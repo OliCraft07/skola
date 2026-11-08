@@ -1,0 +1,914 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Opakovanie z SJL</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Literata:opsz,wght@7..72,500;7..72,700&display=swap">
+<style>
+/* Layout: jeden úzky stĺpec ako zošit s úlohami. Číslo úlohy je veľký blok vľavo (ako číslovanie v teste),
+   modrý akcent podľa modrej náplne pera, ktorou sa na maturite píše. Ukážky sú papierové políčka na vloženie textu. */
+:root {
+  --bg: #EEF1F8;
+  --surface: #FFFFFF;
+  --paper: #F7F8FD;
+  --ink: #141B33;
+  --muted: #586179;
+  --line: #D5DAE7;
+  --box: #E2E6F1;
+  --accent: #1B3CC2;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #E6EBFC;
+  --ok: #16714A;
+  --ok-bg: #E0F3E7;
+  --bad: #B3261E;
+  --bad-bg: #FBE4E2;
+  --mark: #FFE9A8;
+  --display: 'Literata', Georgia, 'Times New Roman', serif;
+  --body: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E1118; --surface: #161B26; --paper: #111620; --ink: #E8EBF4; --muted: #9AA3BA; --line: #283042;
+    --box: #252C3C; --accent: #8EA4FF; --accent-ink: #0E1118; --accent-soft: #1E2640;
+    --ok: #5FD393; --ok-bg: #13281E; --bad: #FF8A80; --bad-bg: #2E1917; --mark: #5A4A12;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E1118; --surface: #161B26; --paper: #111620; --ink: #E8EBF4; --muted: #9AA3BA; --line: #283042;
+  --box: #252C3C; --accent: #8EA4FF; --accent-ink: #0E1118; --accent-soft: #1E2640;
+  --ok: #5FD393; --ok-bg: #13281E; --bad: #FF8A80; --bad-bg: #2E1917; --mark: #5A4A12;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 var(--body); }
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+  z-index: 10; background: var(--bg);
+}
+.page {
+  max-width: 800px; margin: 0 auto; padding-block: 28px 80px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+.back { display: inline-block; margin-bottom: 18px; font: 500 .8rem/1 var(--mono); letter-spacing: .04em; color: var(--muted); text-decoration: none; padding: 10px 0; }
+.back:hover { color: var(--accent); }
+.back:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* úvod */
+.hero { display: flex; gap: 20px; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+.eyebrow { margin: 0 0 8px; font: 500 .74rem/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+h1 { font: 700 clamp(1.9rem, 6vw, 2.7rem)/1.08 var(--display); margin: 0 0 10px; text-wrap: balance; letter-spacing: -.01em; }
+.sub { margin: 0; color: var(--muted); max-width: 56ch; }
+.ring {
+  --p: 0; flex: none; width: 104px; height: 104px; border-radius: 50%;
+  background: conic-gradient(var(--accent) calc(var(--p) * 1%), var(--box) 0);
+  display: grid; place-items: center;
+}
+.ring-in {
+  width: 82px; height: 82px; border-radius: 50%; background: var(--bg);
+  display: grid; align-content: center; justify-items: center; gap: 3px;
+}
+.ring-in b { font: 700 1.45rem/1 var(--display); }
+.ring-in span { font: 500 .6rem/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+
+.tests { display: grid; gap: 8px; margin-bottom: 20px; }
+.tm { display: grid; grid-template-columns: 84px 1fr auto; gap: 12px; align-items: center; font-size: .88rem; }
+.tm span { font: 500 .78rem/1 var(--mono); color: var(--muted); }
+.tm b { font: 500 .82rem/1 var(--mono); }
+.meter { height: 6px; background: var(--box); border-radius: 3px; overflow: hidden; }
+.meter i { display: block; height: 100%; width: 0; background: var(--accent); }
+@media (prefers-reduced-motion: no-preference) { .meter i { transition: width .3s ease; } }
+
+.legend { display: grid; gap: 10px; margin: 0 0 22px; padding: 14px 16px; list-style: none; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; }
+.legend li { display: grid; grid-template-columns: 104px 1fr; gap: 12px; align-items: baseline; font-size: .92rem; }
+@media (max-width: 520px) { .legend li { grid-template-columns: 1fr; gap: 4px; } }
+
+.tag {
+  display: inline-block; font: 500 .7rem/1 var(--mono); letter-spacing: .05em; text-transform: uppercase;
+  padding: 5px 8px; border-radius: 3px; border: 1px solid var(--line); color: var(--muted); width: max-content;
+}
+.tag.s { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+.tag.h { color: var(--ink); background: var(--box); border-color: var(--box); }
+
+/* lišta */
+.bar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 9; background: var(--bg);
+  padding: 10px 0; border-bottom: 1px solid var(--line); margin-bottom: 14px;
+}
+.bar-row { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: .88rem; color: var(--muted); }
+.bar-row b { font: 500 .9rem var(--mono); color: var(--ink); }
+
+/* filtre */
+.filt { margin-bottom: 20px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+.filt > summary { cursor: pointer; padding: 12px 14px; font: 600 .92rem var(--body); list-style: none; display: flex; justify-content: space-between; }
+.filt > summary::-webkit-details-marker { display: none; }
+.filt > summary::after { content: "Zobraziť"; font: 500 .72rem/1.6 var(--mono); text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.filt[open] > summary::after { content: "Skryť"; }
+.filt-in { padding: 4px 14px 14px; display: grid; gap: 14px; }
+.filters { display: grid; gap: 10px; }
+.fg { display: grid; grid-template-columns: 64px 1fr; gap: 10px; align-items: center; }
+.fg > span { font: 500 .72rem/1 var(--mono); letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+.seg { display: flex; flex-wrap: wrap; gap: 4px; }
+.seg button, .btn {
+  font: 500 .88rem/1 var(--body); color: var(--ink); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 5px; padding: 10px 12px; cursor: pointer; min-height: 40px;
+}
+.seg button:hover, .btn:hover { border-color: var(--accent); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn.quiet { color: var(--muted); }
+button:focus-visible, input:focus-visible, textarea:focus-visible, summary:focus-visible, .opt:has(input:focus-visible) {
+  outline: 2px solid var(--accent); outline-offset: 2px;
+}
+.tools { display: flex; flex-wrap: wrap; gap: 8px; }
+@media (max-width: 520px) { .fg { grid-template-columns: 1fr; gap: 6px; } }
+
+/* zoznam */
+.list { display: grid; gap: 14px; }
+.grp {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+  margin: 22px 0 2px; padding-bottom: 8px; border-bottom: 2px solid var(--ink);
+  font: 700 1.4rem/1.2 var(--display);
+}
+.grp:first-child { margin-top: 0; }
+.grp span { font: 500 .78rem/1 var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+
+.card {
+  display: grid; grid-template-columns: 68px minmax(0, 1fr); gap: 16px; align-items: start;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 18px;
+  scroll-margin-top: 96px; min-width: 0;
+}
+.nb {
+  background: var(--box); border-radius: 6px; padding: 10px 4px 9px; text-align: center;
+}
+.nb small { display: block; font: 500 .68rem/1 var(--mono); letter-spacing: .08em; color: var(--muted); margin-bottom: 6px; }
+.nb b { display: block; font: 700 1.75rem/1 var(--display); }
+.card.ok .nb { background: var(--ok-bg); color: var(--ok); }
+.card.bad .nb { background: var(--bad-bg); color: var(--bad); }
+.card.ok .nb small, .card.bad .nb small { color: inherit; }
+.cb { display: grid; gap: 12px; min-width: 0; }
+.ch { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; }
+.status { margin-left: auto; font: 600 .86rem/1 var(--body); }
+.card.ok .status { color: var(--ok); }
+.card.bad .status { color: var(--bad); }
+.q { margin: 0; font-size: 1.06rem; line-height: 1.55; overflow-wrap: anywhere; }
+.q em { font-style: italic; }
+mark { background: var(--mark); color: inherit; padding: 0 2px; border-radius: 2px; }
+.ctx {
+  margin: 0; padding: 12px 14px; background: var(--paper); border: 1px solid var(--line); border-radius: 5px;
+  font: 400 1.02rem/1.6 var(--display); overflow-wrap: anywhere;
+}
+
+/* ukážka */
+.slot { background: var(--paper); border: 1px dashed var(--accent); border-radius: 6px; padding: 12px 14px; display: grid; gap: 8px; }
+.chip {
+  display: inline-block; font: 500 .74rem/1.3 var(--mono); letter-spacing: .02em; background: var(--accent); color: var(--accent-ink);
+  padding: 5px 9px; border-radius: 3px; width: max-content; max-width: 100%;
+}
+.slot-t { margin: 0; font-size: .94rem; }
+.slot label { font-size: .82rem; color: var(--muted); display: grid; gap: 5px; }
+.slot textarea {
+  width: 100%; min-height: 64px; resize: vertical; overflow: hidden;
+  font: 400 1.02rem/1.55 var(--display); color: var(--ink); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 4px; padding: 10px 12px;
+}
+
+/* odpovede */
+.opts { display: grid; gap: 6px; }
+.opt {
+  display: flex; gap: 12px; align-items: flex-start; padding: 11px 13px; border: 1px solid var(--line);
+  border-radius: 6px; cursor: pointer; min-width: 0; background: var(--surface);
+}
+.opt:hover { border-color: var(--accent); }
+.opt input { margin-top: 5px; flex: none; accent-color: var(--accent); }
+.opt .l { font: 500 .85rem/1.7 var(--mono); flex: none; width: 1.5em; color: var(--muted); }
+.opt .t { overflow-wrap: anywhere; min-width: 0; }
+.opt:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+.opt.right, .opt.right:has(input:checked) { background: var(--ok-bg); border-color: var(--ok); }
+.opt.wrong, .opt.wrong:has(input:checked) { background: var(--bad-bg); border-color: var(--bad); }
+.fld input[type="text"] {
+  width: 100%; font: 400 1.05rem/1.3 var(--body); color: var(--ink); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 6px; padding: 13px 14px;
+}
+.card.ok .fld input[type="text"] { border-color: var(--ok); background: var(--ok-bg); }
+.card.bad .fld input[type="text"] { border-color: var(--bad); background: var(--bad-bg); }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.verdict { font-size: .95rem; padding: 12px 14px; border-radius: 6px; overflow-wrap: anywhere; display: grid; gap: 6px; }
+.card.ok .verdict { background: var(--ok-bg); }
+.card.bad .verdict { background: var(--bad-bg); }
+.verdict .note { color: var(--muted); font-size: .86rem; }
+.verdict .row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.empty { text-align: center; color: var(--muted); padding: 32px 0; }
+.sum { margin-top: 22px; padding: 16px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+.sum b { font-family: var(--mono); font-weight: 500; }
+details.skip { margin-top: 26px; font-size: .92rem; color: var(--muted); }
+details.skip summary { cursor: pointer; color: var(--ink); font-weight: 500; }
+details.skip p { margin: 8px 0 0; }
+
+@media (max-width: 560px) {
+  .card { grid-template-columns: 1fr; gap: 12px; padding: 14px; }
+  .nb { display: flex; gap: 10px; align-items: baseline; padding: 7px 11px; width: max-content; }
+  .nb small { margin: 0; }
+  .nb b { font-size: 1.15rem; }
+  .hero { align-items: flex-start; }
+  .ring { width: 84px; height: 84px; }
+  .ring-in { width: 64px; height: 64px; }
+  .ring-in b { font-size: 1.15rem; }
+  .ring-in span { display: none; }
+  .tm { grid-template-columns: 70px 1fr auto; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../index.html">← Všetky témy</a>
+  <header class="hero">
+    <div>
+      <p class="eyebrow">Maturita 2024 a 2025 · externá časť</p>
+      <h1>Opakovanie z SJL</h1>
+      <p class="sub">Otázky z oboch testov, ktoré sa dajú vyriešiť bez čítania celej ukážky. Odpovedz, skontroluj podľa oficiálneho kľúča a pokračuj ďalej.</p>
+    </div>
+    <div class="ring" id="ring" role="img" aria-label="Úspešnosť"><div class="ring-in"><b id="sc-pct">–</b><span>úspešnosť</span></div></div>
+  </header>
+
+  <div class="tests">
+    <div class="tm"><span>Test 2024</span><div class="meter"><i id="m-2024"></i></div><b id="c-2024">0 / 0</b></div>
+    <div class="tm"><span>Test 2025</span><div class="meter"><i id="m-2025"></i></div><b id="c-2025">0 / 0</b></div>
+  </div>
+
+  <ul class="legend">
+    <li><span class="tag s">Samostatná</span><span>Všetko potrebné je v zadaní alebo v tom, čo sa učíš.</span></li>
+    <li><span class="tag h">Hraničná</span><span>Zadanie odkazuje na ukážku. Pri otázke nájdeš test, stranu v PDF a presné miesto v ukážke. Vetu z PDF si môžeš vložiť do poľa a uloží sa.</span></li>
+  </ul>
+
+  <div class="bar">
+    <div class="bar-row">
+      <span>Skontrolované <b id="p-checked">0</b> / <b id="p-total">0</b></span>
+      <span>Správne <b id="p-ok">0</b></span>
+      <span>Zobrazené <b id="p-shown">0</b></span>
+    </div>
+  </div>
+
+  <details class="filt" id="filt" open>
+    <summary>Filtre a nástroje</summary>
+    <div class="filt-in">
+      <div class="filters" id="filters"></div>
+      <div class="tools">
+        <button class="btn primary" id="b-all" type="button">Skontrolovať všetko</button>
+        <button class="btn" id="b-shuffle" type="button" aria-pressed="false">Zamiešať poradie</button>
+        <button class="btn quiet" id="b-reset" type="button">Vynulovať odpovede</button>
+      </div>
+    </div>
+  </details>
+
+  <div class="list" id="list"></div>
+  <p class="empty" id="empty" hidden>Pre tento filter tu nie je žiadna otázka.</p>
+
+  <div class="sum" id="sum" hidden></div>
+
+  <details class="skip">
+    <summary>Vynechané otázky, ktoré potrebujú celú ukážku (37)</summary>
+    <p><b>Test 2024:</b> 1, 2, 9, 11, 17, 18, 33, 35, 36, 37, 41, 43, 49, 57, 58, 60.</p>
+    <p><b>Test 2025:</b> 1, 2, 3, 9, 11, 12, 13, 17, 18, 25, 26, 27, 33, 34, 35, 36, 41, 49, 50, 57, 58.</p>
+  </details>
+</div>
+
+<script>
+/* ---------- DÁTA ---------- */
+const Q = [];
+function mc(t, n, cat, q, opts, ans, x) {
+  Q.push(Object.assign({ id: t + '-' + String(n).padStart(2, '0'), t: t, n: n, cat: cat, kind: 'mc', q: q, opts: opts, ans: ans }, x || {}));
+}
+function sa(t, n, cat, q, accept, show, x) {
+  Q.push(Object.assign({ id: t + '-' + String(n).padStart(2, '0'), t: t, n: n, cat: cat, kind: 'sa', q: q, accept: accept, show: show }, x || {}));
+}
+const lc = s => s.toLowerCase();
+
+/* ===== TEST 2024 (24 1403) ===== */
+mc(2024, 3, 'S', 'V ktorej možnosti je správny prepis číslovky zo slovného spojenia *so skupinou 27 žien* z ukážky 1?',
+  ['dvadsiatich siedmich', 'dvadsiatichsiedmych', 'dvadsiatich siedmych', 'dvadsať sedem'], 0);
+mc(2024, 4, 'S', 'Čo majú spoločné zvýraznené slová z nasledujúceho súvetia?',
+  ['Patria k plnovýznamovým neohybným slovám.', 'Majú rovnaké všetky morfologické kategórie.', 'Zastávajú funkciu rovnakého vetného člena.', 'Sú to hlavné vetné členy v danej vete súvetia.'], 2,
+  { ctx: 'Kážu im, aby sa sústredili na správne dýchanie, vnímali údery **srdca** a kontrolovali prácu **nôh**.' });
+mc(2024, 5, 'S', 'V ktorej možnosti dochádza vo všetkých slovách k znelostnej asimilácii/spodobovaniu?',
+  ['organizmu, vyššia, obmedzenej', 'vedci, vlastný, absolvovala', 'nižšia, podvedome, pravda', 'takzvanú, však, vášho'], 3);
+sa(2024, 6, 'H', 'Napíšte gramaticky a pravopisne správny tvar slova *dobrovoľníčka*, ktorý patrí na zakryté miesto v ukážke 1.',
+  ['dobrovoľníčok'], 'dobrovoľníčok',
+  { hint: 'Ukážka 1 je článok o behu s hudbou. Zakryté miesto je vo vete o ženách vo výskume, hneď za predložkou z.', note: 'Uznáva sa len tento tvar, pravopisne správne.' });
+sa(2024, 7, 'H', 'Napíšte názov slovného druhu podčiarknutého slova ukážky 1.',
+  ['sloveso', 'slovesá', 'verbum', 'verbá'], 'sloveso',
+  { hint: 'Ukážka 1 je článok o behu s hudbou. V teste si vypíš podčiarknuté slovo a urč jeho slovný druh.' });
+sa(2024, 8, 'S', 'Vypíšte zo zvýrazneného textu ukážky 1 slovo cudzieho pôvodu, ktorého lexikálny význam je: vedecky podložený, ale ešte definitívne nedokázaný názor/predpoklad/domnienka.',
+  ['hypotézu', 'hypotéza'], 'hypotézu / hypotéza');
+mc(2024, 10, 'S', 'Ktorá myšlienka nesúvisí s vyznením celého diela *Drak sa vracia*?',
+  ['Najmocnejším preludom je verejná mienka – nikto presne nevie, kto ju vytvára, nikto ju nikdy osobne nepoznal, ale mnohí sa ňou nechajú utláčať.',
+   'Ľudia niekedy z pravdy uznávajú málo, z verejnej mienky mnoho.',
+   'Netreba sa báť tých, ktorí majú iný názor, ale tých, ktorí iný názor majú, ale sú príliš zbabelí na to, aby ho vyslovili.',
+   'Netráp sa pre mienku ľudí, ak máš svoju predstavu o živote.'], 2);
+mc(2024, 12, 'S', 'V ktorej možnosti je uvedený znak literárneho smeru, do ktorého zaraďujeme dielo *Drak sa vracia*?',
+  ['Typická pre tento literárny smer je kombinácia viazanej a neviazanej reči.',
+   'V dielach tohto literárneho smeru sa vyskytujú rozprávkové motívy.',
+   'Typické pre tento literárny smer je oslavovanie súdobého režimu.',
+   'V dielach tohto literárneho smeru sa uplatňujú postupy a prvky drámy.'], 1);
+mc(2024, 13, 'S', 'Kto je autorom diela *Drak sa vracia*?',
+  ['Milo Urban', 'Dobroslav Chrobák', 'Peter Jilemnický', 'Ladislav Mňačko'], 1);
+sa(2024, 14, 'S', 'Pomenujte jednoslovným literárnovedným termínom zvýraznený umelecký prostriedok v nasledujúcej vete.',
+  ['metonymia', 'personifikácia', 'zosobnenie', 'synekdocha', 'tróp', 'trópus', 'trópy'],
+  'metonymia / personifikácia / zosobnenie',
+  { ctx: 'Tak aspoň **usúdila dedina**.', note: 'Uznáva sa aj synekdocha, tróp, trópus.' });
+sa(2024, 15, 'H', 'Vypíšte zo zvýraznenej časti ukážky 2 jedno neohybné slovo, ktorým sa naznačuje, že ide o reprodukciu výpovede niekoho iného.',
+  ['vraj'], 'vraj',
+  { hint: 'Ukážka 2 je úryvok z Chrobákovho diela Drak sa vracia. Hľadaj v odseku o tom, ako starý Lepiš našiel chlapca.' });
+sa(2024, 16, 'H', 'Doplňte chýbajúcu časť jazykovedného termínu do nasledujúcej vety.',
+  ['rozprávací'], 'rozprávací',
+  { ctx: 'V druhej polovici ukážky 2 dominuje ______ slohový postup.', hint: 'Ukážka 2 je úryvok z prózy Drak sa vracia. Druhá polovica je príbeh o tom, ako starý Lepiš našiel chlapca.' });
+mc(2024, 19, 'S', 'Texty o textoch, fragmentárnosť, prelínanie žánrov a záhada sú znaky typické pre',
+  ['postmodernú literatúru.', 'surrealistické diela.', 'naturalistickú literatúru.', 'expresionistické diela.'], 0);
+mc(2024, 20, 'S', 'V ktorej možnosti sa nachádza hyperbola z ukážky 3?',
+  ['živiť tvoju pýchu', 'konať na vlastnú päsť', 'má silu tisícich škorpiónov', 'bol si veľmi blízko k pravde'], 2);
+mc(2024, 21, 'S', 'Zvýraznené slovo *blázon* je v kontexte ukážky 3',
+  ['zastaraným slovom.', 'expresívnym slovom.', 'vulgárnym slovom.', 'neutrálnym slovom.'], 1);
+sa(2024, 22, 'H', 'Vypíšte z prvej priamej reči v ukážke 3 jednu nesklonnú číslovku.',
+  ['prvýkrát'], 'prvýkrát',
+  { hint: 'Ukážka 3 je rozhovor z románu Meno ruže (Eco). Číslovku hľadaj v prvej priamej reči, kde sa hovorí o Malachiášovi.', note: 'Slovo musí byť napísané pravopisne správne.' });
+sa(2024, 23, 'S', 'Napíšte gramaticky a pravopisne správny tvar genitívu plurálu slova *kópia*.',
+  ['kópií'], 'kópií',
+  { note: 'Uznáva sa len tento tvar (aj s predložkou s genitívom).',
+    check: v => { const w = lc(v).split(' '); return w[w.length - 1] === 'kópií' && w.length <= 2; } });
+sa(2024, 24, 'S', 'Napíšte skloňovací vzor zvýrazneného slova v nasledujúcej vete.',
+  ['mesto'], 'mesto', { ctx: 'Dnes predpoludním som v **skriptóriu** počul…' });
+mc(2024, 25, 'S', 'Ktorá replika z ukážky 4 naznačuje empatický postoj postavy? (empatia – schopnosť vciťovať sa do duševných pochodov druhého)',
+  ['ŠUSTEK: Preboha – nemáte cigaretu?',
+   'BABICA: Ten vojak…? To už vieme, pán Fischl!',
+   'ONDREJ: Tak vy nie ste… (Sklamaný.) Ten jedenásty?',
+   'TOMKO: Vidíte…? (Všetkým povzbudivo.) Nevravel som, že sa to vysvetlí?'], 3);
+mc(2024, 26, 'S', 'V diele *Kým kohút nezaspieva* dominujú prvky',
+  ['nadrealizmu.', 'existencializmu.', 'naturizmu.', 'impresionizmu.'], 1);
+mc(2024, 27, 'S', 'Názov diela *Kým kohút nezaspieva* je odkazom na',
+  ['biblický text.', 'slovenské príslovie.', 'antickú bájku.', 'hrdinský epos.'], 0);
+mc(2024, 28, 'H', 'Bukovčan zvýraznenú scénickú poznámku *neadresoval*',
+  ['kostymérkam.', 'divákom.', 'režisérovi.', 'hercovi.'], 1,
+  { hint: 'Ukážka 4 je 7. výstup 1. dejstva hry Kým kohút nezaspieva. Scénická poznámka je text v zátvorkách. V teste si vypíš tú zvýraznenú.' });
+mc(2024, 29, 'S', 'Ktoré tvrdenie o diele *Kým kohút nezaspieva* je pravdivé?',
+  ['Inscenáciu tejto divadelnej hry realizuje činoherný súbor.',
+   'Dielo ako celok zaraďujeme k tragikomédiám.',
+   'Dielo ako celok zaraďujeme do absurdnej drámy.',
+   'Inscenáciu tejto divadelnej hry realizuje kabaretný súbor.'], 0);
+sa(2024, 30, 'H', 'Ktorá postava z ukážky 4 chýbala v šiestom výstupe prvého dejstva?',
+  ['Fischl'], 'Fischl / pán Fischl',
+  { hint: 'Ukážka 4 je 7. výstup. V jeho nadpise je uvedená postava, ktorá do scény práve vstupuje.',
+    note: 'Meno s malým f sa neuznáva. Uznáva sa aj starší muž, sprostredkovateľ, prostredník, obchodník s drevom.',
+    check: v => /^(Pán |pán )?(Fischl|FISCHL)$/.test(v) || /^PÁN FISCHL$/.test(v) || ['starší muž', 'sprostredkovateľ', 'prostredník', 'obchodník s drevom'].includes(lc(v)) });
+sa(2024, 31, 'S', 'Pomenujte syntaktickú konštrukciu, ktorá je v nasledujúcej vete čiarkou odčlenená od pozdravu.',
+  ['oslovenie'], 'oslovenie', { ctx: 'Ruky bozkávam, milostivá pani.' });
+sa(2024, 32, 'S', 'Napíšte počet osôb zadržaných pre vraždu vojaka v diele *Kým kohút nezaspieva*.',
+  ['10', 'desať', '10 ľudí', 'desať ľudí', '10 osôb', 'desať osôb'], '10 / desať (ľudí, osôb)');
+mc(2024, 34, 'H', 'Zvýraznené slovo *malý* možno pri zachovaní vyznenia básne z ukážky 5 nahradiť slovom',
+  ['útly.', 'komorný.', 'drobný.', 'banálny.'], 1,
+  { hint: 'Ukážka 5 je báseň Vybraná spoločnosť (T. Lehenová). Slovo malý je v prvých veršoch, prívlastok pri spoločenskom večere.' });
+sa(2024, 38, 'S', 'Doplňte do nasledujúcej vety správny jazykovedný termín.',
+  ['dramatickú', 'významovú', 'logickú'], 'dramatickú / významovú / logickú (prestávku, pauzu)',
+  { ctx: 'Pomlčka v závere ukážky 5 signalizuje recitátorovi ______ prestávku/pauzu.', note: 'Uznáva sa aj intonačnú, umeleckú.',
+    check: v => ['dramatickú', 'významovú', 'logickú', 'dramatická', 'významová', 'logická', 'intonačnú', 'umeleckú', 'intonačná', 'umelecká'].includes(lc(v).replace(/\s+(prestávku|pauzu|prestávka|pauza)$/, '')) });
+sa(2024, 39, 'H', 'Napíšte jednoslovný literárnovedný termín pomenúvajúci literárny druh ukážky 5.',
+  ['lyrika'], 'lyrika',
+  { hint: 'Ukážka 5 je báseň Vybraná spoločnosť od Taťjany Lehenovej.' });
+sa(2024, 40, 'H', 'Napíšte názov verša/veršového systému využitého v ukážke 5.',
+  ['voľný verš', 'voľný'], 'voľný (verš)',
+  { hint: 'Ukážka 5 je báseň Vybraná spoločnosť. Všimni si rým, dĺžku veršov a rytmus.' });
+mc(2024, 42, 'H', 'V čase vzniku titulu cisársko-kráľovský dodávateľ sa na území Slovenska rozvíjala',
+  ['romantická literatúra.', 'renesančná literatúra.', 'klasicistická literatúra.', 'baroková literatúra.'], 2,
+  { hint: 'Ukážka 6 je úryvok z knihy Habsburgovci v dejinách. Rok, od ktorého sa titul používa, je v druhom odseku. Prepíš si ho a priraď k nemu obdobie.' });
+mc(2024, 44, 'S', 'Slovo *dodávateľ*',
+  ['vzniklo kombináciou skladania a odvodzovania.', 'vzniklo prenesením základného významu slova.', 'obsahuje tri slovotvorné základy.', 'obsahuje slovotvornú predponu a príponu.'], 3);
+mc(2024, 45, 'S', 'V ktorej možnosti je gramaticky a pravopisne správny tvar vzťahového prídavného mena?',
+  ['portréty habsburských panovníkov', 'portréty Habsburských panovníkov', 'portréty habsburgských panovníkov', 'portréty Habsburgských panovníkov'], 0);
+sa(2024, 46, 'S', 'Napíšte gramaticky a pravopisne správne obyvateľské meno mužského obyvateľa Prahy.',
+  ['Pražan'], 'Pražan',
+  { note: 'Uznáva sa len tento tvar, s veľkým P.', check: v => v === 'Pražan' || v === 'PRAŽAN' });
+sa(2024, 47, 'H', 'Koľko slovesných podstatných mien sa nachádza v podčiarknutej časti ukážky 6?',
+  ['1', 'jedno', 'jedno slovesné podstatné meno', '1 slovesné podstatné meno'], '1 / jedno',
+  { hint: 'Ukážka 6 je úryvok z knihy Habsburgovci v dejinách. V teste si vypíš podčiarknutú časť a hľadaj slová končiace na -nie, -tie.' });
+sa(2024, 48, 'H', 'Pomenujte z hľadiska vonkajšej kompozície textu podčiarknutú časť ukážky 6.',
+  ['odsek', 'odstavec', 'paragraf'], 'odsek',
+  { hint: 'Ukážka 6 (Habsburgovci v dejinách). Podčiarknutá je jedna ucelená časť textu medzi dvoma zalomeniami riadka.' });
+mc(2024, 50, 'H', 'Ktorá možnosť patrí na zakryté miesto v texte A?',
+  ['motivačný list', 'lekársku správu', 'cielený rozhovor', 'správu o výsledku projektu'], 0,
+  { hint: 'Text A v ukážke 7 je pracovný inzerát cestovnej kancelárie (animátori do letných táborov). Zakryté miesto je v zozname vecí, ktoré má záujemca poslať spolu so žiadosťou a CV.' });
+mc(2024, 51, 'S', 'Taliančina patrí do rovnakej jazykovej skupiny indoeurópskych jazykov ako',
+  ['dánčina.', 'nemčina.', 'rumunčina.', 'bulharčina.'], 2);
+mc(2024, 52, 'S', 'V ktorej možnosti sa nachádza vokalizovaná predložka?',
+  ['za kladné vybavenie', 'na osobnom pohovore', 'dorozumiem sa aj po maďarsky', 'skúsenosti so spoluorganizovaním'], 3);
+mc(2024, 53, 'H', 'Text B patrí do tej istej skupiny slohových útvarov/žánrov ako',
+  ['prívet.', 'výklad.', 'recenzia.', 'reklamácia.'], 3,
+  { hint: 'Text B v ukážke 7 je žiadosť o brigádnickú prácu študenta (formálny list s hlavičkou, adresátom a oslovením).' });
+sa(2024, 54, 'S', 'Ktorý typ životopisu tvorí prílohu Ondrejovej žiadosti? Doplňte do nasledujúcej vety správne slovo.',
+  ['štruktúrovaný', 'úradný', 'administratívny'], 'štruktúrovaný / úradný / administratívny',
+  { ctx: 'V prílohe posielam svoj ______ životopis.', note: 'Neuznáva sa beletrizovaný.' });
+sa(2024, 55, 'H', 'Nahraďte zvýraznené slovo v texte B združeným pomenovaním.',
+  ['materská škola', 'materskej škole', 'v materskej škole', 'materská škôlka', 'materskej škôlke', 'v materskej škôlke'], '(v) materskej škole',
+  { hint: 'Text B (žiadosť o brigádu) má v časti o odbornej praxi zvýraznené hovorové pomenovanie. Napíš spisovné združené pomenovanie.' });
+sa(2024, 56, 'H', 'Do ktorého jazykového štýlu patrí text B?',
+  ['administratívny', 'úradný', 'administratívneho', 'úradného', 'administratívny štýl', 'úradný štýl', 'do administratívneho štýlu', 'do úradného štýlu'],
+  'do administratívneho (úradného) štýlu',
+  { hint: 'Text B v ukážke 7 je žiadosť o brigádnickú prácu študenta.' });
+mc(2024, 59, 'S', 'V slovnom spojení *jednu z najroztomilejších stvoričiek* sa nachádza',
+  ['zvukomaľba.', 'nonsens.', 'symbol.', 'zdrobnenina.'], 3);
+mc(2024, 61, 'S', 'Ktorý typ priraďovacieho súvetia predstavuje nasledujúca veta?',
+  ['odporovacie', 'vylučovacie', 'zlučovacie', 'stupňovacie'], 2, { ctx: 'Teším sa tomu a som šťastný.' });
+sa(2024, 62, 'S', 'Koľko určovacích vetných skladov sa nachádza v nasledujúcej vete?',
+  ['3', 'tri', 'tri sklady', '3 sklady'], '3 / tri (určovacie sklady)', { ctx: 'Celkom mi zaujala myseľ.' });
+sa(2024, 63, 'H', 'Vypíšte zo zvýraznenej časti ukážky 8 jedno básnické slovo.',
+  ['slnce'], 'slnce',
+  { hint: 'Ukážka 8 je list z Goetheho Utrpenia mladého Werthera (16. júna). Zvýraznená časť je posledný odsek listu.' });
+sa(2024, 64, 'H', 'Doplňte do nasledujúcej vety prvú časť literárnovedného termínu pomenúvajúceho typ rozprávača.',
+  ['priamy', 'subjektívny'], 'priamy / subjektívny',
+  { ctx: 'V ukážke 8 sa uplatnil ______ rozprávač.', hint: 'Ukážka 8 je list, v ktorom Werther píše o sebe v 1. osobe.' });
+
+/* ===== TEST 2025 (25 1403) ===== */
+mc(2025, 4, 'H', 'Ktoré znaky jazykového štýlu nájdeme v ukážke 1?',
+  ['verejnosť, dialogickosť, variabilnosť', 'variabilnosť, súkromnosť, dialogickosť', 'verejnosť, monologickosť, presnosť', 'presnosť, monologickosť, súkromnosť'], 2,
+  { hint: 'Ukážka 1 je odpoveď webovej jazykovej poradne na otázku, či sa správne povie bežecký, alebo behací pás (odborný text).' });
+mc(2025, 5, 'S', 'Slovo *všeobecnejší* predstavuje druhý stupeň',
+  ['pravidelného stupňovania prísloviek.', 'pravidelného stupňovania prídavných mien.', 'nepravidelného stupňovania prísloviek.', 'nepravidelného stupňovania prídavných mien.'], 1);
+sa(2025, 6, 'S', 'Vypíšte z nasledujúcej vety to slovo, v ktorom v prúde reči dochádza k znelostnej asimilácii/spodobovaniu.',
+  ['pás'], 'pás',
+  { ctx: 'Výraz bežecký pás dostatočne plní identifikačnú a komunikačnú funkciu pomenovania tréningového stroja.', note: 'Slovo musí byť pravopisne správne len v tomto tvare.' });
+sa(2025, 7, 'S', 'Napíšte slovo *chôdza* v tvare genitívu singuláru.',
+  ['chôdze'], 'chôdze', { note: 'Uznáva sa aj s adekvátnou predložkou.' });
+sa(2025, 8, 'S', 'Doplňte správny jednoslovný jazykovedný termín do nasledujúcej vety.',
+  ['synonymá', 'synonymami', 'synonymné', 'rovnoznačné'], 'synonymá / synonymné / rovnoznačné',
+  { ctx: 'Podľa vzájomného vzťahu medzi ich významami slovesá bežať a utekať sú ______.' });
+mc(2025, 10, 'S', 'Z ukážky 2 vyplýva, že haiku je',
+  ['satirická rýmovaná báseň.', 'baladická báseň.', 'báseň v próze.', 'krátka lyrická báseň.'], 3);
+sa(2025, 14, 'H', 'Doplňte chýbajúcu časť literárnovedného termínu do nasledujúcej vety.',
+  ['pieseň', 'slovesnosť', 'ľudovú pieseň', 'ľudovú slovesnosť'], '(ľudovú) pieseň / slovesnosť',
+  { ctx: 'Haiku v texte C obsahuje narážku na ľudovú ______.', note: 'Neuznáva sa (ľudovú) tvorbu.',
+    hint: 'Ukážka 2 obsahuje štyri haiku. Text C je od Jána Štrassera (Slovenské haiku), tri krátke verše s detským popevkom. V teste si ho prepíš.' });
+sa(2025, 15, 'H', 'Vypíšte z ukážky 2 to sloveso, ktorému zodpovedajú morfologické kategórie: 2. osoba, singulár, prítomný čas, oznamovací spôsob, nedokonavý vid.',
+  ['zízaš'], 'zízaš',
+  { hint: 'Ukážka 2 sú štyri haiku. Hľadaj v básni, kde sa hovorca prihovára včele (Kerouac, text B).', note: 'Slovo musí byť pravopisne správne len v tomto tvare.' });
+sa(2025, 16, 'S', 'Doplňte do nasledujúcej vety jednoslovný jazykovedný termín.',
+  ['nesklonné', 'nesklonným', 'neohybné', 'neohybným'], 'nesklonné / neohybné',
+  { ctx: 'Cudzie slovo *haiku* nemá v slovenčine žiadny skloňovací vzor, teda je ______.' });
+mc(2025, 19, 'H', 'Na základe ukážky 3 možno tvrdiť, že jej autor v titulku využil',
+  ['anaforu.', 'nonsens.', 'metaforu.', 'podobenstvo.'], 2,
+  { hint: 'Ukážka 3 je článok o 3D CT skeneri na drevo vo Zvolene. V titulku sa o skenovaní hovorí ako o skenovaní pacientov. Prepíš si titulok.' });
+mc(2025, 20, 'S', 'Čo majú spoločné zvýraznené slová *technológia*, *excelentnosť*, *hodnota* z ukážky 3?',
+  ['Sú to konkrétne podstatné mená.', 'Sú to abstraktné podstatné mená.', 'Sú to podstatné mená ženského rodu skloňujúce sa podľa rovnakého vzoru.', 'Sú to podstatné mená ženského rodu skloňujúce sa podľa dvoch rôznych vzorov.'], 1);
+mc(2025, 21, 'S', 'Slová *biotechnologický*, *tomografia*, *skener* zaraďujeme',
+  ['k odborným výrazom.', 'k slangovým slovám.', 'k eufemizmom.', 'k archaizmom.'], 0);
+sa(2025, 22, 'S', 'Doplňte do nasledujúcej vety jednoslovný termín.',
+  ['citát', 'citácia', 'výrok', 'výpoveď', 'prehovor', 'replika'], 'citát / citácia / výrok / výpoveď / prehovor / replika',
+  { ctx: 'V ukážke 3 sa v úvodzovkách nachádza ______ Tomáša Gergeľa.' });
+sa(2025, 23, 'S', 'Ktoré interpunkčné znamienko slúži v ukážke 3 na vytváranie dojmu senzácie/rozruchu?',
+  ['výkričník', 'znamienko výkričník', '!', 'znamienko !'], '(znamienko) výkričník, !');
+sa(2025, 24, 'S', 'Pomenujte vetný člen zvýraznený v nasledujúcej vete.',
+  ['podmet', 'subjekt'], 'podmet / subjekt', { ctx: 'Tu sa používa najkvalitnejšie **drevo**.' });
+mc(2025, 28, 'H', 'Ukážka 4 predstavuje',
+  ['vecný úradný text.', 'vecný neformálny text.', 'súvislý odborný text.', 'nesúvislý odborný text.'], 1,
+  { hint: 'Ukážka 4 je inzerát realitnej kancelárie na predaj štvorizbového bytu: fotografia, zoznam údajov (typ, druh, stav, cena) a voľný text s oslovením čitateľa.' });
+mc(2025, 29, 'S', 'Slohový útvar/žáner obsahujúci výrazové prostriedky z viacerých jazykových štýlov je',
+  ['polysémický.', 'subjektívny.', 'objektívny.', 'hybridný.'], 3);
+sa(2025, 30, 'S', 'Vypíšte z ukážky 4 slovo označujúce odmenu za sprostredkovanie obchodu.',
+  ['provízia'], 'provízia', { note: 'Slovo musí byť pravopisne správne.' });
+sa(2025, 31, 'S', 'Napíšte názov slovotvorného postupu, ktorým vznikli slová *novostavba* a *maloobchod*.',
+  ['skladaním', 'skladanie', 'kompozíciou', 'kompozícia'], 'skladaním / kompozíciou');
+sa(2025, 32, 'H', 'Doplňte do nasledujúcej vety správny názov slohového postupu.',
+  ['informačný', 'informatívny'], 'informačný',
+  { ctx: 'Vo zvýraznenej časti ukážky 4 sa uplatnil ______ slohový postup.', hint: 'Ukážka 4 je realitný inzerát. Zvýraznená časť je v samotnom texte inzerátu, nie v zozname údajov hore.' });
+mc(2025, 37, 'H', 'Rozprávač v ukážke 5 je',
+  ['vševediaci a nezúčastňuje sa na deji.', 'objektívny a do deja zasahuje okrajovo.', 'subjektívny a zúčastňuje sa na deji.', 'priamy a do deja zasahuje okrajovo.'], 0,
+  { hint: 'Ukážka 5 je úryvok z Coelhovho Alchymistu: dialóg chlapca a Alchymistu a dve vety rozprávača v 3. osobe (Santiago si spomenul…).' });
+sa(2025, 38, 'H', 'Vypíšte z poslednej priamej reči dvojicu slov s opačným významom.',
+  ['začína sa – končí sa'], 'začína sa – končí sa',
+  { hint: 'Ukážka 5 (Coelho, Alchymista). Posledná priama reč je Alchymistova replika o Duši sveta. Hľadaj dve slovesá v jej záverečných vetách.',
+    note: 'Uznáva sa v akomkoľvek poradí, aj bez „sa“.',
+    check: v => /začín/.test(lc(v)) && /konč/.test(lc(v)) });
+sa(2025, 39, 'S', 'Rozdeľte slovo *lekcia* správne na slabiky. Slabiky jednoznačne oddeľte (napr. pomocou spojovníka alebo výraznou medzerou)!',
+  ['lek-ci-a'], 'lek-ci-a',
+  { check: v => lc(v).replace(/\.{2,}|…|[\s·\/_–—]+/g, '-').replace(/-+/g, '-') === 'lek-ci-a' });
+sa(2025, 40, 'S', 'Pomenujte vetnú melódiu, ktorou sa vyznačuje nasledujúca veta z ukážky 5.',
+  ['klesavá'], 'klesavá melódia (konkluzívna kadencia)',
+  { ctx: 'Čo mám robiť teraz?', note: 'Uznáva sa aj klesajúca, uspokojivá končiaca melódia.',
+    check: v => /klesav|klesaj|kadenc|uspokojiv/.test(lc(v)) });
+mc(2025, 42, 'H', 'Humor v ukážke 6 je postavený predovšetkým na',
+  ['zobrazovaných komických situáciách.', 'navonok nezmyselnej konverzácii.', 'idealizovaných postavách.', 'typizovaných postavách.'], 1,
+  { hint: 'Ukážka 6 je dialóg L (Lasica) a S (Satinský) zo Soirée. Jeden vysvetľuje, ako vynašiel prístroj, napoly výťah a napoly lietadlo.' });
+mc(2025, 43, 'S', 'Prekvapujúci komický nápad porušujúci logiku situácie, ktorý často využívali aj Lasica a Satinský, sa nazýva',
+  ['hyperbola.', 'derniéra.', 'pointa.', 'gag.'], 3);
+mc(2025, 44, 'S', 'Ktoré tvrdenie o absurdnej dráme je pravdivé?',
+  ['Má veľa postáv, ktoré bohato komunikujú.', 'Porušuje kompozíciu klasickej drámy.', 'Uprednostňuje cit pred rozumom.', 'Má súvislý dej s rozuzlením.'], 1);
+mc(2025, 45, 'S', 'Ktoré tvrdenie o vonkajšej kompozícii divadelnej hry je pravdivé?',
+  ['Dejstvo sa člení na výstupy.', 'Výstup sa člení na dejstvá.', 'Replika sa skladá z dialógu.', 'Monológ sa skladá z replík.'], 0);
+sa(2025, 46, 'H', 'Doplňte na základe textu ukážky 6 do nasledujúcej vety jedno vhodné podstatné meno.',
+  ['vidiečan', 'dedinčan', 'vidiečanom', 'dedinčanom', 'z vidieka', 'z dediny'], 'vidiečan / dedinčan (z vidieka, z dediny)',
+  { ctx: 'L obhajoval svoju nevedomosť tým, že bol ______.', hint: 'Ukážka 6: L vysvetľuje, prečo nevedel, že lietadlo už dávno objavili. Hľadaj, kde býval.' });
+sa(2025, 47, 'H', 'Napíšte skloňovací vzor pomnožného podstatného mena z ukážky 6.',
+  ['ulica'], 'ulica',
+  { hint: 'Ukážka 6: pomnožné podstatné meno je názov pohoria, nad ktorým postavy letia. Urč jeho vzor.', note: 'Uznáva sa aj s vypísanými tvarmi slova Himaláje.' });
+sa(2025, 48, 'H', 'Koľko autorských poznámok obsahuje ukážka 6?',
+  ['1', 'jednu', 'jedna', 'jedna poznámka', 'jednu poznámku'], '1 / jednu',
+  { hint: 'Ukážka 6 je dialóg. Autorské poznámky sú vsuvky v zátvorkách mimo replík.' });
+mc(2025, 51, 'S', 'Ktoré tvrdenie o diele *Valaská škola mravúv stodola* je pravdivé?',
+  ['Je to rozsiahla zbierka sonetov písaných časomerným veršom.', 'Často sa v ňom využíva zložitá náboženská symbolika.', 'Do určitej miery je inšpirované ľudovou múdrosťou.', 'Ide o súbor básní predstavujúcich všetky druhy lyriky.'], 2);
+mc(2025, 52, 'S', 'Jazykom diela *Valaská škola mravúv stodola* je',
+  ['jedna z podôb kultúrnej predspisovnej slovenčiny.', 'prvý variant kodifikovaného slovenského jazyka.', 'biblická čeština používaná slovenskými evanjelikmi.', 'neidentifikovateľné slovenské zemepisné nárečie.'], 0);
+mc(2025, 53, 'S', 'Ktoré tvrdenie o slovách *krátká* a *tráví* z ukážky 7 je pravdivé?',
+  ['Dodržiava sa v nich pravidlo o rytmickom krátení.', 'Majú slabiku tvorenú slabikotvornou spoluhláskou.', 'Patria k plnovýznamovým slovným druhom.', 'Patria k neohybným slovným druhom.'], 2);
+sa(2025, 54, 'S', 'Napíšte **meno a priezvisko** autora diela *Valaská škola mravúv stodola*.',
+  ['Hugolín Gavlovič'], 'Hugolín Gavlovič',
+  { note: 'Musí byť meno aj priezvisko, s veľkými začiatočnými písmenami. Uznáva sa aj Hugolin Gavlovič a Martin Gavlovič.',
+    check: v => ['Hugolín Gavlovič', 'Hugolin Gavlovič', 'Martin Gavlovič'].some(a => v === a || v === a.toUpperCase()) });
+sa(2025, 55, 'S', 'Doplňte správny názov literárnohistorického obdobia do nasledujúcej vety.',
+  ['barok', 'baroka', 'barokového', 'baroková', 'barokovej', 'baroko'], 'barok(a)',
+  { ctx: 'Dielo *Valaská škola mravúv stodola* patrí do literatúry obdobia ______.' });
+sa(2025, 56, 'S', 'Prepíšte podčiarknuté slovné spojenie *Salernusové prísloví* z ukážky 7 podľa súčasných pravidiel pravopisu a gramatiky.',
+  ['Salernovo príslovie'], 'Salernovo príslovie',
+  { note: 'Uznáva sa aj Salernusovo príslovie. Začiatočné S veľké, neuznáva sa len veľkými písmenami.',
+    check: v => ['Salernovo príslovie', 'Salernusovo príslovie', 'Salemovo príslovie', 'Salemusovo príslovie'].includes(v) });
+mc(2025, 59, 'S', 'Ktorý umelecký prostriedok sa nachádza v nasledujúcej vete z ukážky 8?',
+  ['inotaj', 'symbol', 'protiklad', 'metonymia'], 3, { ctx: 'Paríž zmĺkol.' });
+mc(2025, 60, 'S', 'V ktorej vete z ukážky 8 sa nachádza nepriame pomenovanie?',
+  ['Nad hlavami im hrkútal holub.', 'A obidvaja súčasne tíško šeptali…', 'Držali sa za ruky pred svojím veľkým priateľom…', 'Schúlili sa vo výklenku piliera na schodoch…'], 2);
+mc(2025, 61, 'S', 'Po druhej svetovej vojne dosiahol vrchol svojej literárnej tvorby',
+  ['Jerome David Salinger.', 'Erich Maria Remarque.', 'Jozef Cíger Hronský.', 'Milo Urban.'], 0);
+sa(2025, 62, 'H', 'Pomenujte umelecký jazykový prostriedok, ktorý predstavuje zvýraznené slovo v prvom odseku ukážky 8.',
+  ['epiteton', 'epiteton ornans', 'básnický prívlastok'], 'epiteton (ornans) / básnický prívlastok',
+  { hint: 'Ukážka 8 je úryvok z Rollandovho Petra a Lucie. Zvýraznené slovo je v prvom odseku, v opise chrámu, pri zvukoch organa.' });
+sa(2025, 63, 'H', 'Vypíšte z úryvku diela *Peter a Lucia* prvé slovo jednočlennej mennej/neslovesnej vety.',
+  ['Posledný', 'posledný'], 'Posledný',
+  { hint: 'Ukážka 8, prvý odsek: hľadaj krátku vetu bez slovesa, v ktorej ide o zvuk.', note: 'Uznáva sa aj celá veta Posledný zvuk zvonku.' });
+sa(2025, 64, 'H', 'Koľko viet obsahuje podčiarknuté súvetie v ukážke 8?',
+  ['3', 'tri', 'tri vety', '3 vety'], '3 / tri (vety)',
+  { hint: 'Ukážka 8, druhý odsek: podčiarknuté súvetie je veta o tom, kam boli obrátení a čo videli. Spočítaj slovesné skupiny.' });
+</script>
+
+<script>
+/* Miesta ukážok pre hraničné otázky: [číslo ukážky, kde ju v PDF hľadať]. Strana v PDF = 2 × číslo ukážky. */
+const SRC = {
+  '2024-06': [1, 'Článok o behu s hudbou. 1. odsek, posledná veta: zakryté miesto je za predložkou „z“.'],
+  '2024-07': [1, 'Článok o behu s hudbou. Nájdi v texte podčiarknuté slovo, prepíš si jeho vetu a urč slovný druh.'],
+  '2024-15': [2, 'Úryvok z Chrobákovho Draka. 2. odsek, vety o tom, ako starý Lepiš našiel chlapca (zvýraznená časť).'],
+  '2024-16': [2, 'Úryvok z Chrobákovho Draka. Druhá polovica ukážky (2. a 3. odsek): príbeh o tom, ako Lepiš chlapca našiel.'],
+  '2024-22': [3, 'Eco, Meno ruže. 1. priama reč (prvé úvodzovky), 3.–5. veta, kde sa hovorí o Malachiášovi.'],
+  '2024-28': [4, 'Bukovčan, Kým kohút nezaspieva. 7. výstup: nájdi zvýraznenú scénickú poznámku (text v zátvorkách) a prepíš ju.'],
+  '2024-30': [4, 'Bukovčan. Nadpis 7. výstupu (úplne hore v ukážke 4) obsahuje meno postavy, ktorá vstupuje na scénu.'],
+  '2024-34': [5, 'Báseň Vybraná spoločnosť (T. Lehenová), 1.–2. verš: slovo malý je prívlastok pri slove večer.'],
+  '2024-39': [5, 'Báseň Vybraná spoločnosť (T. Lehenová). Pozri formu celého textu.'],
+  '2024-40': [5, 'Báseň Vybraná spoločnosť (T. Lehenová). Všimni si rým, dĺžku veršov a rytmus celej básne.'],
+  '2024-42': [6, 'Habsburgovci v dejinách. 2. odsek, 4. veta: je v nej rok, od ktorého sa používa titul c. a k. dodávateľ.'],
+  '2024-47': [6, 'Habsburgovci v dejinách. Podčiarknutá časť v 2. odseku: prepíš si ju a hľadaj slová na -nie, -tie.'],
+  '2024-48': [6, 'Habsburgovci v dejinách. Podčiarknutá časť je ucelená časť textu medzi dvoma zalomeniami riadka.'],
+  '2024-50': [7, 'Text A (pracovný inzerát), posledná veta pred e-mailovou adresou: zakryté miesto je v zozname príloh k žiadosti.'],
+  '2024-53': [7, 'Text B: formálny list so žiadosťou o brigádnickú prácu (hlavička, adresát, oslovenie, záver).'],
+  '2024-55': [7, 'Text B, 2. odsek, veta o povinnej odbornej praxi: zvýraznené slovo je hovorové.'],
+  '2024-56': [7, 'Text B: žiadosť o brigádnickú prácu študenta. Prečítaj si ju celú.'],
+  '2024-63': [8, 'Goethe, Utrpenie mladého Werthera. Zvýraznená časť je posledný odsek listu.'],
+  '2024-64': [8, 'Goethe, Utrpenie mladého Werthera. List z 16. júna: pozri, v ktorej osobe Werther píše.'],
+
+  '2025-04': [1, 'Odpoveď webovej jazykovej poradne, celá ukážka: urč, aký je to typ textu a štýl.'],
+  '2025-14': [2, 'Haiku, text C (J. Štrasser, Slovenské haiku): tri krátke verše. Prepíš si ho a nájdi narážku.'],
+  '2025-15': [2, 'Haiku, text B (J. Kerouac): básnik sa prihovára včele. Hľadaj sloveso v 2. osobe.'],
+  '2025-19': [3, 'Článok o 3D CT skeneri na drevo vo Zvolene. Titulok (úplne hore): prepíš si ho.'],
+  '2025-28': [4, 'Realitný inzerát na predaj 4-izbového bytu. Pozri celý inzerát: údaje, fotku aj text.'],
+  '2025-32': [4, 'Realitný inzerát. Zvýraznená časť je v samotnom texte inzerátu (nie v zozname údajov hore).'],
+  '2025-37': [5, 'Coelho, Alchymista. Pozri vety rozprávača: za pomlčkami a posledné dve vety úryvku.'],
+  '2025-38': [5, 'Coelho, Alchymista. Posledná priama reč je Alchymistova dlhá replika; hľadaj dve slovesá v jej záverečných vetách.'],
+  '2025-42': [6, 'Lasica, Satinský – Soirée. Dialóg L a S o vynáleze (výťah, lietadlo). Pozri celú ukážku.'],
+  '2025-46': [6, 'Lasica, Satinský – Soirée. 2. replika postavy L, 2. veta: kde býval, že nevedel o lietadle.'],
+  '2025-47': [6, 'Lasica, Satinský – Soirée. Názov pohoria v replikách L a S.'],
+  '2025-48': [6, 'Lasica, Satinský – Soirée. Autorské poznámky sú vsuvky v zátvorkách mimo replík.'],
+  '2025-62': [8, 'Rolland, Peter a Lucia. 1. odsek, 6. veta: zvýraznené slovo je v opise zvukov v chráme.'],
+  '2025-63': [8, 'Rolland, Peter a Lucia. 1. odsek, 3. veta: krátka veta bez slovesa o zvuku.'],
+  '2025-64': [8, 'Rolland, Peter a Lucia. 2. odsek, 3. veta (podčiarknuté súvetie): spočítaj slovesné skupiny.']
+};
+
+(function () {
+  const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const fmt = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<mark>$1</mark>').replace(/\*(.+?)\*/g, '<em>$1</em>');
+  const L = ['A', 'B', 'C', 'D'];
+  const LS = 'sjl-opakovanie-v1';
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let S = {};
+  try { S = JSON.parse(localStorage.getItem(LS) || '{}') || {}; } catch (e) { S = {}; }
+  const save = () => { try { localStorage.setItem(LS, JSON.stringify(S)); } catch (e) {} };
+  const rec = id => S[id] || (S[id] = { v: '', c: false, ok: false, f: false, x: '' });
+  const $ = id => document.getElementById(id);
+
+  function isCorrect(q, val) {
+    const v = String(val).trim().replace(/\s+/g, ' ');
+    if (!v) return false;
+    if (q.check) return q.check(v);
+    const l = v.toLowerCase();
+    return q.accept.some(a => l === a.toLowerCase());
+  }
+
+  function el(tag, cls, html) {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (html != null) e.innerHTML = html;
+    return e;
+  }
+  function grow(ta) { ta.style.height = 'auto'; ta.style.height = Math.max(64, ta.scrollHeight + 2) + 'px'; }
+
+  const list = $('list');
+  const els = {};
+  const heads = {};
+  const F = { t: 'all', c: 'all', k: 'all', s: 'all' };
+  let shuffled = false;
+
+  function build(q) {
+    const r = rec(q.id);
+    const card = el('article', 'card');
+    card.id = 'q-' + q.id;
+
+    card.appendChild(el('div', 'nb', '<small>' + q.t + '</small><b>' + String(q.n).padStart(2, '0') + '</b>'));
+    const cb = el('div', 'cb');
+    card.appendChild(cb);
+
+    const ch = el('div', 'ch');
+    ch.appendChild(el('span', 'tag ' + (q.cat === 'S' ? 's' : 'h'), q.cat === 'S' ? 'Samostatná' : 'Hraničná'));
+    ch.appendChild(el('span', 'tag', q.kind === 'mc' ? 'Výber' : 'Krátka odpoveď'));
+    const status = el('span', 'status');
+    ch.appendChild(status);
+    cb.appendChild(ch);
+
+    cb.appendChild(el('p', 'q', fmt(q.q)));
+    if (q.ctx) cb.appendChild(el('blockquote', 'ctx', fmt(q.ctx)));
+
+    if (q.cat === 'H') {
+      const s = SRC[q.id];
+      const slot = el('div', 'slot');
+      const u = s ? s[0] : null;
+      slot.appendChild(el('span', 'chip', s ? ('Test ' + q.t + ' · PDF str. ' + (2 * u) + ' · Ukážka ' + u) : ('Test ' + q.t)));
+      slot.appendChild(el('p', 'slot-t', esc(s ? s[1] : (q.hint || ''))));
+      const lab = el('label', null, 'Vlož sem text z ukážky (nepovinné, uloží sa)');
+      lab.setAttribute('for', 'x-' + q.id);
+      const ta = document.createElement('textarea');
+      ta.id = 'x-' + q.id;
+      ta.placeholder = 'Skopíruj sem vetu z PDF…';
+      ta.value = r.x || '';
+      ta.addEventListener('input', () => { rec(q.id).x = ta.value; save(); grow(ta); });
+      lab.appendChild(ta);
+      slot.appendChild(lab);
+      cb.appendChild(slot);
+      setTimeout(() => { if (ta.value) grow(ta); }, 0);
+    }
+
+    const ans = el('div', q.kind === 'mc' ? 'opts' : 'fld');
+    const inputs = [];
+    if (q.kind === 'mc') {
+      q.opts.forEach((o, i) => {
+        const lab = el('label', 'opt');
+        const inp = document.createElement('input');
+        inp.type = 'radio'; inp.name = 'r-' + q.id; inp.value = i; inp.id = 'o-' + q.id + '-' + i;
+        if (String(r.v) === String(i)) inp.checked = true;
+        inp.addEventListener('change', () => { rec(q.id).v = i; save(); });
+        lab.appendChild(inp);
+        lab.appendChild(el('span', 'l', L[i] + ')'));
+        lab.appendChild(el('span', 't', fmt(o)));
+        ans.appendChild(lab);
+        inputs.push(inp);
+      });
+    } else {
+      const inp = document.createElement('input');
+      inp.type = 'text'; inp.id = 'a-' + q.id; inp.value = r.v || '';
+      inp.autocomplete = 'off'; inp.spellcheck = false;
+      inp.setAttribute('aria-label', 'Odpoveď na otázku ' + q.t + ' ' + q.n);
+      inp.placeholder = 'Tvoja odpoveď';
+      inp.addEventListener('input', () => { rec(q.id).v = inp.value; save(); });
+      inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); check(q); } });
+      ans.appendChild(inp);
+      inputs.push(inp);
+    }
+    cb.appendChild(ans);
+
+    const act = el('div', 'actions');
+    const bCheck = el('button', 'btn primary', 'Skontrolovať'); bCheck.type = 'button';
+    bCheck.addEventListener('click', () => check(q));
+    act.appendChild(bCheck);
+    cb.appendChild(act);
+
+    const verdict = el('div', 'verdict');
+    verdict.setAttribute('aria-live', 'polite');
+    cb.appendChild(verdict);
+
+    els[q.id] = { card, status, inputs, bCheck, verdict, ans };
+    paint(q);
+    return card;
+  }
+
+  function nextCard(q) {
+    let c = els[q.id].card.nextElementSibling;
+    while (c && (c.hidden || !c.classList.contains('card'))) c = c.nextElementSibling;
+    if (!c) return;
+    c.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    const f = c.querySelector('input:not([disabled]), textarea');
+    if (f) setTimeout(() => f.focus({ preventScroll: true }), reduce ? 0 : 350);
+  }
+
+  function paint(q) {
+    const r = rec(q.id), e = els[q.id];
+    e.card.classList.toggle('ok', r.c && r.ok);
+    e.card.classList.toggle('bad', r.c && !r.ok);
+    e.status.textContent = r.c ? (r.ok ? (r.f ? 'Uznané' : 'Správne') : 'Chybné') : '';
+    e.bCheck.hidden = r.c;
+    e.inputs.forEach(i => { i.disabled = r.c; });
+    e.verdict.hidden = !r.c;
+    e.verdict.innerHTML = '';
+
+    if (q.kind === 'mc') {
+      e.ans.querySelectorAll('.opt').forEach((lab, i) => {
+        lab.classList.toggle('right', r.c && i === q.ans);
+        lab.classList.toggle('wrong', r.c && !r.ok && String(r.v) === String(i));
+      });
+    }
+    if (!r.c) return;
+
+    let h;
+    if (q.kind === 'mc') {
+      h = r.ok ? '<b>Správne.</b>' : '<b>Nesprávne.</b> Správna odpoveď: <b>' + L[q.ans] + ')</b> ' + fmt(q.opts[q.ans]);
+    } else if (r.ok) {
+      h = '<b>' + (r.f ? 'Uznané.' : 'Správne.') + '</b> Kľúč: ' + esc(q.show);
+    } else {
+      h = '<b>Nesprávne.</b> Kľúč: <b>' + esc(q.show) + '</b>';
+    }
+    e.verdict.innerHTML = '<span>' + h + '</span>';
+    if (q.note) e.verdict.appendChild(el('span', 'note', esc(q.note)));
+
+    const row = el('div', 'row');
+    if (q.kind === 'sa' && !r.ok) {
+      const b = el('button', 'btn', 'Uznať ako správne');
+      b.type = 'button';
+      b.title = 'Napríklad preklep, ktorý by učiteľka prešla';
+      b.addEventListener('click', () => { const x = rec(q.id); x.ok = true; x.f = true; save(); paint(q); update(); });
+      row.appendChild(b);
+    }
+    const bRetry = el('button', 'btn', 'Skúsiť znova'); bRetry.type = 'button';
+    bRetry.addEventListener('click', () => retry(q));
+    const bNext = el('button', 'btn primary', 'Ďalšia otázka'); bNext.type = 'button';
+    bNext.addEventListener('click', () => nextCard(q));
+    row.appendChild(bRetry); row.appendChild(bNext);
+    e.verdict.appendChild(row);
+  }
+
+  function check(q) {
+    const r = rec(q.id), e = els[q.id];
+    if (r.v === '' || r.v == null || (q.kind === 'sa' && !String(r.v).trim())) {
+      e.verdict.hidden = false;
+      e.verdict.textContent = 'Najprv zadaj odpoveď.';
+      return;
+    }
+    r.c = true; r.f = false;
+    r.ok = q.kind === 'mc' ? Number(r.v) === q.ans : isCorrect(q, r.v);
+    save(); paint(q); update();
+  }
+  function retry(q) {
+    const r = rec(q.id), e = els[q.id];
+    r.c = false; r.ok = false; r.f = false; r.v = '';
+    if (q.kind === 'mc') e.inputs.forEach(i => { i.checked = false; });
+    else e.inputs[0].value = '';
+    save(); paint(q); update();
+    e.inputs[0].focus({ preventScroll: true });
+  }
+
+  function matches(q) {
+    const r = S[q.id];
+    if (F.t !== 'all' && String(q.t) !== F.t) return false;
+    if (F.c !== 'all' && q.cat !== F.c) return false;
+    if (F.k !== 'all' && q.kind !== F.k) return false;
+    if (F.s === 'open' && r && r.c) return false;
+    if (F.s === 'wrong' && !(r && r.c && !r.ok)) return false;
+    return true;
+  }
+
+  function update() {
+    let checked = 0, ok = 0, shown = 0;
+    const per = { 2024: { n: 0, c: 0 }, 2025: { n: 0, c: 0 } };
+    const vis = { 2024: 0, 2025: 0 };
+    Q.forEach(q => {
+      const r = S[q.id];
+      per[q.t].n++;
+      if (r && r.c) { checked++; per[q.t].c++; if (r.ok) ok++; }
+      const m = matches(q);
+      els[q.id].card.hidden = !m;
+      if (m) { shown++; vis[q.t]++; }
+    });
+    Object.keys(heads).forEach(t => { heads[t].hidden = shuffled || vis[t] === 0; });
+    $('p-checked').textContent = checked;
+    $('p-total').textContent = Q.length;
+    $('p-ok').textContent = ok;
+    $('p-shown').textContent = shown;
+    [2024, 2025].forEach(t => {
+      $('m-' + t).style.width = (per[t].c / per[t].n * 100) + '%';
+      $('c-' + t).textContent = per[t].c + ' / ' + per[t].n;
+    });
+    const pct = checked ? Math.round(ok / checked * 100) : 0;
+    $('ring').style.setProperty('--p', pct);
+    $('sc-pct').textContent = checked ? pct + ' %' : '–';
+    $('empty').hidden = shown !== 0;
+    const sum = $('sum');
+    if (checked > 0) {
+      sum.hidden = false;
+      sum.innerHTML = 'Zatiaľ si skontroloval <b>' + checked + '</b> otázok, z nich <b>' + ok + '</b> správne (<b>' + pct + ' %</b>). ' +
+        (checked < Q.length ? 'Zostáva <b>' + (Q.length - checked) + '</b>.' : 'Hotovo, všetky otázky sú skontrolované.');
+    } else sum.hidden = true;
+  }
+
+  /* filtre */
+  const GROUPS = [
+    { key: 't', label: 'Test', opts: [['all', 'Oba'], ['2024', '2024'], ['2025', '2025']] },
+    { key: 'c', label: 'Typ', opts: [['all', 'Všetky'], ['S', 'Samostatné'], ['H', 'Hraničné']] },
+    { key: 'k', label: 'Forma', opts: [['all', 'Všetky'], ['mc', 'Výber odpovede'], ['sa', 'Krátka odpoveď']] },
+    { key: 's', label: 'Stav', opts: [['all', 'Všetky'], ['open', 'Nezodpovedané'], ['wrong', 'Chybné']] }
+  ];
+  const fbox = $('filters');
+  GROUPS.forEach(g => {
+    const row = el('div', 'fg');
+    row.appendChild(el('span', null, g.label));
+    const seg = el('div', 'seg');
+    g.opts.forEach(o => {
+      const b = el('button', null, o[1]); b.type = 'button';
+      b.setAttribute('aria-pressed', String(F[g.key] === o[0]));
+      b.addEventListener('click', () => {
+        F[g.key] = o[0];
+        seg.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', 'false'));
+        b.setAttribute('aria-pressed', 'true');
+        update();
+      });
+      seg.appendChild(b);
+    });
+    row.appendChild(seg);
+    fbox.appendChild(row);
+  });
+  if (window.innerWidth < 640) $('filt').open = false;
+
+  /* karty a nadpisy testov */
+  [2024, 2025].forEach(t => {
+    const n = Q.filter(q => q.t === t).length;
+    heads[t] = el('h2', 'grp', 'Test ' + t + '<span>' + n + ' otázok</span>');
+  });
+  Q.forEach(q => build(q));
+
+  function layout(order) {
+    if (shuffled) {
+      order.forEach(q => list.appendChild(els[q.id].card));
+    } else {
+      [2024, 2025].forEach(t => {
+        list.appendChild(heads[t]);
+        Q.filter(q => q.t === t).forEach(q => list.appendChild(els[q.id].card));
+      });
+    }
+  }
+  layout(Q);
+
+  /* nástroje */
+  $('b-all').addEventListener('click', () => {
+    Q.forEach(q => {
+      const r = rec(q.id);
+      if (!r.c && r.v !== '' && r.v != null && String(r.v).trim() !== '') check(q);
+    });
+  });
+  $('b-shuffle').addEventListener('click', e => {
+    shuffled = !shuffled;
+    const order = Q.slice();
+    if (shuffled) for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
+    layout(order);
+    e.currentTarget.setAttribute('aria-pressed', String(shuffled));
+    e.currentTarget.textContent = shuffled ? 'Vrátiť poradie' : 'Zamiešať poradie';
+    update();
+  });
+
+  let armed = null;
+  const bReset = $('b-reset');
+  bReset.addEventListener('click', () => {
+    if (!armed) {
+      bReset.textContent = 'Naozaj zmazať všetko? Klikni znova';
+      armed = setTimeout(() => { armed = null; bReset.textContent = 'Vynulovať odpovede'; }, 4000);
+      return;
+    }
+    clearTimeout(armed); armed = null;
+    bReset.textContent = 'Vynulovať odpovede';
+    Q.forEach(q => {
+      const r = rec(q.id), e = els[q.id];
+      r.v = ''; r.c = false; r.ok = false; r.f = false; r.x = '';
+      if (q.kind === 'mc') e.inputs.forEach(i => { i.checked = false; }); else e.inputs[0].value = '';
+      const ta = document.getElementById('x-' + q.id); if (ta) { ta.value = ''; grow(ta); }
+      paint(q);
+    });
+    save(); update();
+  });
+
+  update();
+})();
+</script>
+</body>
+</html>
