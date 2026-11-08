@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<title>Maturitné témy</title>
+<title>Príprava na písomky</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Literata:opsz,wght@7..72,500;7..72,700&display=swap">
 <style>
 /* Rovnaká paleta a písma ako v stránke s opakovaním z SJL, aby všetky témy pôsobili ako jedna sada.
@@ -121,6 +121,8 @@ a.topic:hover .go { color: var(--accent); }
 }
 .tag.s { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
 .tag.n { color: var(--ink); background: var(--box); border-color: var(--box); }
+.tag.w { color: var(--ink); border-color: var(--ink); }
+.tag.w.hot { color: var(--accent-ink); background: var(--accent); border-color: var(--accent); }
 .topic h2 { margin: 0; font: 700 1.25rem/1.25 var(--display); overflow-wrap: anywhere; }
 .topic p { margin: 0; color: var(--muted); font-size: .95rem; overflow-wrap: anywhere; }
 .kw { display: flex; flex-wrap: wrap; gap: 4px 10px; font: 400 .78rem/1.4 var(--mono); color: var(--muted); }
@@ -141,14 +143,14 @@ mark { background: var(--mark); color: inherit; padding: 0 2px; border-radius: 2
 <body>
 <div class="page">
   <header>
-    <p class="eyebrow">Škola · opakovanie</p>
-    <h1>Maturitné témy</h1>
-    <p class="sub">Všetky témy na jednom mieste. Vyber predmet alebo vyhľadaj tému podľa názvu, autora či kľúčového slova.</p>
+    <p class="eyebrow">Škola</p>
+    <h1>Príprava na písomky</h1>
+    <p class="sub">Všetko na jednom mieste, od najbližšej písomky. Vyber predmet alebo hľadaj podľa názvu, autora či kľúčového slova.</p>
   </header>
 
   <div class="bar">
     <div class="search" role="search">
-      <input id="q" type="search" placeholder="Hľadať tému, autora, dielo…" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Hľadať v témach" aria-controls="out">
+      <input id="q" type="search" placeholder="Hľadať písomku, autora, dielo…" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Hľadať v príprave" aria-controls="out">
       <span class="kbd" aria-hidden="true">/</span>
       <button class="clear" id="clear" type="button" aria-label="Vymazať hľadanie">×</button>
     </div>
@@ -166,8 +168,9 @@ mark { background: var(--mark); color: inherit; padding: 0 2px; border-radius: 2
 
 <script>
 /* ---------- TÉMY ----------
-   Nová téma = jeden objekt v poli TOPICS. Súbor dáš do priečinka predmetu (napr. slovencina/) a sem pridáš:
-     subject – názov predmetu (podľa neho sa tvoria filtre a skupiny)
+   Nový materiál = jeden objekt v poli TOPICS. Súbor dáš do priečinka predmetu (napr. slovencina/) a sem pridáš:
+     subject – názov predmetu (podľa neho sa tvoria filtre)
+     date    – termín písomky ako 'RRRR-MM-DD'; karty sa radia podľa neho (najbližšie hore, minulé nižšie)
      title   – nadpis karty
      desc    – 1 až 2 vety, o čom téma je
      tags    – kľúčové slová pre vyhľadávanie (autor, dielo, obdobie…)
@@ -181,14 +184,16 @@ const TOPICS = [
     desc: 'Otázky z oboch testov externej časti, ktoré sa dajú vyriešiť bez čítania celej ukážky. Odpovedáš, kontroluješ podľa oficiálneho kľúča a priebeh sa ti uloží.',
     tags: ['test', 'externá časť', 'maturita', 'jazyk', 'literatúra', '2024', '2025', 'cvičenie'],
     url: 'slovencina/maturita-24-25.html',
+    date: '2026-10-25', /* približne, uprav podľa skutočného termínu */
     kind: 'Test'
   },
   {
     subject: 'Slovenčina',
     title: 'J. D. Salinger – Kto chytá v žite',
     desc: 'Ťahák na písomku: celý dej kapitolu po kapitole, postavy, symboly, otázky „prečo?“ a testy v troch úrovniach.',
-    tags: ['Salinger', 'Kto chytá v žite', 'The Catcher in the Rye', 'Holden Caulfield', 'ťahák', 'próza', 'americká literatúra', 'dielo', 'test'],
+    tags: ['Salinger', 'Kto chytá v žite', 'The Catcher in the Rye', 'Holden Caulfield', 'ťahák', 'písomka', 'próza', 'americká literatúra', 'dielo', 'test'],
     url: 'slovencina/salinger-kto-chyta-v-zite.html',
+    date: '2026-11-09',
     kind: 'Ťahák'
   }
 ];
@@ -228,9 +233,30 @@ const TOPICS = [
     return res + (open ? '</mark>' : '');
   }
 
+  /* termíny: relatívny popis podľa dnešného dňa */
+  const DAY = 864e5;
+  const now = new Date(), today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const days = d => { const p = d.split('-').map(Number); return Math.round((new Date(p[0], p[1] - 1, p[2]) - today) / DAY); };
+  const noun = (n, one, few, many) => n === 1 ? one : (n >= 2 && n <= 4) ? few : many;
+  function when(n) {
+    if (n === 0) return 'Dnes';
+    if (n === 1) return 'Zajtra';
+    if (n === -1) return 'Včera';
+    if (n > 1 && n < 14) return 'O ' + n + ' ' + noun(n, 'deň', 'dni', 'dní');
+    if (n >= 14) { const w = Math.round(n / 7); return 'O ' + w + ' ' + noun(w, 'týždeň', 'týždne', 'týždňov'); }
+    const k = -n;
+    if (k < 14) return 'Pred ' + k + ' dňami';
+    if (k < 60) { const w = Math.round(k / 7); return 'Pred ' + w + ' ' + (w === 1 ? 'týždňom' : 'týždňami'); }
+    const m = Math.round(k / 30);
+    return 'Pred ' + m + ' ' + (m === 1 ? 'mesiacom' : 'mesiacmi');
+  }
+
   function card(t, words) {
+    const n = t.date ? days(t.date) : null;
     const inner =
-      '<div class="top"><span class="tag s">' + esc(t.subject) + '</span>' +
+      '<div class="top">' +
+      (n !== null ? '<span class="tag w' + (n >= 0 && n <= 2 ? ' hot' : '') + '">' + when(n) + '</span>' : '') +
+      '<span class="tag s">' + esc(t.subject) + '</span>' +
       (t.kind ? '<span class="tag n">' + esc(t.kind) + '</span>' : '') +
       (t.soon ? '<span class="tag">Čoskoro</span>' : '') + '</div>' +
       '<h2>' + mark(t.title, words) + '</h2>' +
@@ -244,21 +270,27 @@ const TOPICS = [
     return el;
   }
 
+  /* poradie: najbližšie písomky hore (od najskoršej), potom už prebehnuté (od najnovšej), nakoniec bez termínu */
+  const dn = t => t.date ? days(t.date) : null;
+  const sections = [
+    ['Najbližšie', t => dn(t) !== null && dn(t) >= 0, (a, b) => dn(a) - dn(b)],
+    ['Už bolo', t => dn(t) !== null && dn(t) < 0, (a, b) => dn(b) - dn(a)],
+    ['Bez termínu', t => dn(t) === null, () => 0]
+  ];
+
   function render() {
     const raw = input.value.trim();
     const words = norm(raw).split(/\s+/).filter(Boolean);
     const found = prep.filter(t => (!subject || t.subject === subject) && words.every(w => t.hay.indexOf(w) !== -1));
 
     out.textContent = '';
-    subjects.forEach(s => {
-      const items = found.filter(t => t.subject === s);
+    sections.forEach(sec => {
+      const items = found.filter(sec[1]).sort(sec[2]);
       if (!items.length) return;
-      if (subjects.length > 1 || !subject) {
-        const h = document.createElement('h2');
-        h.className = 'grp';
-        h.innerHTML = esc(s) + '<span>' + items.length + ' ' + plural(items.length) + '</span>';
-        out.appendChild(h);
-      }
+      const h = document.createElement('h2');
+      h.className = 'grp';
+      h.innerHTML = esc(sec[0]) + '<span>' + items.length + ' ' + plural(items.length) + '</span>';
+      out.appendChild(h);
       const g = document.createElement('div');
       g.className = 'grid';
       items.forEach(t => g.appendChild(card(t, words)));
@@ -270,7 +302,7 @@ const TOPICS = [
     if (!found.length) {
       empty.innerHTML = raw
         ? 'Nič sa nenašlo pre <b>' + esc(raw) + '</b>' + (subject ? ' v predmete ' + esc(subject) : '') + '.'
-        : 'V tomto predmete zatiaľ nie je žiadna téma.';
+        : 'V tomto predmete zatiaľ nie je nič pripravené.';
     }
     try {
       const u = new URL(location.href);
@@ -279,7 +311,7 @@ const TOPICS = [
     } catch (e) {}
   }
 
-  function plural(n) { return n === 1 ? 'téma' : (n >= 2 && n <= 4) ? 'témy' : 'tém'; }
+  function plural(n) { return noun(n, 'materiál', 'materiály', 'materiálov'); }
 
   /* filtre podľa predmetu: zobrazia sa, až keď je predmetov viac ako jeden */
   function buildSubjects() {
