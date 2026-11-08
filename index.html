@@ -5,178 +5,169 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
 <title>Príprava na písomky</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Literata:opsz,wght@7..72,500;7..72,700&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Source+Sans+3:wght@400;600&display=swap">
 <style>
-/* Rovnaká paleta a písma ako v stránke s opakovaním z SJL, aby všetky témy pôsobili ako jedna sada.
-   Landing page je zoznam kariet, ktoré sa dajú filtrovať predmetom a prehľadávať. */
+/* Vzhľad: zošit s rozpisom, nie dashboard. Papierové pozadie, čierny atrament, jedna červená ako červené pero učiteľa.
+   Žiadne karty ani štítky: každá položka je riadok s dátumom vľavo, oddelený linkou. Predmety majú vlastnú farbu bodky. */
 :root {
-  --bg: #EEF1F8;
-  --surface: #FFFFFF;
-  --paper: #F7F8FD;
-  --ink: #141B33;
-  --muted: #586179;
-  --line: #D5DAE7;
-  --box: #E2E6F1;
-  --accent: #1B3CC2;
-  --accent-ink: #FFFFFF;
-  --accent-soft: #E6EBFC;
-  --mark: #FFE9A8;
-  --display: 'Literata', Georgia, 'Times New Roman', serif;
-  --body: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --mono: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
+  --bg: #F4F0E6;
+  --ink: #1E1C17;
+  --muted: #6B6556;
+  --rule: #D9D2C0;
+  --accent: #B23A1C;
+  --mark: #F6DE8D;
+  --sl: 38%;   /* svetlosť farby predmetu */
+  --serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+  --sans: 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0E1118; --surface: #161B26; --paper: #111620; --ink: #E8EBF4; --muted: #9AA3BA; --line: #283042;
-    --box: #252C3C; --accent: #8EA4FF; --accent-ink: #0E1118; --accent-soft: #1E2640; --mark: #5A4A12;
+  :root {
+    --bg: #16150F; --ink: #EDE7D6; --muted: #A39B88; --rule: #2F2C22;
+    --accent: #EE8A66; --mark: #5C4A12; --sl: 68%;
     color-scheme: dark;
   }
-}
-:root[data-theme="dark"] {
-  --bg: #0E1118; --surface: #161B26; --paper: #111620; --ink: #E8EBF4; --muted: #9AA3BA; --line: #283042;
-  --box: #252C3C; --accent: #8EA4FF; --accent-ink: #0E1118; --accent-soft: #1E2640; --mark: #5A4A12;
-  color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 var(--body); }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 17px/1.55 var(--sans); }
 body::before {
   content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
   z-index: 10; background: var(--bg);
 }
 .page {
-  max-width: 920px; margin: 0 auto; padding-block: 36px 80px;
-  padding-left: max(16px, env(safe-area-inset-left, 0px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  max-width: 760px; margin: 0 auto; padding-block: 56px 90px;
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
 }
+button, input { font: inherit; color: inherit; }
+button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
-/* úvod */
-.eyebrow { margin: 0 0 8px; font: 500 .74rem/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
-h1 { font: 700 clamp(2rem, 7vw, 3rem)/1.06 var(--display); margin: 0 0 12px; text-wrap: balance; letter-spacing: -.01em; }
-.sub { margin: 0 0 22px; color: var(--muted); max-width: 58ch; }
+/* hlavička */
+.today { margin: 0 0 6px; color: var(--muted); font-size: .95rem; }
+h1 {
+  margin: 0 0 34px; font: 400 clamp(3rem, 12vw, 5.4rem)/.95 var(--serif); letter-spacing: -.015em; text-wrap: balance;
+}
+h1 em { font-style: italic; color: var(--accent); }
 
-/* lišta s vyhľadávaním */
-.bar {
+/* hľadanie a filter */
+.ctl {
   position: sticky; top: env(safe-area-inset-top, 0px); z-index: 9; background: var(--bg);
-  padding: 10px 0 12px; border-bottom: 1px solid var(--line); margin-bottom: 18px; display: grid; gap: 10px;
+  padding: 8px 0 0;
 }
-.search { position: relative; }
+.search { position: relative; display: block; }
 .search input {
-  width: 100%; font: 400 1.05rem/1.3 var(--body); color: var(--ink); background: var(--surface);
-  border: 1px solid var(--line); border-radius: 6px; padding: 13px 44px 13px 14px; min-height: 48px;
-  -webkit-appearance: none; appearance: none;
+  width: 100%; border: 0; border-bottom: 2px solid var(--ink); border-radius: 0; background: transparent;
+  padding: 12px 40px 12px 0; font-size: 1.25rem; min-height: 52px; -webkit-appearance: none; appearance: none;
 }
-.search input::placeholder { color: var(--muted); }
+.search input::placeholder { color: var(--muted); opacity: 1; }
 .search input::-webkit-search-cancel-button { display: none; }
+.search input:focus-visible { outline: 0; border-bottom-color: var(--accent); }
 .clear {
-  position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
-  width: 40px; height: 40px; border: 0; background: transparent; color: var(--muted);
-  font: 500 1.3rem/1 var(--body); cursor: pointer; border-radius: 5px;
+  position: absolute; right: 0; top: 50%; transform: translateY(-50%); width: 40px; height: 40px;
+  border: 0; background: none; color: var(--muted); font-size: 1.5rem; line-height: 1; cursor: pointer;
 }
 .clear:hover { color: var(--accent); }
-.kbd {
-  position: absolute; right: 14px; top: 50%; transform: translateY(-50%); pointer-events: none;
-  font: 500 .72rem/1 var(--mono); color: var(--muted); border: 1px solid var(--line); border-radius: 3px; padding: 4px 6px;
-}
-@media (hover: none) { .kbd { display: none; } }
-.search input:not(:placeholder-shown) ~ .kbd { display: none; }
 .search input:placeholder-shown ~ .clear { display: none; }
 
-.row { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; justify-content: space-between; }
-.seg { display: flex; flex-wrap: wrap; gap: 4px; }
-.seg button {
-  font: 500 .88rem/1 var(--body); color: var(--ink); background: var(--surface);
-  border: 1px solid var(--line); border-radius: 5px; padding: 10px 12px; cursor: pointer; min-height: 40px;
+.meta { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0 20px; padding: 6px 0 10px; border-bottom: 1px solid var(--rule); }
+.subj { display: flex; flex-wrap: wrap; gap: 0 20px; }
+.subj button {
+  display: inline-flex; align-items: center; gap: 7px; border: 0; background: none; cursor: pointer;
+  padding: 10px 0 8px; color: var(--muted); font-weight: 600; font-size: .95rem; min-height: 40px;
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
 }
-.seg button:hover { border-color: var(--accent); }
-.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
-.seg button span { font: 500 .78rem/1 var(--mono); opacity: .75; margin-left: 4px; }
-.count { font: 500 .78rem/1 var(--mono); color: var(--muted); letter-spacing: .03em; }
-.count b { color: var(--ink); font-weight: 500; }
-button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.subj button:hover { color: var(--ink); }
+.subj button[aria-pressed="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+.subj sup { font-weight: 400; font-size: .72rem; color: var(--muted); }
+.count { color: var(--muted); font-size: .88rem; font-variant-numeric: tabular-nums; }
 
-/* zoznam tém */
-.grp {
-  display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
-  margin: 28px 0 14px; padding-bottom: 8px; border-bottom: 2px solid var(--ink);
-  font: 700 1.4rem/1.2 var(--display);
-}
-.grp:first-child { margin-top: 0; }
-.grp span { font: 500 .78rem/1 var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr)); gap: 14px; }
+/* subjekt: farba z odtieňa --h */
+.sj { color: hsl(var(--h) 55% var(--sl)); font-weight: 600; }
+.dot { width: .62em; height: .62em; border-radius: 50%; background: hsl(var(--h) 55% var(--sl)); flex: none; display: inline-block; }
 
-.topic {
-  display: grid; gap: 10px; align-content: start; min-width: 0;
-  background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 18px;
-  color: inherit; text-decoration: none;
+/* zoznam */
+.list { border-top: 2px solid var(--ink); margin-top: 0; }
+.row {
+  display: grid; grid-template-columns: 116px minmax(0, 1fr) 28px; gap: 4px 24px; align-items: start;
+  padding: 24px 0 26px; border-bottom: 1px solid var(--rule); color: inherit; text-decoration: none; min-width: 0;
 }
-a.topic:hover { border-color: var(--accent); }
-a.topic:hover .go { color: var(--accent); }
-.topic.soon { background: var(--paper); border-style: dashed; }
-.top { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; }
-.tag {
-  display: inline-block; font: 500 .7rem/1 var(--mono); letter-spacing: .05em; text-transform: uppercase;
-  padding: 5px 8px; border-radius: 3px; border: 1px solid var(--line); color: var(--muted); width: max-content;
+.when { display: grid; gap: 2px; align-content: start; padding-top: 3px; }
+.when b { font: 400 2.1rem/1 var(--serif); letter-spacing: -.01em; font-variant-numeric: lining-nums; white-space: nowrap; }
+.when span { color: var(--muted); font-size: .88rem; }
+.row.hot .when b, .row.hot .when span { color: var(--accent); }
+.row.hot .when span { font-weight: 600; }
+.main { min-width: 0; display: grid; gap: 6px; }
+.row h2 { margin: 0; font: 400 clamp(1.6rem, 5vw, 2.05rem)/1.12 var(--serif); letter-spacing: -.005em; overflow-wrap: anywhere; text-wrap: balance; }
+.kind { display: flex; align-items: center; gap: 8px; font-size: .9rem; color: var(--muted); }
+.kind .sj { display: inline-flex; align-items: center; gap: 7px; }
+.desc { margin: 2px 0 0; color: var(--muted); max-width: 56ch; overflow-wrap: anywhere; }
+.hit { margin: 0; font-size: .86rem; color: var(--muted); }
+.arrow { justify-self: end; padding-top: 6px; font: 400 1.5rem/1 var(--serif); color: var(--muted); }
+a.row:hover h2 { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 6px; }
+a.row:hover .arrow { color: var(--accent); }
+@media (prefers-reduced-motion: no-preference) {
+  .arrow { transition: transform .15s ease, color .15s ease; }
+  a.row:hover .arrow { transform: translateX(4px); }
 }
-.tag.s { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
-.tag.n { color: var(--ink); background: var(--box); border-color: var(--box); }
-.tag.w { color: var(--ink); border-color: var(--ink); }
-.tag.w.hot { color: var(--accent-ink); background: var(--accent); border-color: var(--accent); }
-.topic h2 { margin: 0; font: 700 1.25rem/1.25 var(--display); overflow-wrap: anywhere; }
-.topic p { margin: 0; color: var(--muted); font-size: .95rem; overflow-wrap: anywhere; }
-.kw { display: flex; flex-wrap: wrap; gap: 4px 10px; font: 400 .78rem/1.4 var(--mono); color: var(--muted); }
-.go { margin-top: 2px; font: 600 .86rem/1 var(--body); color: var(--ink); }
-.topic.soon .go { color: var(--muted); font-weight: 500; }
+.row.soon { cursor: default; }
+.row.soon h2, .row.soon .desc { color: var(--muted); }
 mark { background: var(--mark); color: inherit; padding: 0 2px; border-radius: 2px; }
 
-.empty { text-align: center; color: var(--muted); padding: 40px 0; }
-.empty b { color: var(--ink); }
-.foot { margin-top: 40px; padding-top: 14px; border-top: 1px solid var(--line); font: 400 .78rem/1.5 var(--mono); color: var(--muted); }
+.empty { padding: 44px 0 20px; color: var(--muted); font-size: 1.1rem; }
+.empty b { color: var(--ink); font-weight: 600; }
+.empty button { margin-left: 6px; border: 0; background: none; padding: 6px 0; color: var(--accent); font-weight: 600; text-decoration: underline; cursor: pointer; }
+.foot { margin: 40px 0 0; color: var(--muted); font-size: .85rem; }
 
-@media (max-width: 520px) {
-  .page { padding-top: 24px; }
-  .topic { padding: 14px; }
+@media (max-width: 600px) {
+  .page { padding-top: 36px; }
+  .row { grid-template-columns: minmax(0, 1fr) 20px; gap: 8px 12px; padding: 20px 0 22px; }
+  .when { grid-column: 1 / -1; display: flex; align-items: baseline; gap: 12px; padding-top: 0; }
+  .when b { font-size: 1.7rem; }
+  .arrow { grid-column: 2; grid-row: 2; padding-top: 3px; }
+  .main { grid-column: 1; grid-row: 2; }
 }
 </style>
 </head>
 <body>
 <div class="page">
   <header>
-    <p class="eyebrow">Škola</p>
-    <h1>Príprava na písomky</h1>
-    <p class="sub">Všetko na jednom mieste, od najbližšej písomky. Vyber predmet alebo hľadaj podľa názvu, autora či kľúčového slova.</p>
+    <p class="today" id="today"></p>
+    <h1>Príprava na <em>písomky</em></h1>
   </header>
 
-  <div class="bar">
-    <div class="search" role="search">
-      <input id="q" type="search" placeholder="Hľadať písomku, autora, dielo…" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Hľadať v príprave" aria-controls="out">
-      <span class="kbd" aria-hidden="true">/</span>
+  <div class="ctl">
+    <label class="search">
+      <span hidden>Hľadať</span>
+      <input id="q" type="search" placeholder="Hľadať písomku, autora, dielo…" autocomplete="off" autocapitalize="off" spellcheck="false" aria-controls="list">
       <button class="clear" id="clear" type="button" aria-label="Vymazať hľadanie">×</button>
-    </div>
-    <div class="row">
-      <div class="seg" id="subjects" role="group" aria-label="Predmet"></div>
+    </label>
+    <div class="meta">
+      <nav class="subj" id="subjects" aria-label="Predmet"></nav>
       <span class="count" id="count" aria-live="polite"></span>
     </div>
   </div>
 
-  <main id="out"></main>
+  <div class="list" id="list"></div>
   <p class="empty" id="empty" hidden></p>
 
   <p class="foot">Priebeh a odpovede sa ukladajú iba v tomto prehliadači.</p>
 </div>
 
 <script>
-/* ---------- TÉMY ----------
+/* ---------- MATERIÁLY ----------
    Nový materiál = jeden objekt v poli TOPICS. Súbor dáš do priečinka predmetu (napr. slovencina/) a sem pridáš:
-     subject – názov predmetu (podľa neho sa tvoria filtre)
-     date    – termín písomky ako 'RRRR-MM-DD'; karty sa radia podľa neho (najbližšie hore, minulé nižšie)
-     title   – nadpis karty
-     desc    – 1 až 2 vety, o čom téma je
+     subject – názov predmetu; z neho sa sám vytvorí filter (zobrazí sa, keď sú predmety aspoň dva) a farba bodky
+     title   – nadpis
+     desc    – 1 až 2 vety, o čom to je
      tags    – kľúčové slová pre vyhľadávanie (autor, dielo, obdobie…)
      url     – cesta k súboru
-     kind    – krátky štítok na karte (Test, Dielo, Zhrnutie…)
-     soon    – true, kým stránka ešte nie je hotová; karta sa zobrazí, ale nedá sa otvoriť */
+     date    – termín písomky 'RRRR-MM-DD'; zoznam je zoradený podľa neho (najbližšie hore, minulé pod nimi)
+     kind    – krátky popis druhu (Test, Ťahák, Zhrnutie…)
+     soon    – true, kým stránka nie je hotová; zobrazí sa, ale nedá sa otvoriť */
 const TOPICS = [
   {
     subject: 'Slovenčina',
@@ -198,135 +189,140 @@ const TOPICS = [
   }
 ];
 
+/* farby predmetov: pevný odtieň pre známe, ostatné sa vyberú podľa názvu (stále rovnaké) */
+const HUES = { 'Slovenčina': 14 };
+const PALETTE = [206, 152, 276, 38, 336, 178, 92, 250];
+
 (function () {
-  /* normalizácia znak po znaku (bez diakritiky, malé písmená), aby sa dĺžka reťazca nemenila
-     a zvýraznenie sedelo na pôvodný text */
+  /* normalizácia znak po znaku (bez diakritiky, malé písmená), aby sa dĺžka nemenila a zvýraznenie sedelo */
   const norm = s => Array.from(s).map(c => (c.normalize('NFD')[0] || c).toLowerCase()).join('');
   const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const $ = id => document.getElementById(id);
-
-  const input = $('q'), out = $('out'), empty = $('empty'), count = $('count'), seg = $('subjects');
+  const list = $('list'), input = $('q'), empty = $('empty'), count = $('count'), seg = $('subjects');
   let subject = '';
 
-  const prep = TOPICS.map(t => Object.assign({}, t, {
-    hay: norm([t.subject, t.title, t.desc, t.kind || '', (t.tags || []).join(' ')].join(' '))
-  }));
-  const subjects = Array.from(new Set(TOPICS.map(t => t.subject)));
+  const hue = name => {
+    if (HUES[name] !== undefined) return HUES[name];
+    let h = 0; for (const c of name) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+    return PALETTE[h % PALETTE.length];
+  };
 
-  /* zvýraznenie hľadaných slov v texte */
+  /* termíny */
+  const DAY = 864e5, MON = ['januára', 'februára', 'marca', 'apríla', 'mája', 'júna', 'júla', 'augusta', 'septembra', 'októbra', 'novembra', 'decembra'];
+  const WD = ['nedeľa', 'pondelok', 'utorok', 'streda', 'štvrtok', 'piatok', 'sobota'], WDS = ['ne', 'po', 'ut', 'st', 'št', 'pi', 'so'];
+  const now = new Date(), today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const toDate = s => { const p = s.split('-').map(Number); return new Date(p[0], p[1] - 1, p[2]); };
+  const noun = (n, one, few, many) => n === 1 ? one : (n >= 2 && n <= 4) ? few : many;
+  const diff = s => Math.round((toDate(s) - today) / DAY);
+  function rel(n) {
+    if (n === 0) return 'dnes';
+    if (n === 1) return 'zajtra';
+    if (n === -1) return 'včera';
+    if (n > 1 && n < 14) return 'o ' + n + ' ' + noun(n, 'deň', 'dni', 'dní');
+    if (n >= 14) { const w = Math.round(n / 7); return 'o ' + w + ' ' + noun(w, 'týždeň', 'týždne', 'týždňov'); }
+    const k = -n;
+    if (k < 14) return 'pred ' + k + ' dňami';
+    if (k < 60) { const w = Math.round(k / 7); return 'pred ' + w + ' ' + (w === 1 ? 'týždňom' : 'týždňami'); }
+    const m = Math.round(k / 30);
+    return 'pred ' + m + ' ' + (m === 1 ? 'mesiacom' : 'mesiacmi');
+  }
+  const dateLabel = d => d.getDate() + '. ' + (d.getMonth() + 1) + '.' + (d.getFullYear() !== today.getFullYear() ? ' ' + d.getFullYear() : '');
+
+  $('today').textContent = 'Dnes je ' + WD[today.getDay()] + ' ' + today.getDate() + '. ' + MON[today.getMonth()];
+
+  /* jeden zoznam podľa času: najbližšie písomky hore, minulé pod nimi (od najnovšej), bez termínu na konci */
+  const prep = TOPICS.map(t => Object.assign({}, t, {
+    n: t.date ? diff(t.date) : null,
+    hay: norm([t.subject, t.title, t.desc, t.kind || '', (t.tags || []).join(' ')].join(' '))
+  })).sort((a, b) => {
+    const g = t => t.n === null ? 2 : t.n >= 0 ? 0 : 1;
+    if (g(a) !== g(b)) return g(a) - g(b);
+    return g(a) === 0 ? a.n - b.n : b.n - a.n;
+  });
+  const subjects = Array.from(new Set(prep.map(t => t.subject)));
+
+  /* zvýraznenie hľadaných slov */
   function mark(text, words) {
     if (!words.length) return esc(text);
-    const n = norm(text);
-    /* indexy sú po bodoch kódu, preto pracujeme s poľom znakov */
-    const chars = Array.from(text);
-    const flags = new Array(chars.length).fill(false);
+    const n = norm(text), chars = Array.from(text), on = new Array(chars.length).fill(false);
     words.forEach(w => {
       let i = n.indexOf(w);
-      while (i !== -1) { for (let k = i; k < i + w.length; k++) flags[k] = true; i = n.indexOf(w, i + w.length); }
+      while (i !== -1) { for (let k = i; k < i + w.length; k++) on[k] = true; i = n.indexOf(w, i + w.length); }
     });
     let res = '', open = false;
     chars.forEach((c, i) => {
-      if (flags[i] && !open) { res += '<mark>'; open = true; }
-      if (!flags[i] && open) { res += '</mark>'; open = false; }
+      if (on[i] && !open) { res += '<mark>'; open = true; }
+      if (!on[i] && open) { res += '</mark>'; open = false; }
       res += esc(c);
     });
     return res + (open ? '</mark>' : '');
   }
 
-  /* termíny: relatívny popis podľa dnešného dňa */
-  const DAY = 864e5;
-  const now = new Date(), today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const days = d => { const p = d.split('-').map(Number); return Math.round((new Date(p[0], p[1] - 1, p[2]) - today) / DAY); };
-  const noun = (n, one, few, many) => n === 1 ? one : (n >= 2 && n <= 4) ? few : many;
-  function when(n) {
-    if (n === 0) return 'Dnes';
-    if (n === 1) return 'Zajtra';
-    if (n === -1) return 'Včera';
-    if (n > 1 && n < 14) return 'O ' + n + ' ' + noun(n, 'deň', 'dni', 'dní');
-    if (n >= 14) { const w = Math.round(n / 7); return 'O ' + w + ' ' + noun(w, 'týždeň', 'týždne', 'týždňov'); }
-    const k = -n;
-    if (k < 14) return 'Pred ' + k + ' dňami';
-    if (k < 60) { const w = Math.round(k / 7); return 'Pred ' + w + ' ' + (w === 1 ? 'týždňom' : 'týždňami'); }
-    const m = Math.round(k / 30);
-    return 'Pred ' + m + ' ' + (m === 1 ? 'mesiacom' : 'mesiacmi');
-  }
-
-  function card(t, words) {
-    const n = t.date ? days(t.date) : null;
-    const inner =
-      '<div class="top">' +
-      (n !== null ? '<span class="tag w' + (n >= 0 && n <= 2 ? ' hot' : '') + '">' + when(n) + '</span>' : '') +
-      '<span class="tag s">' + esc(t.subject) + '</span>' +
-      (t.kind ? '<span class="tag n">' + esc(t.kind) + '</span>' : '') +
-      (t.soon ? '<span class="tag">Čoskoro</span>' : '') + '</div>' +
-      '<h2>' + mark(t.title, words) + '</h2>' +
-      '<p>' + mark(t.desc, words) + '</p>' +
-      ((t.tags && t.tags.length) ? '<div class="kw">' + t.tags.map(k => '<span>#' + mark(k, words) + '</span>').join('') + '</div>' : '') +
-      '<span class="go">' + (t.soon ? 'Pripravuje sa' : 'Otvoriť →') + '</span>';
+  function row(t, words) {
+    const hot = t.n !== null && t.n >= 0 && t.n <= 2;
     const el = document.createElement(t.soon ? 'div' : 'a');
-    el.className = 'topic' + (t.soon ? ' soon' : '');
+    el.className = 'row' + (hot ? ' hot' : '') + (t.soon ? ' soon' : '');
+    el.style.setProperty('--h', hue(t.subject));
     if (!t.soon) el.href = t.url;
-    el.innerHTML = inner;
+
+    let when = '';
+    if (t.n !== null) {
+      const d = toDate(t.date);
+      when = '<div class="when"><b>' + dateLabel(d) + '</b><span>' + (t.n >= 0 ? WDS[d.getDay()] + ' · ' : '') + rel(t.n) + '</span></div>';
+    } else {
+      when = '<div class="when"><b>–</b><span>bez termínu</span></div>';
+    }
+    const hits = words.length ? (t.tags || []).filter(k => words.some(w => norm(k).indexOf(w) !== -1)) : [];
+    el.innerHTML = when +
+      '<div class="main"><h2>' + mark(t.title, words) + '</h2>' +
+      '<div class="kind"><span class="sj"><i class="dot"></i>' + esc(t.subject) + '</span>' +
+      (t.kind ? '<span>· ' + esc(t.kind) + '</span>' : '') + (t.soon ? '<span>· pripravuje sa</span>' : '') + '</div>' +
+      '<p class="desc">' + mark(t.desc, words) + '</p>' +
+      (hits.length ? '<p class="hit">' + hits.map(k => '#' + mark(k, words)).join('  ') + '</p>' : '') + '</div>' +
+      '<span class="arrow" aria-hidden="true">' + (t.soon ? '' : '→') + '</span>';
     return el;
   }
-
-  /* poradie: najbližšie písomky hore (od najskoršej), potom už prebehnuté (od najnovšej), nakoniec bez termínu */
-  const dn = t => t.date ? days(t.date) : null;
-  const sections = [
-    ['Najbližšie', t => dn(t) !== null && dn(t) >= 0, (a, b) => dn(a) - dn(b)],
-    ['Už bolo', t => dn(t) !== null && dn(t) < 0, (a, b) => dn(b) - dn(a)],
-    ['Bez termínu', t => dn(t) === null, () => 0]
-  ];
 
   function render() {
     const raw = input.value.trim();
     const words = norm(raw).split(/\s+/).filter(Boolean);
     const found = prep.filter(t => (!subject || t.subject === subject) && words.every(w => t.hay.indexOf(w) !== -1));
 
-    out.textContent = '';
-    sections.forEach(sec => {
-      const items = found.filter(sec[1]).sort(sec[2]);
-      if (!items.length) return;
-      const h = document.createElement('h2');
-      h.className = 'grp';
-      h.innerHTML = esc(sec[0]) + '<span>' + items.length + ' ' + plural(items.length) + '</span>';
-      out.appendChild(h);
-      const g = document.createElement('div');
-      g.className = 'grid';
-      items.forEach(t => g.appendChild(card(t, words)));
-      out.appendChild(g);
-    });
+    list.textContent = '';
+    found.forEach(t => list.appendChild(row(t, words)));
+    list.hidden = !found.length;
 
-    count.innerHTML = '<b>' + found.length + '</b> / ' + TOPICS.length + ' ' + plural(TOPICS.length);
+    const mat = n => n + ' ' + noun(n, 'materiál', 'materiály', 'materiálov');
+    count.textContent = (raw || subject) ? found.length + ' z ' + prep.length : mat(prep.length);
     empty.hidden = found.length > 0;
     if (!found.length) {
-      empty.innerHTML = raw
-        ? 'Nič sa nenašlo pre <b>' + esc(raw) + '</b>' + (subject ? ' v predmete ' + esc(subject) : '') + '.'
-        : 'V tomto predmete zatiaľ nie je nič pripravené.';
+      empty.innerHTML = (raw ? 'Nič sa nenašlo pre <b>„' + esc(raw) + '“</b>' + (subject ? ' v predmete ' + esc(subject) : '') + '.' : 'V tomto predmete zatiaľ nič nie je.') +
+        '<button type="button" id="reset">Zrušiť filter</button>';
+      $('reset').addEventListener('click', () => { input.value = ''; setSubject(''); input.focus(); });
     }
     try {
       const u = new URL(location.href);
       raw ? u.searchParams.set('q', raw) : u.searchParams.delete('q');
+      subject ? u.searchParams.set('p', subject) : u.searchParams.delete('p');
       history.replaceState(null, '', u);
     } catch (e) {}
   }
 
-  function plural(n) { return noun(n, 'materiál', 'materiály', 'materiálov'); }
-
-  /* filtre podľa predmetu: zobrazia sa, až keď je predmetov viac ako jeden */
+  /* filter predmetov sa zobrazí, až keď je predmetov viac ako jeden */
+  function setSubject(s) {
+    subject = s;
+    Array.from(seg.children).forEach(b => b.setAttribute('aria-pressed', String(b.dataset.s === s)));
+    render();
+  }
   function buildSubjects() {
     if (subjects.length < 2) { seg.hidden = true; return; }
-    const defs = [['', 'Všetky', TOPICS.length]].concat(subjects.map(s => [s, s, TOPICS.filter(t => t.subject === s).length]));
-    defs.forEach(d => {
+    [''].concat(subjects).forEach(s => {
       const b = document.createElement('button');
-      b.type = 'button';
-      b.innerHTML = esc(d[1]) + '<span>' + d[2] + '</span>';
-      b.setAttribute('aria-pressed', String(d[0] === subject));
-      b.addEventListener('click', () => {
-        subject = d[0];
-        Array.from(seg.children).forEach(x => x.setAttribute('aria-pressed', String(x === b)));
-        render();
-      });
+      b.type = 'button'; b.dataset.s = s;
+      const n = s ? prep.filter(t => t.subject === s).length : prep.length;
+      b.innerHTML = (s ? '<span class="sj" style="--h:' + hue(s) + '"><i class="dot"></i></span>' : '') + esc(s || 'Všetko') + '<sup>' + n + '</sup>';
+      b.setAttribute('aria-pressed', String(s === subject));
+      b.addEventListener('click', () => setSubject(s));
       seg.appendChild(b);
     });
   }
@@ -335,10 +331,7 @@ const TOPICS = [
   $('clear').addEventListener('click', () => { input.value = ''; render(); input.focus(); });
   input.addEventListener('keydown', e => {
     if (e.key === 'Escape' && input.value) { input.value = ''; render(); }
-    if (e.key === 'Enter') {
-      const first = out.querySelector('a.topic');
-      if (first) first.click();
-    }
+    if (e.key === 'Enter') { const a = list.querySelector('a.row'); if (a) a.click(); }
   });
   document.addEventListener('keydown', e => {
     const tag = (document.activeElement && document.activeElement.tagName) || '';
@@ -347,7 +340,11 @@ const TOPICS = [
     }
   });
 
-  try { input.value = new URL(location.href).searchParams.get('q') || ''; } catch (e) {}
+  try {
+    const u = new URL(location.href);
+    input.value = u.searchParams.get('q') || '';
+    const p = u.searchParams.get('p'); if (p && subjects.indexOf(p) !== -1) subject = p;
+  } catch (e) {}
   buildSubjects();
   render();
 })();
