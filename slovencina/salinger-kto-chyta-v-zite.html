@@ -1,0 +1,648 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Kto chytá v žite – ťahák</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: úzky čitateľný stĺpec, sticky lišta so sekciami, karty len pre postavy a otázky */
+:root{
+  --bg:#f3f4f6; --surface:#ffffff; --ink:#1a1d26; --muted:#5d6272; --line:#dcdfe6;
+  --red:#b5121b; --red-soft:#fbe9ea; --rye:#9a6b12; --rye-soft:#f7efdc;
+  --ok:#1f7a45; --ok-soft:#e5f4ea; --bad:#b5121b; --bad-soft:#fbe9ea;
+  --f-display:"Instrument Serif", Georgia, "Times New Roman", serif;
+  --f-body:"Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121419; --surface:#1b1e26; --ink:#e9e8e4; --muted:#a0a4b0; --line:#2e323d;
+  --red:#ff5d5d; --red-soft:#3a1d20; --rye:#e0b45a; --rye-soft:#30281a;
+  --ok:#5fd08e; --ok-soft:#173023; --bad:#ff6b6b; --bad-soft:#3a1d20; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121419; --surface:#1b1e26; --ink:#e9e8e4; --muted:#a0a4b0; --line:#2e323d;
+  --red:#ff5d5d; --red-soft:#3a1d20; --rye:#e0b45a; --rye-soft:#30281a;
+  --ok:#5fd08e; --ok-soft:#173023; --bad:#ff6b6b; --bad-soft:#3a1d20; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:860px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;text-wrap:balance;line-height:1.1;margin:0}
+h2{font-size:2.3rem;margin-bottom:.4rem}
+h3{font-size:1.55rem}
+p{margin:.6rem 0}
+a{color:var(--red)}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+
+.back{display:inline-block;margin-top:22px;font-family:var(--f-mono);font-size:.8rem;letter-spacing:.04em;color:var(--muted);text-decoration:none;padding:10px 0}
+.back:hover{color:var(--red)}
+
+header.top{padding-block:40px 18px}
+.kicker{font-family:var(--f-mono);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+header.top h1{font-size:clamp(2.8rem,9vw,4.6rem);margin:.3rem 0 .2rem}
+header.top h1 em{color:var(--red);font-style:italic}
+header.top .sub{color:var(--muted);max-width:60ch}
+
+nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);
+  display:flex;gap:4px;overflow-x:auto;padding-block:10px;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs a{flex:none;text-decoration:none;color:var(--muted);font-weight:600;font-size:.95rem;padding:7px 13px;border-radius:999px;border:1px solid transparent}
+nav.tabs a:hover{color:var(--ink);border-color:var(--line)}
+nav.tabs a[aria-current="page"]{background:var(--ink);color:var(--bg)}
+nav.tabs a.test-tab{color:var(--red)}
+nav.tabs a.test-tab[aria-current="page"]{background:var(--red);color:#fff}
+a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+
+section.view{padding-block:28px 64px}
+.lead{font-size:1.12rem}
+.note{background:var(--rye-soft);border-radius:10px;padding:12px 16px;margin:16px 0;font-size:.97rem}
+.note b{color:var(--rye)}
+
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:20px 0}
+.facts div{background:var(--surface);padding:12px 16px;min-width:0}
+.facts dt{font-family:var(--f-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.facts dd{margin:2px 0 0}
+
+.days{display:grid;gap:22px;margin-top:18px}
+.day h3{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.day h3 .mono{font-size:.8rem;color:var(--red);letter-spacing:.06em;text-transform:uppercase}
+ol.steps{margin:.5rem 0 0;padding-left:1.4rem}
+ol.steps li{margin:.25rem 0}
+ol.steps li::marker{font-family:var(--f-mono);color:var(--muted);font-size:.85em}
+
+.groups{display:grid;gap:30px;margin-top:10px}
+.group h3{margin-bottom:10px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;min-width:0}
+.card h4{margin:0;font-size:1.08rem}
+.card .role{font-size:.85rem;color:var(--red);font-weight:600;margin-bottom:4px}
+.card p{margin:.3rem 0 0;font-size:.95rem}
+
+.search{display:flex;gap:10px;align-items:center;margin:14px 0 18px}
+.search input{flex:1;min-width:0;font:inherit;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.toggle-all{font:inherit;font-size:.9rem;font-weight:600;background:none;border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:9px 12px;cursor:pointer;flex:none}
+details.ch{border-top:1px solid var(--line)}
+details.ch:last-child{border-bottom:1px solid var(--line)}
+details.ch summary{cursor:pointer;list-style:none;display:grid;grid-template-columns:3.2rem 1fr auto;gap:10px;align-items:baseline;padding:14px 4px}
+details.ch summary::-webkit-details-marker{display:none}
+details.ch summary .n{font-family:var(--f-mono);color:var(--red);font-size:.95rem}
+details.ch summary .t{font-weight:600;min-width:0}
+details.ch summary .d{font-family:var(--f-mono);font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+details.ch[open] summary .t{color:var(--red)}
+.ch-body{padding:0 4px 18px 3.8rem}
+.ch-body .det{background:var(--rye-soft);border-radius:10px;padding:10px 14px 10px 14px;margin-top:10px}
+.ch-body .det b.lbl{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.07em;text-transform:uppercase;color:var(--rye)}
+.ch-body .det ul{margin:.3rem 0 0;padding-left:1.1rem}
+.ch-body .det li{margin:.15rem 0}
+mark{background:var(--rye-soft);color:inherit;padding:0 2px;border-radius:3px}
+
+.sym{display:grid;gap:14px;margin-top:14px}
+.sym .card h4{font-family:var(--f-display);font-weight:400;font-size:1.45rem}
+.why{margin-top:10px}
+.why details{border-top:1px solid var(--line);padding:4px 0}
+.why details:last-child{border-bottom:1px solid var(--line)}
+.why summary{cursor:pointer;font-weight:600;padding:10px 0}
+.why details p{margin:0 0 12px}
+
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface);margin-top:14px}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:none}
+th{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:500}
+td:first-child{font-family:var(--f-mono);font-variant-numeric:tabular-nums;color:var(--red);width:38%;min-width:9rem}
+
+.levels{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:16px 0}
+.lvl{font:inherit;text-align:left;cursor:pointer;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.lvl b{display:block;font-size:1.02rem}
+.lvl span{font-size:.85rem;color:var(--muted)}
+.lvl[aria-pressed="true"]{border-color:var(--red);box-shadow:inset 0 0 0 1px var(--red)}
+.lvl .bars{font-family:var(--f-mono);color:var(--red);letter-spacing:2px}
+.scorebar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 58px);z-index:4;background:var(--bg);display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;padding-block:10px;border-bottom:1px solid var(--line)}
+.scorebar .s{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.scorebar .s b{color:var(--red);font-size:1.15rem}
+.meter{flex:1;min-width:120px;height:8px;background:var(--line);border-radius:99px;overflow:hidden;display:flex}
+.meter i{display:block;height:100%}
+.meter .g{background:var(--ok)} .meter .r{background:var(--bad)}
+.btn{font:inherit;font-size:.9rem;font-weight:600;cursor:pointer;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:7px 12px}
+.btn:hover{border-color:var(--ink)}
+.qlist{display:grid;gap:14px;margin-top:16px;counter-reset:q}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;min-width:0}
+.q .qh{display:flex;gap:10px;align-items:baseline}
+.q .qh .num{font-family:var(--f-mono);color:var(--muted);font-size:.85rem;flex:none}
+.q .qh .txt{font-weight:600;min-width:0}
+.q .ref{font-family:var(--f-mono);font-size:.7rem;color:var(--muted);margin-left:auto;flex:none;white-space:nowrap}
+.opts{display:grid;gap:7px;margin-top:10px}
+.opt{font:inherit;font-size:.97rem;text-align:left;cursor:pointer;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:9px 12px}
+.opt:hover:not(:disabled){border-color:var(--ink)}
+.opt:disabled{cursor:default}
+.opt.correct{background:var(--ok-soft);border-color:var(--ok);color:var(--ink)}
+.opt.wrong{background:var(--bad-soft);border-color:var(--bad);text-decoration:line-through;text-decoration-color:var(--bad)}
+.expl{margin-top:10px;font-size:.94rem;padding:10px 12px;border-radius:9px;background:var(--bg)}
+.expl b.ok{color:var(--ok)} .expl b.no{color:var(--bad)}
+.q.is-ok{border-color:var(--ok)} .q.is-bad{border-color:var(--bad)}
+.done{margin-top:18px;padding:16px;border-radius:12px;background:var(--rye-soft)}
+.done h3{margin-bottom:4px}
+footer{color:var(--muted);font-size:.85rem;padding-block:0 40px}
+
+@media (max-width:560px){
+  body{font-size:16px}
+  .ch-body{padding-left:4px}
+  details.ch summary{grid-template-columns:2.6rem 1fr}
+  details.ch summary .d{grid-column:2}
+  .scorebar{top:calc(env(safe-area-inset-top,0px) + 54px)}
+}
+@media (prefers-reduced-motion:no-preference){.opt,.lvl,nav.tabs a{transition:background .15s,border-color .15s}}
+</style>
+
+<div class="wrap">
+<a class="back" href="../index.html">← Všetky témy</a>
+<header class="top">
+  <div class="kicker">Ťahák na písomku · J. D. Salinger · 1951</div>
+  <h1>Kto chytá <em>v žite</em></h1>
+  <p class="sub">Celý dej knihy, kapitolu po kapitole, s detailmi, ktoré vie len ten, kto knihu čítal. Na konci testy v troch úrovniach. Podľa slovenského prekladu Viery Marušiakovej (Slovenský spisovateľ, 2000).</p>
+</header>
+
+<nav class="tabs" aria-label="Sekcie">
+  <a href="#prehlad">Prehľad</a>
+  <a href="#postavy">Postavy</a>
+  <a href="#kapitoly">Kapitoly</a>
+  <a href="#symboly">Symboly a „prečo“</a>
+  <a href="#fakty">Čísla a mená</a>
+  <a href="#testy" class="test-tab">Testy</a>
+</nav>
+
+<!-- ============ PREHĽAD ============ -->
+<section class="view" id="v-prehlad">
+  <h2>Kniha za päť minút</h2>
+  <p class="lead">Šestnásťročného Holdena Caulfielda tesne pred Vianocami vyhodia zo školy Pencey. Namiesto toho, aby počkal do stredy a šiel domov, odíde v sobotu v noci do New Yorku a tri dni sa túla mestom: hotel, bary, prostitútka, rande so Sally, opitosť, nočná návšteva u sestry Phoebe a útek od profesora Antoliniho. Všade naráža na „farizejov“ a pokrytcov, spomína na mŕtveho brata Allieho a stále viac sa rozpadá. Zachráni ho až Phoebe: keď ju vidí krútiť sa na kolotoči v daždi, je prvýkrát šťastný a ostane doma.</p>
+
+  <dl class="facts">
+    <div><dt>Rozprávač</dt><dd>Holden Caulfield, ich-forma, priamo oslovuje čitateľa („vám“)</dd></div>
+    <div><dt>Odkiaľ rozpráva</dt><dd>O rok neskôr z liečebne (blízko Hollywoodu), kde ho lieči psychoanalytik</dd></div>
+    <div><dt>Kedy sa to deje</dt><dd>Sobota až pondelok, december, pred vianočnými prázdninami (začínajú v stredu)</dd></div>
+    <div><dt>Kde</dt><dd>Pencey (Agerstown, Pennsylvánia), potom New York</dd></div>
+    <div><dt>Vek</dt><dd>Počas deja 16, keď rozpráva 17. Meria 189 cm, na jednej strane má šedivé vlasy</dd></div>
+    <div><dt>Forma</dt><dd>Román, 26 kapitol, retrospektíva, hovorový jazyk a slang</dd></div>
+    <div><dt>Žáner a smer</dt><dd>Psychologický román, román o dospievaní; americká povojnová próza</dd></div>
+    <div><dt>Typické slová</dt><dd>„Bohatstvo!“, „fakt“, „a tak“, „ubíja ma to“, „farizej“, „pokrytec“, „aby som vám pravdu povedal“</dd></div>
+  </dl>
+
+  <div class="note"><b>Na čo si dať pozor:</b> písomka, ktorá overuje čítanie, sa pýta na <i>konkrétne</i> scény: kto čo povedal, koľko čo stálo, čo bolo na rukavici, ako sa Holden predstavil, čo urobil s peniazmi. Tie sú v sekcii Kapitoly vo zvýraznených rámčekoch „Na písomku“.</div>
+
+  <h2 style="margin-top:34px">Časová os: tri dni</h2>
+  <div class="days">
+    <div class="day">
+      <h3>Sobota <span class="mono">kap. 1–8 · Pencey</span></h3>
+      <ol class="steps">
+        <li>Futbalový zápas Pencey – Saxon Hall. Holden ho sleduje z Thomsenovho vŕšku, lebo sa práve vrátil so šermiarmi z New Yorku (nechal im kordy v metre).</li>
+        <li>Návšteva u starého Spencera (dejepis) – rozlúčka, prednáška o „zápase podľa pravidiel“.</li>
+        <li>V izbe: číta, otravuje ho Ackley. Stradlater ho poprosí o sloh a ide na rande s Jane Gallagherovou.</li>
+        <li>Večer Agerstown (hamburgery, kino), potom sloh o Allieho rukavici.</li>
+        <li>Stradlater sa vráti, nadáva na sloh, Holden ho roztrhá, pobijú sa kvôli Jane.</li>
+        <li>V noci Holden predá písací stroj, zakričí „Spite sladko, debili!“ a odíde vlakom do New Yorku.</li>
+      </ol>
+    </div>
+    <div class="day">
+      <h3>Sobota v noci – nedeľa <span class="mono">kap. 8–20 · New York</span></h3>
+      <ol class="steps">
+        <li>Vo vlaku pani Morrowová; Holden klame (Rudolf Schmidt, nádor na mozgu).</li>
+        <li>Hotel Edmont, zvrhlíci v oknách, telefonát Faith Cavendishovej.</li>
+        <li>Lavender bar: tri ženy zo Seattlu. Spomienky na Jane.</li>
+        <li>Taxikár Horwitz (ryby v ľade), Ernieho klub, Lillian Simmonsová.</li>
+        <li>Výťahár Maurice, prostitútka Sunny; Maurice Holdena zbije.</li>
+        <li>Nedeľa ráno: mníšky v bufete, platňa pre Phoebe, chlapček spieva o žite, múzeum.</li>
+        <li>Rande so Sally: divadlo (Luntovci), korčuľovanie, návrh na útek, hádka.</li>
+        <li>Radio City Music Hall, Carl Luce vo Wicker bare, Holden sa opije.</li>
+        <li>Central Park, rozbitá platňa, kačice; v noci sa vkradne domov za Phoebe.</li>
+      </ol>
+    </div>
+    <div class="day">
+      <h3>Nedeľa v noci – pondelok <span class="mono">kap. 21–26</span></h3>
+      <ol class="steps">
+        <li>Rozhovor s Phoebe, „chytač v žite“, Phoebe mu požičia vianočné peniaze.</li>
+        <li>U Antoliniho: rozhovor o páde, citát od Stekela; Holden sa zobudí a uteká.</li>
+        <li>Pondelok: noc na Grand Central, strach, že „zmizne“, plán ísť na Západ.</li>
+        <li>Lístok pre Phoebe v škole, nápisy na stenách, múmie v múzeu.</li>
+        <li>Phoebe príde s kufrom, chce ísť s ním. Zoo, kolotoč, dážď, šťastie.</li>
+        <li>Kap. 26: epilóg v liečebni, v septembri pôjde do novej školy.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ============ POSTAVY ============ -->
+<section class="view" id="v-postavy" hidden>
+  <h2>Postavy</h2>
+  <p>Najprv rodina, potom ľudia z Pencey, potom tí, ktorých Holden stretne v New Yorku.</p>
+  <div class="groups" id="chars"></div>
+</section>
+
+<!-- ============ KAPITOLY ============ -->
+<section class="view" id="v-kapitoly" hidden>
+  <h2>Kapitola po kapitole</h2>
+  <p>Každá kapitola má krátky dej a pod ním rámček „Na písomku“ s detailmi, na ktoré sa učitelia radi pýtajú.</p>
+  <div class="search">
+    <input id="chSearch" type="search" placeholder="Hľadaj meno, miesto alebo slovo (napr. Sunny, kačice, rukavica)" aria-label="Hľadať v kapitolách">
+    <button class="toggle-all" id="toggleAll" type="button">Otvoriť všetky</button>
+  </div>
+  <div id="chapters"></div>
+  <p id="noHits" class="note" hidden>Nič sa nenašlo. Skús iné slovo.</p>
+</section>
+
+<!-- ============ SYMBOLY ============ -->
+<section class="view" id="v-symboly" hidden>
+  <h2>Symboly a témy</h2>
+  <div class="sym" id="symbols"></div>
+  <h2 style="margin-top:36px">Otázky „prečo?“</h2>
+  <p>Typ otázok, kde nestačí vedieť, čo sa stalo. Najprv si skús odpovedať sám, potom klikni.</p>
+  <div class="why" id="whys"></div>
+</section>
+
+<!-- ============ FAKTY ============ -->
+<section class="view" id="v-fakty" hidden>
+  <h2>Čísla, mená, miesta</h2>
+  <p>Tieto drobnosti sa nedajú vymyslieť a presne preto sa na ne učitelia pýtajú.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Čo</th><th>Význam</th></tr></thead>
+    <tbody id="factRows"></tbody>
+  </table></div>
+</section>
+
+<!-- ============ TESTY ============ -->
+<section class="view" id="v-testy" hidden>
+  <h2>Testy</h2>
+  <p>Vyber úroveň. Po kliknutí na odpoveď hneď uvidíš, či je správna, a krátke vysvetlenie. Možnosti sa pri každom spustení premiešajú.</p>
+  <div class="levels" id="levels"></div>
+  <div class="scorebar">
+    <div class="s">Správne <b id="sOk">0</b> / <span id="sTot">0</span></div>
+    <div class="meter" aria-hidden="true"><i class="g" id="mOk"></i><i class="r" id="mBad"></i></div>
+    <button class="btn" id="btnRetryWrong" type="button">Zopakovať chybné</button>
+    <button class="btn" id="btnReset" type="button">Začať znova</button>
+  </div>
+  <div class="qlist" id="qlist"></div>
+  <div class="done" id="doneBox" hidden></div>
+</section>
+
+<footer>Zdroj: J. D. Salinger, <i>Kto chytá v žite</i>, preklad Viera Marušiaková, Slovenský spisovateľ 2000. Citáty a čísla sú overené priamo v texte knihy.</footer>
+</div>
+
+<script>
+/* ---------- DATA: POSTAVY ---------- */
+const CHARS = [
+ {g:"Rodina Caulfieldovcov", items:[
+  {n:"Holden Caulfield",r:"Rozprávač, 16 rokov",d:"Vyhodili ho z Pencey (prepadol zo 4 predmetov, prešiel len z angliny). Predtým odišiel aj z Whootonu a Elkton Hills. Nenávidí „farizejov“ a pokrytectvo, veľa klame („som najstrašnejší klamár“), fajčí, nosí červenú poľovnícku čiapku. Citlivý, osamelý, nevie sa vyrovnať s Allieho smrťou."},
+  {n:"Phoebe",r:"Mladšia sestra, 10 rokov",d:"Ryšavá, chudá, veľmi inteligentná, „vie presne, o čo ide“. Píše príbehy o detektívke Hazel Weatherfieldovej (píše „Hazle“). V školskej hre hrá Benedicta Arnolda. Jediná, kto Holdena naozaj zastaví. Na konci kolotoč."},
+  {n:"Allie",r:"Mladší brat, zomrel",d:"O 2 roky mladší, najinteligentnejší a najmilší z rodiny, ryšavý. Zomrel na leukémiu 18. júla 1946 v Maine. Mal ľavácku bejzbalovú rukavicu popísanú básňami zeleným atramentom. Holden (13 r.) v tú noc rozbil päsťou všetky okná v garáži a zlomil si ruku."},
+  {n:"D. B.",r:"Starší brat, spisovateľ",d:"Napísal knihu poviedok Tajná zlatá rybka. Teraz píše pre film v Hollywoode, preto o ňom Holden hovorí, že „robí zo seba prostitúta“. Bol 4 roky v armáde, nenávidel ju. Chodí Holdena navštevovať do liečebne, kúpil si jaguára."},
+  {n:"Rodičia",r:"Otec advokát, mama nervózna",d:"Otec je advokát (korporačný). Mama poslala Holdenovi nové korčule – kúpila hokejové „kanady“ namiesto pretekárskych „nožov“. V noci 21. kap. sú na návšteve v Norwalku v Connecticute. Phoebe opakuje: „Ocko ťa zabije.“"}
+ ]},
+ {g:"Pencey a staré školy", items:[
+  {n:"Pán Spencer",r:"Profesor dejepisu, ~70 rokov",d:"Chorý na chrípku, v starom zodratom župane, s navajskou prikrývkou z Yellowstonu, číta Atlantic Monthly. Prečíta Holdenovi jeho písomku o Egypťanoch. Hovorí: „Život je zápas, chlapče. Život je zápas, ktorý sa má hrať podľa pravidiel.“"},
+  {n:"Ward Stradlater",r:"Spolubývajúci",d:"Pekný, obľúbený, zvonku upravený, ale „tajný bordelár“ (hrdzavá žiletka). Ide na rande s Jane v aute Eda Bankyho. Chce, aby mu Holden napísal sloh. Zbije Holdena, keď ho Holden napadne kvôli Jane."},
+  {n:"Robert Ackley",r:"Sused zo susednej izby",d:"18 rokov, asi 193 cm, hnusné zuby, akné, nikdy si nečistí zuby, strihá si nechty na zem, prehrabáva sa v cudzích veciach. Neznáša Stradlatera. Spolubývajúci sa volá Ely."},
+  {n:"Jane Gallagherová",r:"Holdenova kamarátka z leta",d:"Nikdy sa v deji neobjaví osobne. Poznali sa v Maine (jej doberman chodil na ich trávnik). Hrali spolu dámu – dámy si vždy nechávala v zadnom rade. Mala nevlastného otca, pána Cudahyho (opilec). Holden jej stále chce zavolať, ale nikdy to nedotiahne."},
+  {n:"Pán Antolini",r:"Bývalý profesor angliny z Elkton Hills",d:"Mladý, inteligentný, žena je o veľa staršia a bohatá. Byt na Sutton Place. Pije whisky. Varuje Holdena pred „pádom“, dá mu citát od Wilhelma Stekela. V noci ho hladká po hlave – Holden ujde."},
+  {n:"Ďalší zo škôl",r:"Mená na písomku",d:"Selma Thurmerová (dcéra riaditeľa Thurmera), Ossenburger (pohrebník, dal meno krídlu internátu), Marsalla (pustil vetry počas Ossenburgerovej reči), Mal Brossard, Ed Banky (tréner basketbalu), Frederick Woodruff (kúpil písací stroj), Haas (pokrytecký riaditeľ v Elkton Hills), James Castle (vyskočil z okna), Carl Luce (Whooton), Richard Kinsella a pán Vinson (ústny prejav)."}
+ ]},
+ {g:"New York", items:[
+  {n:"Pani Morrowová",r:"Vo vlaku",d:"Matka Ernesta Morrowa z Pencey. Holden sa predstaví ako Rudolf Schmidt (meno vrátnika) a vymýšľa, aký je Ernest skromný – v skutočnosti je to podľa neho najväčší sviniar na škole."},
+  {n:"Bernice, Marty, Laverne",r:"Lavender bar",d:"Tri ženy zo Seattlu, pracujú v poisťovni. Holden sa predstaví ako Jim Steele. Bernice je blondína a dobre tancuje. Ráno idú na prvé predstavenie do Radio City Music Hall."},
+  {n:"Horwitz",r:"Taxikár",d:"Nahnevaný taxikár, ktorému Holden položí otázku o kačiciach. Odpovie, že ryby v zamrznutom jazere prežijú, lebo prijímajú potravu cez póry."},
+  {n:"Maurice a Sunny",r:"Výťahár a prostitútka",d:"Maurice ponúkne „číslo“ za 5 dolárov (15 do obeda). Sunny je mladá, nervózna, v zelených šatách; Holden s ňou len chce hovoriť. Potom pýtajú 10, Sunny vezme 5 z peňaženky, Maurice ho udrie do brucha."},
+  {n:"Sally Hayesová",r:"Rande v nedeľu",d:"Pekná, ale povrchná, „farizejská“. Stretnutie pod hodinami v Biltmore o druhej, divadlo s Luntovcami, korčuľovanie v Radio City. Odmietne Holdenov plán utiecť do Vermontu, Holden ju urazí."},
+  {n:"Dve mníšky",r:"Bufet, nedeľa ráno",d:"Majú lacné kufre, zbierajú milodary. Jedna učí angličtinu – rozprávajú sa o Rómeovi a Júlii. Holden im daruje 10 dolárov."},
+  {n:"Carl Luce",r:"Bývalý študentský poradca",d:"O 3 roky starší, z Whootonu, teraz na Columbii. Chodí so staršou čínskou sochárkou z Greenwich Village. Jeho otec je psychoanalytik; Holdenovi radí, aby k nemu šiel."},
+  {n:"Ernie, Lillian Simmonsová",r:"Nočný klub",d:"Ernie je tučný černošský klavirista a snob. Lillian Simmonsová je bývalá dievčina D. B., príde s námorníkom; Holden sa vyhovorí a odíde."}
+ ]}
+];
+
+/* ---------- DATA: KAPITOLY ---------- */
+const CH = [
+ {n:1,t:"Odchod z Pencey",d:"Sobota",s:"Holden rozpráva z miesta, kde sa „zotavuje“, a nechce písať svoj životopis, len o „bláznivých veciach“ pred minulými Vianocami. Pencey je škola v Agerstowne v Pennsylvánii. Je posledný zápas sezóny so Saxon Hallom, ale Holden stojí na Thomsenovom vŕšku, lebo sa práve vrátil s družstvom šermiarov z New Yorku, kde v metre nechal všetky kordy. Je kapitánom (vlastne správcom) družstva. Ide sa rozlúčiť so starým Spencerom. Cestou cíti, že sa „rozplynie“.",
+  x:["Ako kapitán šermiarov nechal v metre kordy aj výstroj, preto ho celé družstvo vo vlaku bojkotovalo.","Vyhodili ho, lebo prepadol zo štyroch predmetov; po vianočných prázdninách sa už nemá vrátiť.","Selma Thurmerová, dcéra riaditeľa: veľký nos, obhryzené nechty, vypchatá podprsenka, ale páčila sa mu, lebo sa nevystatovala otcom.","Kabát z ťavej srsti aj s kožušinovými rukavicami mu niekto ukradol týždeň predtým.","Má „nanič pľúca“: je ťažký fajčiar a vlani vyrástol o 16,5 cm, preto „dostal tuberu“.","D. B. napísal knihu poviedok Tajná zlatá rybka, teraz je v Hollywoode."]},
+ {n:2,t:"U starého Spencera",d:"Sobota",s:"Spencer s manželkou bývajú neďaleko školy, slúžku nemajú. Spencer sedí v župane zabalený v navajskej prikrývke. Holdena dráždi, že mu prečíta jeho písomku o Egypťanoch aj s poznámkou, v ktorej Holden prosí, aby ho pokojne nechal prepadnúť. Holden počas rozhovoru myslí na kačice v Central Parku. Klame, že musí ísť do telocvične po veci, a uteká.",
+  x:["„Život je zápas, chlapče. Život je zápas, ktorý sa má hrať podľa pravidiel.“ Holden si myslí: zápas je to len pre tých, čo sú na strane víťazov.","Egypťanov preberali od 4. novembra do 2. decembra; Holden napísal len pár viet o múmiách.","Z angliny prešiel, lebo Beowulfa a Lorda Randalla už preberal vo Whootone.","Holden mal vtedy 16, teraz má 17, meria 189 cm a má „milión šedivých vlasov“. Správa sa, akoby mal 12 – „každý to hovorí, najmä otec“.","Spomína Elkton Hills a riaditeľa Haasa – pokrytca, ktorý sa usmieval len na bohatých rodičov.","Spencer za ním zakričí „Veľa šťastia!“ – Holden to nenávidí."]},
+ {n:3,t:"Ackley a čiapka",d:"Sobota",s:"Holden priznáva, že je najstrašnejší klamár. Býva v Ossenburgerovom krídle (Ossenburger zbohatol na pohrebných ústavoch a v kaplnke mal reč o tom, že sa modlí aj v aute). Doma číta Spomienky na Afriku od Isaka Dinesena a nasadí si novú červenú poľovnícku čiapku. Vtrhne k nemu Ackley, sused, ktorého nikto nemá rád, a hrabe sa mu vo veciach.",
+  x:["Čiapku kúpil v New Yorku v to ráno, keď stratil kordy – za dolár; nosí ju šiltom dozadu.","Ackley: „V takejto čiapke sa strieľajú jelene.“ Holden: „V tejto čiapke sa strieľajú ľudia.“","Marsalla pustil počas Ossenburgerovej reči vetry.","Najobľúbenejší spisovateľ: D. B., potom Ring Lardner. Páči sa mu Eustacia Vyeová z Hardyho Rodákovho návratu.","Ackley: 18 rokov, asi 193 cm, nikdy si nečistí zuby, má akné, strihá si nechty na zem. Holden mu hovorí „štopeľ“.","Ackley berie do ruky fotku Sally Hayesovej."]},
+ {n:4,t:"Stradlater a Jane",d:"Sobota",s:"V umyvárke sa Stradlater holí a Holden stepuje. Stradlater ide na rande a prosí Holdena, aby mu napísal sloh do angliny – opis izby, domu alebo niečoho. Ukáže sa, že ide s Jane Gallagherovou (sám ju volá Jean). Holden je strašne rozrušený, spomína, že spolu hrali dámu, ale za Jane nezíde.",
+  x:["Stradlater je „tajný bordelár“: vyzerá výborne, ale jeho žiletka je hrdzavá a plná chlpov.","Jane si pri dáme nechávala všetky dámy v zadnom rade a nehýbala nimi – páčilo sa jej, ako tam stoja.","Zoznámili sa cez jej dobermana, ktorý chodil na Caulfieldovský trávnik.","Jane robila balet a hrala golf; Holden ju učil.","Holden sa obáva, čo bude Stradlater s Jane robiť – nervózne sa pýta, či jej povie, že je tu."]},
+ {n:5,t:"Sloh o Allieho rukavici",d:"Sobota večer",s:"Na sobotnú večeru bol steak (aby sa v nedeľu rodičia nepýtali). Sneží, Holden uhnieti snehovú guľu, ale nehodí ju. S Malom Brossardom a Ackleym ide autobusom do Agerstownu na hamburgery. Večer napíše sloh pre Stradlatera – o bejzbalovej rukavici mŕtveho brata Allieho.",
+  x:["Rukavica bola na ľavú ruku – Allie bol ľavák. Na prstoch a všade mal napísané básne zeleným atramentom, aby mal čo čítať, keď na ihrisku nič nerobil.","Allie zomrel na leukémiu 18. júla 1946 v Maine. Bol o dva roky mladší a „päťdesiat ráz inteligentnejší“.","Holden mal 13; v noci spal v garáži a päsťou rozbil všetky okná, zlomil si ruku. Chceli ho dať na psychoanalýzu.","Allieho rukavicu Holden vozí so sebou.","Sloh píše na Stradlaterovom písacom stroji, lebo svoj požičal chlapcovi z chodby (Woodruffovi)."]},
+ {n:6,t:"Bitka so Stradlaterom",d:"Sobota v noci",s:"Stradlater sa vráti a je nahnevaný, že sloh je o rukavici a nie o izbe alebo dome. Holden ho vytrhne a roztrhá. Vypytuje sa na Jane; Stradlater povie, že boli v aute Eda Bankyho. Holden sa ho pokúsi udrieť, Stradlater ho zrazí na zem a sadne si naňho. Holden ho volá debil, dostane druhýkrát a krváca z nosa.",
+  x:["Ed Banky je tréner basketbalu; Stradlater je jeho miláčik, lebo hrá centra.","Holden sa pýta, či sa Jane opýtal, či si stále necháva dámy v zadnom rade.","Krv mal na ústach, na brade, na pyžame aj na župane – a trochu sa mu to páčilo, vyzeral drsne.","Holden si nasadí poľovnícku čiapku šiltom dozadu a ide k Ackleymu."]},
+ {n:7,t:"Odchod v noci",d:"Sobota v noci",s:"Holden chce spať v posteli Ackleyho spolubývajúceho Elyho, ale nedá sa zaspať. Rozhodne sa okamžite odísť do New Yorku, ubytovať sa v lacnom hoteli a domov prísť až v stredu, keď začnú prázdniny. Zbalí sa, predá písací stroj a odchádza.",
+  x:["Ely sa vracia až v nedeľu večer.","Smúti nad novými korčuľami od mamy: chcel pretekárske „nože“, ona kúpila hokejové „kanady“ – keď mu niekto niečo dá, je z toho smutný.","Peniaze mu pred týždňom poslala stará mama.","Písací stroj predal Frederickovi Woodruffovi za 20 dolárov (stál asi 90).","Na chodbe zakričí: „Spite sladko, debili!“ a trochu si poplače."]},
+ {n:8,t:"Pani Morrowová vo vlaku",d:"Sobota v noci",s:"Vo vlaku si k nemu prisadne pekná pani, ktorá si všimne nálepku Pencey na kufri. Je to matka Ernesta Morrowa. Holden jej klame, ako je jej syn obľúbený a skromný. Ponúkne jej koktail a vymyslí si, že má nádor na mozgu.",
+  x:["Predstaví sa ako Rudolf Schmidt – tak sa volá vrátnik na internáte.","Ernest je podľa Holdena najväčší sviniar na Pencey (šľahal chlapcov mokrým uterákom).","Klame, že Ernesta chceli za predsedu triedy, ale bol príliš skromný.","„Mám len taký maličký nádor na mozgu. Vyrežú mi ho za dve minútky.“","Pani ho pozýva na leto do Gloucesteru v Massachusetts; vraví, že prázdniny začínajú v stredu."]},
+ {n:9,t:"Hotel Edmont",d:"Sobota v noci",s:"Na stanici chce niekomu zavolať, ale nakoniec nevolá nikomu. V taxíku sa pýta, kam idú kačice z jazierka v Central Parku, keď zamrzne. Ubytuje sa v hoteli Edmont, kde je to „plné zvrhlíkov“. Z okna sleduje cudzie izby. Zavolá Faith Cavendishovej.",
+  x:["Poslíček v hoteli bol asi 65-ročný vetchý dedo – Holdena to ubíjalo.","V oknách videl muža, ktorý sa obliekal do ženských šiat, a pár, ktorý si striekal do tváre vodu/drink.","Faith Cavendishová (bývalá striptérka): číslo dostal od Eddieho Birdsella. Odmietne stretnutie hneď v noci, navrhne zajtra – Holden nechce.","Phoebe chodí spať o deviatej, preto jej nevolá."]},
+ {n:10,t:"Lavender bar",d:"Sobota v noci",s:"Holden opisuje Phoebe. Potom ide do Lavender baru v hoteli. Tancuje s tromi ženami zo Seattlu, ktoré sa najviac zaujímajú o celebrity. Nakoniec zaplatí ich účet a ony odídu, lebo ráno idú do Radio City.",
+  x:["Predstavil sa ako Jim Steele.","Bernice (blondína) tancuje výborne; tancovať s Marty bolo „peklo“.","Holden si vymyslí, že práve zazrel Garyho Coopera; žena prestane tancovať a hľadá ho – potom mu je ľúto, že si z nej vystrelil.","Phoebe: ryšavá, 10 rokov, píše knihy o Hazel Weatherfieldovej; film 39 stupňov s Robertom Donatom vie naspamäť.","Čašník mu nechce dať alkohol, lebo je neplnoletý."]},
+ {n:11,t:"Spomienky na Jane",d:"Sobota v noci",s:"Vo vestibule hotela Holden spomína na leto s Jane v Maine. Hrali tenis, golf a dámu. Raz na verande ku nej prišiel jej nevlastný otec, pán Cudahy, a keď odišiel, Jane sa rozplakala – slza jej padla na šachovnicu. Holden ju bozkával všade, len nie na ústa. Odíde do Ernieho klubu.",
+  x:["Pán Cudahy chodil po dome nahý – Holden tuší, že s ním Jane mala zlú skúsenosť.","V kine sa držali za ruky a bolo to „úžasné“.","Bola to najbližšia vec k bozku, a predsa sa nepobozkali na ústa.","Holden: Jane „nebola úplne pekná“, ale ohromila ho."]},
+ {n:12,t:"Horwitz a Ernie",d:"Sobota v noci",s:"Taxikár Horwitz sa nahnevá kvôli otázke o kačiciach a hovorí o rybách. V Ernieho nočnom klube hrá Ernie na klavíri, všetci tlieskajú. Holden je znechutený. Stretne Lillian Simmonsovú, bývalú dievčinu D. B., s námorníkom. Aby s ňou nemusel sedieť, odíde.",
+  x:["Horwitz: ryby primrznú do ľadu a živia sa cez póry – „tak sú už stvorené“.","Ernie je veľký tučný černoch, klavirista a „úžasný snob“; Holden nemá rád, keď sa niekto tvári pokorne.","Lillian ho volá Holden, D. B. k nej chodieval; Holden sa vyhovorí, že sa musí s niekým stretnúť."]},
+ {n:13,t:"Maurice a Sunny",d:"Sobota v noci",s:"Holden ide pešo naspäť do Edmontu a premýšľa o zbabelosti (kto mu ukradol rukavice). Výťahár Maurice mu ponúkne dievča. Holden súhlasí. Prvá je Sunny, mladá a nervózna. Holden sa necíti „v nálade“, chce sa len rozprávať, vymýšľa si o operácii. Zaplatí jej a ona odíde.",
+  x:["Cena: „päť dolárov jedno číslo, pätnásť do obeda“.","Holden povie Mauriceovi, že má 22 rokov; izba 1222.","Sunny mala zelené šaty, ktoré Holden zavesil do skrine – a to ho ubíjalo.","Výhovorka: mal operáciu „na klavichorde“.","Sunny tvrdí, že stojí desať; Holden jej dá päť."]},
+ {n:14,t:"Maurice ho zbije",d:"Nedeľa skoro ráno",s:"Holden si spomína na Allieho, ktorého raz nevzal so sebou na bicykli. Potom zabúcha Maurice so Sunny a pýtajú ďalších 5 dolárov. Sunny ich vezme z jeho peňaženky, Maurice ho udrie do žalúdka. Holden potom predstiera, že je postrelený, a vo fantázii ide Mauricea zastreliť.",
+  x:["Allie chcel ísť s Holdenom a Bobbym Fallonom k jazeru Sedebego na bicykli – Holden ho nevzal; teraz sa mu ospravedlňuje nahlas.","Maurice mu švihne prstami po pyžame a udrie ho do brucha.","Holden si predstavuje, že má v bruchu guľku a ide dolu za Mauriceom s pištoľou (ako vo filmoch).","Myslí na samovraždu – vyskočil by z okna, keby si bol istý, že ho hneď niekto zakryje."]},
+ {n:15,t:"Sally a mníšky",d:"Nedeľa ráno",s:"Holden zavolá Sally Hayesovej a dohodnú si rande na matiné o druhej. Odhlási sa z hotela, kufre dá do skrinky na stanici a ide na raňajky. Do bufetu prídu dve mníšky s lacnými kuframi. Rozprávajú sa o literatúre a Holden im daruje peniaze.",
+  x:["Stretnutie: o druhej v Biltmore pod hodinami.","Lacné kufre mníšok mu pripomenú Dicka Slagla z Elkton Hills, ktorý sa hanbil za svoje lacné kufre.","Holden mníškam daruje 10 dolárov.","Jedna mníška učí angličtinu – Rómeo a Júlia. Holdenovi bolo najviac ľúto Mercutia."]},
+ {n:16,t:"Žito, platňa a múzeum",d:"Nedeľa",s:"Holden ide po Broadwayi kúpiť pre Phoebe platňu. Vidí chlapčeka, ktorý kráča po obrubníku a spieva si „Keď raz človek niekde v žite chytí človeka“ – zlepší mu to náladu. Kúpi lístky na Luntovcov. V parku hľadá Phoebe, pomôže dievčatku utiahnuť korčuľu. Ide do prírodovedného múzea, kde chodil s triedou, ale dnu nevojde.",
+  x:["Platňa: Malá Shirley Beansová, spieva ju černošská speváčka Estelle Fletcherová; je o dievčatku, ktorému vypadli dva predné zuby. Stála 5 dolárov.","Chlapček spieval „Keď raz človek niekde v žite chytí človeka“ (nesprávne slová – správne je „stretne“).","V múzeu: indiánske vojnové kanoe dlhé ako tri cadillacy, Eskimák chytajúci ryby. Páčilo sa mu, že sa tam nič nemení – zmenil sa len človek.","Hamleta s Laurenceom Olivierom videl s D. B. a Phoebe."]},
+ {n:17,t:"Rande so Sally",d:"Nedeľa",s:"Sally vyzerá úžasne. Hra s Luntovcami je podľa Holdena farizejská. Cez prestávku Sally stretne Georgea z Andoveru a predvádzajú sa. Idú korčuľovať do Radio City. Holden jej navrhne, aby spolu utiekli do Massachusetts a Vermontu, kde by žili v chatke pri potoku. Sally odmietne a Holden jej povie, že mu „ide na nervy“ (doslova ho „serie“). Ona sa rozplače, rande skončí.",
+  x:["Sally hovorí, že Holdenov plán je „fantastický“ – ale až po vysokej škole.","Holden ju zrazu nenávidí aj miluje naraz; potom priznáva, že ju vlastne vôbec nechcel brať so sebou.","Pozor na vulgarizmus v preklade – Sally sa urazí, Holden sa smeje v nevhodnej chvíli.","Sally mala na korčuliach krátku sukničku."]},
+ {n:18,t:"Radio City",d:"Nedeľa večer",s:"Holden zavolá Jane, ale nikto to nedvíha. Dohodne sa s Carlom Luceom na desiatu vo Wicker bare. Čas zabije v Radio City Music Hall: rockettky, vianočná šou s anjelmi a Kristom, film o vojakovi. Premýšľa o vojne a D. B.",
+  x:["Vianočná šou s anjelmi a krížmi ho znechutí – je mu to falošné.","D. B. bol 4 roky v armáde, bol aj pri vylodení, armádu nenávidel.","Holden je „skoro rád“, že vynašli atómovú bombu – keby bola vojna, sadne si na ňu dobrovoľne.","D. B. dal Holdenovi čítať Hemingwayovu knihu Zbohom zbraniam; Holden ju považuje za farizejskú."]},
+ {n:19,t:"Carl Luce",d:"Nedeľa večer",s:"Wicker bar je v hoteli Seton. Carl Luce, bývalý Holdenov študentský poradca z Whootonu, je o tri roky starší a teraz študuje na Columbii. Holden ho otravuje otázkami o sexe. Luce mu odporúča psychoanalýzu, lebo jeho otec je psychoanalytik. Odíde skoro na rande.",
+  x:["Luce vo Whootone viedol „sexuálne“ rozhovory pre mladších.","Jeho priateľka je Číňanka, sochárka z Greenwich Village, staršia od neho.","Holden: „Ty, a odkedy s ňou chodíš, s tou sochárkou?“"]},
+ {n:20,t:"Opitý v parku",d:"Nedeľa v noci",s:"Holden zostane v bare a opije sa. Speváčka Valencia. Opitý zavolá Sally a ponúka, že jej príde na Štedrý deň ozdobiť stromček. V Central Parku hľadá kačice pri jazierku, nenájde ich. Platňa pre Phoebe mu spadne a rozbije sa. Je mu zima, premýšľa o zápale pľúc a vlastnom pohrebe. Rozhodne sa ísť domov za Phoebe.",
+  x:["Predstiera, že má guľku v bruchu – „krvácam“.","Sallyina stará mama dvíha telefón, potom Sally: „Choď spať, Holden.“","Platňa sa rozbila asi na 50 kúskov; kúsky si dal do vrecka.","Spomína Allieho hrob – na cintoríne prší na náhrobok, ľudia utekajú do áut, Allie ostane."]},
+ {n:21,t:"Domov k Phoebe",d:"Nedeľa v noci",s:"Holden sa potichu vkradne do bytu (výťahár je nový). Phoebe spí v D. B.-ho izbe. Holden si číta v jej zošitoch. Phoebe sa zobudí, nadšene rozpráva o školskej hre a filme. Keď zistí, že ho vyhodili, zakryje si hlavu vankúšom.",
+  x:["Rodičia sú na večierku v Norwalku v Connecticute.","Phoebe hrá v školskom vianočnom predstavení Benedicta Arnolda – „prakticky najväčšiu rolu“.","Phoebe opakuje: „Ocko ťa zabije.“","Otec musí letieť do Kalifornie.","Holden jej dá kúsky rozbitej platne – Phoebe si ich odloží."]},
+ {n:22,t:"Chytač v žite",d:"Nedeľa v noci",s:"Phoebe vyčíta Holdenovi, že nemá rád nič. Má vymenovať aspoň jednu vec. Spomína na mníšky a na Jamesa Castla, ktorý vyskočil z okna. Povie, že má rád Allieho a sedieť s Phoebe. Potom priznáva, čím by chcel byť: chytačom v žite. Phoebe ho opraví, že báseň Roberta Burnsa hovorí „stretne“, nie „chytí“.",
+  x:["James Castle z Elkton Hills nazval Phila Stabila nafúkancom, nechcel to odvolať, šiesti chlapci ho v izbe týrali – vyskočil z okna. Mal na sebe Holdenov rolák.","Tým, čo to spravili, sa nič nestalo – len ich vylúčili.","Advokát: ako môžeš vedieť, či zachraňuješ ľudí naozaj, alebo len chceš byť slávny – „pokrytec“.","„Proste, ja si v jednom kuse predstavujem, ako sa davy malých deciek hrajú na takom velikánskom žitnom poli... A ja stojím na kraji nejakej strašnej priepasti... Chytal by som tie decká v žite.“","Phoebe: „Ocko ťa zabije.“"]},
+ {n:23,t:"Phoebine peniaze",d:"Nedeľa v noci",s:"Holden zavolá pánu Antolinimu, ktorý ho pozve hneď k sebe. Tancuje s Phoebe. Phoebe ukazuje, ako si vie urobiť horúčku. Rodičia sa vrátia, Holden sa schová v skrini. Phoebe mu požičia svoje vianočné peniaze. Holden sa rozplače. Na odchode jej dá svoju poľovnícku čiapku.",
+  x:["Phoebe mu dá 8 dolárov a 85 centov (65 centov už minula).","Mama príde do izby a cíti cigaretový dym – Phoebe Holdena kryje.","Holden sa rozplakal, nevedel prestať, Phoebe ho objala.","Mama sa pýta: „Phoebe, ty si tu fajčila?“"]},
+ {n:24,t:"U pána Antoliniho",d:"Nedeľa v noci",s:"Antoliniovci majú elegantný byt na Sutton Place. Antolini pije, pýta sa na Pencey. Holden rozpráva o hodine ústneho prejavu, kde museli kričať „K veci!“. Antolini ho varuje, že smeruje k strašnému pádu, a napíše mu citát. Holden zaspí na gauči, zobudí sa a Antolini ho hladká po hlave. Holden sa vydesí a odíde.",
+  x:["Pani Antoliniová je o veľa staršia (asi o 60 rokov) a bohatá.","Antolini bol ten, kto zdvihol mŕtveho Jamesa Castla a zakryl ho svojím kabátom.","Richard Kinsella rozprával o farme svojho otca vo Vermonte a odbočoval – trieda kričala „K veci!“, pán Vinson mu dal zlú známku.","Citát Wilhelma Stekela: „Známkou nezrelého človeka je, že chce za niečo vznešene zomrieť, kým známkou zrelého človeka je, že chce pre niečo pokorne žiť.“","Antolini: „Si čudný chlapec, veľmi čudný.“ Holden sa vyhovorí, že má kufre na stanici."]},
+ {n:25,t:"Zmiznúť / kolotoč",d:"Pondelok",s:"Holden prespí v čakárni na Grand Central. Rozmýšľa, či Antoliniho neodsúdil zle. Kráča po Piatej Avenue a pri každom prechode cez ulicu má pocit, že zmizne – prosí Allieho. Plánuje odísť na Západ ako hluchonemý. Do Phoebinej školy odnesie lístok. Na stenách vidí sprosté nápisy. V múzeu ukazuje deťom múmie. Phoebe príde s kufrom, že ide s ním. Holden odmietne, ona sa urazí. Ide s ňou do zoo a na kolotoč.",
+  x:["Prosí: „Allie, nedovoľ, aby som zmizol.“","Plán: stopom na Západ, tankovať benzín, hrať hluchonemého, oženiť sa s hluchonemou a bývať v chatke.","Lístok: stretnúť sa o štvrť na jednu pred Múzeom výtvarného umenia, vráti jej vianočné peniaze.","Nápis na stene („J.... ťa“) zotrie rukou, druhý je vyrytý nožom – nedá sa. „Nikde na svete nenájdete pekné a tiché miesto.“","V hrobke múmií je ďalší nápis – červenou pastelkou. Potom Holden omdlie (spadne na zem).","Phoebe ťahá jeho starý kufor; hovorí, že nepôjde hrať Benedicta Arnolda.","Kolotoč hrá „Ó Marie!“ a „Dym ti stúpa do očí“. Phoebe sedí na veľkom, starom, ošklbanom hnedákovi a načahuje sa za zlatým krúžkom.","„S deckami je to tak, že keď sa načahujú za zlatým krúžkom, treba ich nechať... Ak spadnú, tak spadnú.“","Phoebe mu nasadí poľovnícku čiapku. Prší, Holden je zmoknutý a šťastný, skoro sa rozplače."]},
+ {n:26,t:"Epilóg",d:"O rok neskôr",s:"Holden nechce rozprávať, čo bolo potom, ako ochorel ani do akej školy pôjde v septembri. Psychoanalytik sa ho pýta, či sa bude učiť. D. B. ho navštívil s Angličankou, ktorá hrá v jeho filme. Holden ľutuje, že to rozprával toľkým ľuďom – všetci mu chýbajú.",
+  x:["„Ako môžete vedieť, čo urobíte, kým to neurobíte?“","Chýbajú mu aj Stradlater, Ackley, ba aj Maurice.","Posledná veta: „Nikdy nikomu o ničom nerozprávajte. Lebo potom bude každý chýbať.“"]}
+];
+
+/* ---------- DATA: SYMBOLY ---------- */
+const SYMS = [
+ {t:"Červená poľovnícka čiapka",d:"Kúpil ju za dolár. Je jeho štít aj znak, že je iný. Nosí ju šiltom dozadu, keď si ju nasadí, cíti sa istejšie. Na konci ju dá Phoebe a ona mu ju vráti na kolotoči – už ju nepotrebuje celkom pre seba, chráni ho pred dažďom."},
+ {t:"Kačice v Central Parku",d:"Kam idú, keď jazierko zamrzne? Holden sa pýta Spencera v duchu, taxikára aj Horwitza. Kačice sú on: niekto, kto nevie, kam ísť, a dúfa, že ho niekto „odvezie“ a postará sa oňho."},
+ {t:"Chytač v žite",d:"Nesprávne zapamätaný verš z Burnsovej básne. Holden chce chrániť deti pred pádom do priepasti, teda pred dospelosťou a stratou nevinnosti. Je to aj dôvod názvu knihy."},
+ {t:"Kolotoč a zlatý krúžok",d:"Opak chytača: Holden pochopí, že deti treba nechať riskovať – „ak spadnú, tak spadnú“. Kolotoč sa stále točí, ale ostáva rovnaký, ako múzeum. Prvý okamih, keď je Holden šťastný."},
+ {t:"Prírodovedné múzeum",d:"Všetko je za sklom a nič sa nemení – Eskimák stále chytá tie dve ryby. Holden by chcel, aby sa veci (a deti, Phoebe) nemenili."},
+ {t:"Allieho rukavica",d:"Básne zeleným atramentom. Znak smútku, ktorý Holden nespracoval. Stradlater ju nepochopí – sloh vraj nie je o tom, čo zadal."},
+ {t:"Nápisy na stenách",d:"Sprostý nápis zotiera, aby ho Phoebe nevidela. Ale nedá sa zotrieť všetko – nevinnosť sa nedá uchrániť naveky."},
+ {t:"Pád",d:"Antolini hovorí o páde, „ktorý sa nikdy neskončí“. Holden sa bojí, že zmizne. Súvisí s priepasťou v žite a s Jamesom Castlom, ktorý naozaj spadol."}
+];
+const THEMES = "Odcudzenie a osamelosť · strata nevinnosti a strach z dospievania · pokrytectvo („farizeji“) · smrť a smútok (Allie) · túžba po komunikácii (telefonáty, ktoré nikdy neprebehnú) · ochrana detí";
+
+const WHYS = [
+ {q:"Prečo Holden neodíde domov hneď, keď ho vyhodia?",a:"Rodičia ešte nevedia, že ho vyhodili (riaditeľ im mal poslať list), a do stredy nechce byť doma. Chce si „oddýchnuť“ v lacnom hoteli a doma sa zjaviť až na začiatku prázdnin, keď už list dostanú."},
+ {q:"Prečo sa Holden pobije so Stradlaterom?",a:"Kvôli Jane. Stradlater s ňou bol v aute Eda Bankyho a Holden sa bojí, že ju zneužil. Navyše Stradlater znevážil sloh o Allieho rukavici. Holden sa ho pokúsi udrieť, ale prehrá."},
+ {q:"Prečo Holden stále klame (Rudolf Schmidt, Jim Steele, nádor)?",a:"Sám hovorí, že je najstrašnejší klamár. Klamstvá mu pomáhajú vyhnúť sa skutočnému rozhovoru a ochrániť sa. Je to paradox: nenávidí farizejov, ale sám neustále hrá rolu."},
+ {q:"Prečo nespí so Sunny?",a:"Necíti sa na to, je mu jej ľúto (zelené šaty, ktoré si kúpila, mladá a nervózna). Chce sa len rozprávať – hľadá blízkosť, nie sex."},
+ {q:"Čo znamená, keď hovorí, že všetko je „farizejské“?",a:"Farizej je u Holdena človek, ktorý predstiera: Haas, Ossenburger, Sally, herci, Ernie. Je to jeho kritika sveta dospelých, ktorý je falošný."},
+ {q:"Prečo chce byť „chytačom v žite“?",a:"Chce chrániť deti pred pádom z „útesu“ – teda pred dospelosťou, pokrytectvom a smrťou (ako Allie a James Castle). Je to jediná vec, ktorú by fakt rád robil."},
+ {q:"Prečo Holden ujde od Antoliniho?",a:"Zobudí sa a Antolini ho v tme hladká po hlave. Holden to vníma ako sexuálny návrh („perverzní ksichti“). Ráno ale na Grand Central zapochybuje, či sa nemýlil a či to nebola len láskavosť."},
+ {q:"Prečo Holden nakoniec neodíde na Západ?",a:"Phoebe príde s kufrom, že ide s ním. Holden pochopí, že by ju tým zničil, a jeho úloha je zostať. Sľúbi jej, že pôjde domov – a naozaj pôjde."},
+ {q:"Prečo je Holden pri kolotoči šťastný?",a:"Vidí, že Phoebe je šťastná, a prvýkrát akceptuje, že ju musí nechať riskovať (zlatý krúžok). Prestáva chcieť všetkých „chytať“. Je to bod zlomu knihy."},
+ {q:"Prečo Holden stále volá Jane, ale nikdy sa nedovolá / nezavolá?",a:"Bojí sa, že Jane sa zmenila (Stradlater). Chce mať v pamäti tú Jane z leta, čo nechávala dámy v zadnom rade. Je to ďalší obraz toho, že nechce, aby sa veci menili."},
+ {q:"Prečo D. B. „robí zo seba prostitúta“?",a:"Lebo talentovaný spisovateľ (Tajná zlatá rybka) predal svoj talent filmu v Hollywoode. Holden film nenávidí – je to podľa neho falošné."},
+ {q:"Kde je Holden, keď rozpráva príbeh?",a:"V liečebni / sanatóriu (v Kalifornii, blízko Hollywoodu), kde ho lieči psychoanalytik. Kniha je retrospektíva o udalostiach spred roka."}
+];
+
+const FACTS = [
+ ["16 / 17","Holdenov vek počas deja / keď rozpráva"],
+ ["189 cm","Holdenova výška (v preklade); vlani vyrástol o 16,5 cm"],
+ ["4","počet predmetov, z ktorých prepadol (prešiel len z angliny)"],
+ ["1 dolár","poľovnícka čiapka, kúpená v New Yorku v deň straty kordov"],
+ ["4. 11. – 2. 12.","obdobie, keď v dejepise preberali Egypťanov"],
+ ["18. 7. 1946","Allie zomrel na leukémiu v Maine"],
+ ["13","Holdenov vek, keď Allie zomrel (rozbil okná v garáži)"],
+ ["20 / 90 $","za koľko predal písací stroj Woodruffovi / koľko stál"],
+ ["Rudolf Schmidt","Holdenovo falošné meno pre pani Morrowovú (vrátnik)"],
+ ["Jim Steele","falošné meno pred ženami zo Seattlu"],
+ ["5 / 15 $","Mauriceova cena: jedno číslo / do obeda; potom pýtal 10"],
+ ["22","koľko rokov Holden tvrdí Mauriceovi; izba 1222"],
+ ["10 $","dar mníškam"],
+ ["5 $","platňa Malá Shirley Beansová (Estelle Fletcherová)"],
+ ["≈ 50","na koľko kúskov sa rozbila platňa"],
+ ["8,85 $","Phoebine vianočné peniaze (65 centov minula)"],
+ ["12:15","„o štvrť na jednu“ – stretnutie pred Múzeom výtvarného umenia"],
+ ["Saxon Hall","súper v poslednom futbalovom zápase"],
+ ["Thomsenov vŕšok","odkiaľ Holden sleduje zápas"],
+ ["Agerstown","mesto pri Pencey (Pennsylvánia), hamburgery a kino"],
+ ["Ossenburgerovo krídlo","krídlo internátu, kde Holden býva"],
+ ["Edmont","hotel, kde sa ubytuje v New Yorku"],
+ ["Lavender bar","nočný klub v hoteli Edmont"],
+ ["Wicker bar","bar v hoteli Seton, stretnutie s Carlom Luceom o 10"],
+ ["Biltmore","stretnutie so Sally pod hodinami o druhej"],
+ ["Sutton Place","kde bývajú Antoliniovci"],
+ ["Norwalk (Connecticut)","kde sú rodičia na večierku"],
+ ["Gloucester (Massachusetts)","kam pozýva pani Morrowová"],
+ ["Massachusetts, Vermont","kam chce Holden utiecť so Sally"],
+ ["Benedict Arnold","Phoebina rola v školskej hre"],
+ ["Hazel Weatherfieldová","detektívka z Phoebiných príbehov"],
+ ["Wilhelm Stekel","psychoanalytik, ktorého cituje Antolini"],
+ ["Robert Burns","autor básne, z ktorej pochádza názov (stretne, nie chytí)"],
+ ["Isak Dinesen","Spomienky na Afriku – kniha, ktorú Holden číta v izbe"],
+ ["Ring Lardner","Holdenov obľúbený autor hneď po D. B."],
+ ["Tajná zlatá rybka","kniha poviedok D. B."],
+ ["„Dym ti stúpa do očí“","pieseň na kolotoči (aj „Ó Marie!“)"]
+];
+
+/* ---------- DATA: TESTY ---------- */
+const Q = {
+ easy:[
+  {q:"Kto napísal knihu Kto chytá v žite?",o:["J. D. Salinger","Ernest Hemingway","John Steinbeck","F. Scott Fitzgerald"],e:"Jerome David Salinger, kniha vyšla v roku 1951.",c:"úvod"},
+  {q:"Ako sa volá rozprávač?",o:["Holden Caulfield","Ward Stradlater","Robert Ackley","Carl Luce"],e:"Holden rozpráva v prvej osobe a priamo oslovuje čitateľa.",c:"1"},
+  {q:"Z ktorej školy Holdena vyhodili?",o:["Pencey","Elkton Hills","Whooton","Saxon Hall"],e:"Pencey v Agerstowne (Pennsylvánia). Elkton Hills a Whooton sú jeho predchádzajúce školy, Saxon Hall je súper vo futbale.",c:"1"},
+  {q:"Prečo Holdena vyhodili?",o:["Prepadol zo štyroch predmetov","Pobil sa so spolužiakom","Fajčil na internáte","Ukradol písací stroj"],e:"Prepadol zo 4 predmetov, prešiel len z angliny.",c:"1–2"},
+  {q:"V ktorom meste sa odohráva väčšina deja?",o:["New York","Chicago","Los Angeles","Boston"],e:"Holden odíde z Pencey do New Yorku, kde býva aj jeho rodina.",c:"8–25"},
+  {q:"Ako sa volá Holdenova mladšia sestra?",o:["Phoebe","Jane","Sally","Bernice"],e:"Phoebe má 10 rokov a je jediná, komu Holden naozaj verí.",c:"10, 21"},
+  {q:"Čo sa stalo s Holdenovým bratom Alliem?",o:["Zomrel na leukémiu","Odišiel do armády","Píše scenáre v Hollywoode","Vyskočil z okna"],e:"Allie zomrel na leukémiu. Do Hollywoodu odišiel D. B., z okna vyskočil James Castle.",c:"5"},
+  {q:"Čo robí Holdenov starší brat D. B.?",o:["Píše pre film v Hollywoode","Učí angličtinu","Je advokát","Študuje na Columbii"],e:"Holden hovorí, že D. B. tam „robí zo seba prostitúta“.",c:"1"},
+  {q:"Aký typický kus oblečenia Holden nosí?",o:["Červenú poľovnícku čiapku","Modrý šál","Kožené rukavice","Kovbojský klobúk"],e:"Kúpil ju za dolár v New Yorku a nosí ju šiltom dozadu.",c:"3"},
+  {q:"Na čo sa Holden opakovane pýta?",o:["Kam idú kačice z jazierka v Central Parku v zime","Prečo je zima taká dlhá","Kde býva Jane","Koľko stojí lístok do kina"],e:"Pýta sa na to taxikárov, myslí na to aj u Spencera.",c:"2, 9, 12"},
+  {q:"S kým ide Stradlater na rande?",o:["S Jane Gallagherovou","So Sally Hayesovou","So Selmou Thurmerovou","S Phoebe"],e:"Holdenova kamarátka z leta; preto sa potom pobijú.",c:"4"},
+  {q:"V akom ročnom období sa dej odohráva?",o:["Pred Vianocami, v zime","V lete","Na jar","Na jeseň počas žatvy"],e:"V decembri, vianočné prázdniny začínajú v stredu.",c:"1"},
+  {q:"Kde sa kniha (dej) končí?",o:["Pri kolotoči v Central Parku","Na stanici Grand Central","V byte Antoliniho","V Pencey"],e:"Holden sleduje Phoebe na kolotoči v daždi a je šťastný.",c:"25"},
+  {q:"Čím by chcel Holden byť?",o:["Tým, kto chytá deti v žite, aby nespadli do priepasti","Advokátom ako otec","Spisovateľom ako D. B.","Učiteľom angličtiny"],e:"Odtiaľ je názov knihy. Advokátom byť nechce, lebo by nevedel, či to nerobí len pre slávu.",c:"22"},
+  {q:"Koľko rokov má Holden počas deja?",o:["16","14","18","20"],e:"Počas deja 16, keď rozpráva, má 17.",c:"2"},
+  {q:"Odkiaľ Holden príbeh rozpráva?",o:["Z liečebne, kde ho lieči psychoanalytik","Z väzenia","Z novej školy na Západe","Z domu svojich rodičov"],e:"Na konci spomína psychoanalytika a to, že v septembri pôjde do novej školy.",c:"1, 26"}
+ ],
+ med:[
+  {q:"Aký predmet učil pán Spencer?",o:["Dejepis","Angličtinu","Telocvik","Matematiku"],e:"Spencer učil dejepis; angličtinu učil v Elkton Hills pán Antolini.",c:"1"},
+  {q:"Čo hovorí Spencer o živote?",o:["Život je zápas, ktorý sa má hrať podľa pravidiel","Život je krátky, treba si ho užiť","Život je škola","Život je divadlo"],e:"Holden si myslí, že je to zápas len pre tých na strane víťazov.",c:"2"},
+  {q:"O čom napísal Holden sloh pre Stradlatera?",o:["O Allieho bejzbalovej rukavici","O svojej izbe na internáte","O dome rodičov v New Yorku","O futbalovom zápase"],e:"Stradlater chcel opis izby alebo domu, Holden napísal o rukavici s básňami.",c:"5"},
+  {q:"Čím mal Allie popísanú rukavicu?",o:["Básňami zeleným atramentom","Menami spoluhráčov","Podpismi hráčov","Kresbami kačíc"],e:"Aby mal čo čítať, keď na ihrisku nič nerobil.",c:"5"},
+  {q:"Ako sa skončila bitka so Stradlaterom?",o:["Holden ležal na zemi a krvácal z nosa","Stradlater mal zlomenú ruku","Rozdelil ich Ackley","Holden Stradlatera zrazil"],e:"Stradlater si na neho sadol; Holden mal krv na pyžame aj župane.",c:"6"},
+  {q:"Čo Holden zakričal, keď v noci odchádzal z Pencey?",o:["„Spite sladko, debili!“","„Zbohom, farizeji!“","„Veľa šťastia!“","„Už sa nevrátim!“"],e:"Stavil sa, že zobudil celé poschodie. „Veľa šťastia“ naopak nenávidí.",c:"7"},
+  {q:"Ako sa Holden predstavil pani Morrowovej?",o:["Rudolf Schmidt","Jim Steele","Ernest Morrow","Ward Stradlater"],e:"Rudolf Schmidt sa volá vrátnik na internáte. Jim Steele je meno pre ženy zo Seattlu.",c:"8"},
+  {q:"Akú chorobu si Holden vymyslel pre pani Morrowovú?",o:["Malý nádor na mozgu","Tuberkulózu","Zlomenú ruku","Zápal pľúc"],e:"„Vyrežú mi ho za dve minútky.“",c:"8"},
+  {q:"Odkiaľ boli tri ženy v Lavender bare?",o:["Zo Seattlu","Z Bostonu","Z Chicaga","Z Kalifornie"],e:"Bernice, Marty a Laverne zo Seattlu vo Washingtone.",c:"10"},
+  {q:"Ako sa volá výťahár, ktorý Holdenovi dohodol prostitútku?",o:["Maurice","Horwitz","Ernie","Pete"],e:"Maurice potom Holdena aj zbije.",c:"13–14"},
+  {q:"Ako sa volala prostitútka?",o:["Sunny","Faith","Lillian","Valencia"],e:"Faith Cavendishová je striptérka, ktorej Holden volá; Lillian je bývalá D. B.; Valencia speváčka.",c:"13"},
+  {q:"Koľko peňazí daroval Holden mníškam?",o:["10 dolárov","5 dolárov","20 dolárov","1 dolár"],e:"Mníšky sa ho stále pýtali, či si to môže dovoliť.",c:"15"},
+  {q:"O akej hre sa Holden rozpráva s mníškou?",o:["Rómeo a Júlia","Hamlet","Macbeth","Kráľ Lear"],e:"Najviac mu bolo ľúto Mercutia. Hamleta videl s Olivierom.",c:"15"},
+  {q:"Akú platňu kúpil Holden pre Phoebe?",o:["Malá Shirley Beansová","Dym ti stúpa do očí","Ó Marie!","Keď raz človek niekde v žite"],e:"Je o dievčatku, ktorému vypadli predné zuby; spieva ju Estelle Fletcherová.",c:"16"},
+  {q:"Čo sa stalo s platňou pre Phoebe?",o:["Rozbila sa v parku","Ukradol ju Maurice","Nechal ju v taxíku","Dal ju Sally"],e:"Spadla mu v Central Parku a rozbila sa asi na 50 kúskov.",c:"20"},
+  {q:"Kam chcel Holden utiecť so Sally?",o:["Do Massachusetts a Vermontu","Do Kalifornie","Do Kanady","Do Európy"],e:"Žili by v chatke pri potoku; Sally odmietne.",c:"17"},
+  {q:"Kde sa Holden stretne s Carlom Luceom?",o:["Vo Wicker bare","V Ernieho klube","V Lavender bare","V Biltmore"],e:"Wicker bar je v hoteli Seton.",c:"19"},
+  {q:"Akú rolu hrá Phoebe v školskej hre?",o:["Benedicta Arnolda","Júliu","Pannu Máriu","Hazel Weatherfieldovú"],e:"„Mám prakticky najväčšiu rolu.“ Hazel je postava z jej príbehov.",c:"21"},
+  {q:"Kto bol James Castle?",o:["Chlapec z Elkton Hills, ktorý vyskočil z okna","Holdenov spolubývajúci","Učiteľ dejepisu","Phoebin spolužiak"],e:"Mal na sebe Holdenov rolák.",c:"22"},
+  {q:"Prečo Holden v noci ujde od Antoliniho?",o:["Zobudí sa a Antolini ho hladká po hlave","Antolini ho vyhodí","Prídu Holdenovi rodičia","Antolini mu povie, že zavolá otcovi"],e:"Holden je zošokovaný a vyhovorí sa na kufre na stanici.",c:"24"},
+  {q:"Čo plánuje Holden v posledných kapitolách?",o:["Odísť na Západ a hrať hluchonemého","Ísť do armády","Vrátiť sa do Pencey","Ísť k Jane do Maine"],e:"Tankoval by benzín a nikto by s ním nemusel hovoriť.",c:"25"},
+  {q:"Komu dá Holden svoju poľovnícku čiapku?",o:["Phoebe","Allieho hrobu","Sunny","Antolinimu"],e:"Dá jej ju, keď od nej odchádza; ona mu ju na kolotoči vráti na hlavu.",c:"23, 25"}
+ ],
+ hard:[
+  {q:"S ktorou školou hrala Pencey posledný futbalový zápas?",o:["Saxon Hall","Elkton Hills","Whooton","McBurneyho škola"],e:"S McBurneyho školou mali mať šermiari stretnutie v New Yorku.",c:"1"},
+  {q:"Odkiaľ Holden sledoval zápas?",o:["Z Thomsenovho vŕšku","Z tribúny pri rodičoch","Z okna izby","Vôbec ho nesledoval, bol u Spencera"],e:"Stál hore na Thomsenovom vŕšku, lebo sa práve vrátil zo šermu.",c:"1"},
+  {q:"Prečo šermiari s Holdenom vo vlaku nehovorili?",o:["Holden nechal kordy a výstroj v metre","Holden prehral rozhodujúci zápas","Holden zaspal a zmeškali vlak","Holden sa pohádal s trénerom"],e:"Ako kapitán zabudol všetky kordy v metre, takže zápas nebol.",c:"1"},
+  {q:"Kedy v dejepise preberali Egypťanov?",o:["Od 4. novembra do 2. decembra","Celý október","Od septembra do Vianoc","Len jeden týždeň v decembri"],e:"Spencer to hovorí, keď mu ide čítať jeho písomku.",c:"2"},
+  {q:"Akú knihu číta Holden v izbe, keď príde Ackley?",o:["Spomienky na Afriku (Isak Dinesen)","Zbohom zbraniam (Hemingway)","Rodákov návrat (Hardy)","Tajná zlatá rybka (D. B.)"],e:"Myslel, že to bude nuda, ale bola to dobrá kniha. Hemingwaya neznáša.",c:"3"},
+  {q:"Čo povedal Holden o svojej čiapke, keď Ackley tvrdil, že je na jelene?",o:["„V tejto čiapke sa strieľajú ľudia.“","„Je to šermiarska čiapka.“","„Je od Allieho.“","„Nosí sa na lov kačíc.“"],e:"Ackley: „V takejto čiapke sa strieľajú jelene.“",c:"3"},
+  {q:"Kedy a kde zomrel Allie?",o:["18. júla 1946 v Maine","Na Vianoce 1949 v New Yorku","V lete 1945 v Pennsylvánii","18. decembra 1946 v Kalifornii"],e:"Holden mal vtedy 13 rokov.",c:"5"},
+  {q:"Čo robila Jane pri dáme?",o:["Nechávala všetky dámy v zadnom rade","Vždy podvádzala","Hrala len čiernymi","Nikdy nevyhrala"],e:"Páčilo sa jej, keď tam stáli všetky pekne v rade. Holden sa na to Stradlatera pýta.",c:"4, 6, 11"},
+  {q:"Ako sa Holden s Jane zoznámil?",o:["Jej doberman chodil na ich trávnik","Na tanečnej zábave","V škole Pencey","Cez Sally Hayesovú"],e:"Leto v Maine, boli susedia.",c:"4, 11"},
+  {q:"V koho aute boli Stradlater s Jane?",o:["Eda Bankyho, trénera basketbalu","Mala Brossarda","Stradlaterovho otca","Pána Cudahyho"],e:"Stradlater je Bankyho miláčik, lebo hrá centra.",c:"6"},
+  {q:"Komu a za koľko Holden predal písací stroj?",o:["Frederickovi Woodruffovi za 20 dolárov","Ackleymu za 10 dolárov","Stradlaterovi za 90 dolárov","Malovi Brossardovi za 50 dolárov"],e:"Stroj stál asi 90 dolárov.",c:"7"},
+  {q:"Čo trápilo Holdena pri balení?",o:["Nové korčule od mamy, ktoré kúpila zlé","Že nechal v izbe Allieho rukavicu","Že nemal peniaze na vlak","Že Ackley čítal jeho listy"],e:"Chcel pretekárske „nože“, mama kúpila hokejové „kanady“.",c:"7"},
+  {q:"Kto bol Rudolf Schmidt?",o:["Vrátnik na internáte v Pencey","Holdenov spolužiak","Taxikár v New Yorku","Poslíček v Edmonte"],e:"Holden si jeho meno požičal pre pani Morrowovú.",c:"8"},
+  {q:"Čo tvrdil taxikár Horwitz o rybách v zamrznutom jazere?",o:["Prijímajú potravu cez póry","Odplávajú do mora","Spia na dne","Odvezú ich do zoo"],e:"„Tak sú už stvorené.“ Holden sa však pýtal na kačice.",c:"12"},
+  {q:"Kto je Lillian Simmonsová?",o:["Bývalá dievčina D. B.","Matka Sally","Speváčka v Ernieho klube","Učiteľka Phoebe"],e:"Príde k Holdenovi s námorníkom; Holden sa vyhovorí a odíde.",c:"12"},
+  {q:"Akú cenu povedal Maurice na začiatku?",o:["5 dolárov jedno číslo, 15 do obeda","10 dolárov jedno číslo","20 dolárov celá noc","2 doláre"],e:"Potom tvrdil, že je to desať, a vypýtali ďalších päť.",c:"13–14"},
+  {q:"Akú výhovorku si vymyslel Holden pred Sunny?",o:["Mal operáciu „na klavichorde“","Je chorý na chrípku","Má priateľku","Je mu len 16"],e:"Absurdné klamstvo – chcel sa len rozprávať.",c:"13"},
+  {q:"Čo Holdena na Sunny najviac ubíjalo?",o:["Jej zelené šaty, ktoré zavesil do skrine","Že fajčila","Že bola staršia","Že sa smiala"],e:"Predstavoval si, ako si ich kupovala v obchode a nikto nevedel, že je prostitútka.",c:"13"},
+  {q:"Kde sa mal Holden stretnúť so Sally?",o:["O druhej v Biltmore pod hodinami","O desiatej vo Wicker bare","V Radio City na klzisku","Pred múzeom o štvrť na jednu"],e:"Potom išli na matiné s Luntovcami.",c:"15"},
+  {q:"Kto spieva pieseň Malá Shirley Beansová?",o:["Estelle Fletcherová","Valencia","Sunny","Lillian Simmonsová"],e:"Holden hovorí, že ju spieva „dixíkovo“ a bordelovo, nie sladko.",c:"16"},
+  {q:"Čo si spieval chlapček na ulici v nedeľu?",o:["„Keď raz človek niekde v žite chytí človeka“","„Ó Marie!“","„Dym ti stúpa do očí“","„Malá Shirley Beansová“"],e:"Zdvihlo to Holdenovi náladu.",c:"16"},
+  {q:"Ako znie správne Burnsov verš podľa Phoebe?",o:["Keď raz človek niekde v žite stretne človeka","Keď raz človek niekde v žite chytí človeka","Keď raz človek niekde v žite stratí človeka","Keď raz človek niekde v žite hľadá človeka"],e:"„Ale mala pravdu. Naozaj je tam, že stretne človeka.“",c:"22"},
+  {q:"Čo sa Holdenovi najviac páčilo na prírodovednom múzeu?",o:["Že sa tam nič nemení, mení sa len človek","Že tam bolo teplo","Že tam nikto nechodil","Že tam pracoval Allie"],e:"Eskimák stále chytá tie isté dve ryby. Holden dnu nakoniec ani nevojde.",c:"16"},
+  {q:"Koľko peňazí požičala Phoebe Holdenovi?",o:["8,85 dolára","5 dolárov","10 dolárov","15 dolárov"],e:"Osem dolárov a osemdesiatpäť centov; 65 centov už minula.",c:"23"},
+  {q:"Kde boli rodičia, keď Holden prišiel v noci domov?",o:["Na večierku v Norwalku v Connecticute","V Kalifornii","V Maine","V divadle na Broadwayi"],e:"Otec potom musí letieť do Kalifornie.",c:"21"},
+  {q:"Čo je na papieri, ktorý dá Antolini Holdenovi?",o:["Citát Stekela o nezrelom a zrelom človeku","Adresa psychoanalytika","Báseň Roberta Burnsa","Odporúčací list do novej školy"],e:"„Známkou nezrelého človeka je, že chce za niečo vznešene zomrieť, kým známkou zrelého človeka je, že chce pre niečo pokorne žiť.“",c:"24"},
+  {q:"Čo urobil Antolini po smrti Jamesa Castla?",o:["Zdvihol ho a zakryl svojím kabátom","Zavolal políciu na spolužiakov","Odišiel zo školy","Napísal o tom do novín"],e:"Bol jediný, kto sa k nemu priblížil.",c:"24"},
+  {q:"O čom rozprával Richard Kinsella na hodine ústneho prejavu?",o:["O farme svojho otca vo Vermonte (a odbočoval)","O vojne","O bejzbale","O Egypťanoch"],e:"Trieda kričala „K veci!“ a profesor Vinson mu dal zlú známku.",c:"24"},
+  {q:"Kde sa Holden dohodol stretnúť s Phoebe v pondelok?",o:["O štvrť na jednu pred Múzeom výtvarného umenia","O druhej v Biltmore","O deviatej na Grand Central","Pri kolotoči o dvanástej"],e:"Napísal jej lístok, že jej vráti vianočné peniaze.",c:"25"},
+  {q:"Čím bol napísaný nápis v hrobke s múmiami?",o:["Červenou pastelkou","Kriedou","Vyrytý nožom","Atramentom"],e:"Nápis na školskom schodisku bol vyrytý nožom, ten v múzeu červenou pastelkou.",c:"25"},
+  {q:"Na akom koni sedí Phoebe na kolotoči?",o:["Na veľkom, starom, ošklbanom hnedákovi","Na bielom koníkovi","Na čiernom žrebcovi","Na drevenej labuti"],e:"Kolotoč hral „Dym ti stúpa do očí“.",c:"25"},
+  {q:"Kto Holdenovi na konci chýba?",o:["Stradlater, Ackley, ba aj Maurice","Len Allie","Len Jane","Nikto, je rád, že je preč"],e:"„Nikdy nikomu o ničom nerozprávajte. Lebo potom bude každý chýbať.“",c:"26"},
+  {q:"Kto povedal: „Si čudný chlapec, veľmi čudný“?",o:["Pán Antolini","Pán Spencer","Stradlater","Carl Luce"],e:"V noci, keď Holden odchádza z jeho bytu.",c:"24"},
+  {q:"Čím sa preslávil Marsalla?",o:["Pustil vetry počas Ossenburgerovej reči v kaplnke","Vyhral zápas so Saxon Hallom","Ukradol Holdenovi kabát","Hral na klavíri v Ernieho klube"],e:"Div to nevyrazilo strechu; riaditeľ Thurmer to potom riešil.",c:"3"},
+  {q:"Čo prosí Holden Allieho, keď prechádza cez ulice na Piatej Avenue?",o:["Aby nedovolil, aby zmizol","Aby mu odpustil","Aby sa vrátil","Aby ochránil Phoebe"],e:"„Allie, nedovoľ, aby som zmizol.“",c:"25"}
+ ]
+};
+
+/* ---------- RENDER: postavy, kapitoly, symboly, fakty ---------- */
+const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+document.getElementById("chars").innerHTML = CHARS.map(g =>
+  `<div class="group"><h3>${g.g}</h3><div class="cards">${g.items.map(c=>
+    `<article class="card"><div class="role">${esc(c.r)}</div><h4>${esc(c.n)}</h4><p>${esc(c.d)}</p></article>`).join("")}</div></div>`).join("");
+
+const chWrap = document.getElementById("chapters");
+chWrap.innerHTML = CH.map(c =>
+ `<details class="ch" data-text="${esc((c.t+" "+c.s+" "+c.x.join(" ")).toLowerCase())}">
+   <summary><span class="n">${String(c.n).padStart(2,"0")}</span><span class="t">${esc(c.t)}</span><span class="d">${c.d}</span></summary>
+   <div class="ch-body"><p>${esc(c.s)}</p>
+   <div class="det"><b class="lbl">Na písomku</b><ul>${c.x.map(i=>`<li>${esc(i)}</li>`).join("")}</ul></div></div>
+ </details>`).join("");
+
+const search = document.getElementById("chSearch");
+search.addEventListener("input", () => {
+  const v = search.value.trim().toLowerCase(); let hits = 0;
+  chWrap.querySelectorAll("details.ch").forEach(d => {
+    const m = !v || d.dataset.text.includes(v);
+    d.hidden = !m; if (m) hits++;
+    d.open = !!v && m;
+  });
+  document.getElementById("noHits").hidden = hits > 0;
+});
+const tAll = document.getElementById("toggleAll");
+tAll.addEventListener("click", () => {
+  const all = [...chWrap.querySelectorAll("details.ch:not([hidden])")];
+  const open = all.some(d => !d.open);
+  all.forEach(d => d.open = open);
+  tAll.textContent = open ? "Zavrieť všetky" : "Otvoriť všetky";
+});
+
+document.getElementById("symbols").innerHTML =
+  `<p><b>Hlavné témy:</b> ${THEMES}</p>` +
+  `<div class="cards">${SYMS.map(s=>`<article class="card"><h4>${esc(s.t)}</h4><p>${esc(s.d)}</p></article>`).join("")}</div>`;
+document.getElementById("whys").innerHTML = WHYS.map(w=>`<details><summary>${esc(w.q)}</summary><p>${esc(w.a)}</p></details>`).join("");
+document.getElementById("factRows").innerHTML = FACTS.map(f=>`<tr><td>${esc(f[0])}</td><td>${esc(f[1])}</td></tr>`).join("");
+
+/* ---------- TESTY ---------- */
+const LEVELS = [
+  {k:"easy",n:"Základné",d:"Kto, kde, čo – základ deja",b:"●○○"},
+  {k:"med",n:"Stredné",d:"Kľúčové scény a postavy",b:"●●○"},
+  {k:"hard",n:"Ťažké",d:"Detaily ako na skutočnej písomke",b:"●●●"},
+  {k:"mix",n:"Mix 20",d:"Náhodný výber zo všetkých",b:"⟳"}
+];
+const shuffle = a => { a = a.slice(); for (let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+let cur = "easy", qs = [], ans = {};
+
+const lvlEl = document.getElementById("levels");
+lvlEl.innerHTML = LEVELS.map(l=>`<button class="lvl" type="button" data-k="${l.k}" aria-pressed="false"><span class="bars">${l.b}</span><b>${l.n}</b><span>${l.d} · ${l.k==="mix"?20:Q[l.k].length} otázok</span></button>`).join("");
+lvlEl.addEventListener("click", e => { const b = e.target.closest(".lvl"); if (b) start(b.dataset.k); });
+
+function build(k){
+  let base = k==="mix" ? shuffle([...Q.easy,...Q.med,...Q.hard]).slice(0,20) : Q[k];
+  return base.map(x => { const opts = shuffle(x.o.map((t,i)=>({t,ok:i===0}))); return {...x, opts}; });
+}
+function start(k, list){
+  cur = k; ans = {};
+  qs = list || build(k);
+  try { localStorage.setItem("kcvz-level", k); } catch(e){}
+  lvlEl.querySelectorAll(".lvl").forEach(b=>b.setAttribute("aria-pressed", b.dataset.k===k));
+  render();
+}
+function render(){
+  const L = document.getElementById("qlist");
+  L.innerHTML = qs.map((x,i)=>`
+   <div class="q" id="q${i}">
+     <div class="qh"><span class="num">${i+1}.</span><span class="txt">${esc(x.q)}</span><span class="ref">kap. ${x.c}</span></div>
+     <div class="opts">${x.opts.map((o,j)=>`<button class="opt" type="button" data-q="${i}" data-o="${j}">${esc(o.t)}</button>`).join("")}</div>
+   </div>`).join("");
+  document.getElementById("doneBox").hidden = true;
+  score();
+}
+document.getElementById("qlist").addEventListener("click", e => {
+  const b = e.target.closest(".opt"); if (!b) return;
+  const i = +b.dataset.q, j = +b.dataset.o; if (ans[i] !== undefined) return;
+  const x = qs[i]; const ok = x.opts[j].ok; ans[i] = ok;
+  const box = document.getElementById("q"+i);
+  box.classList.add(ok ? "is-ok" : "is-bad");
+  box.querySelectorAll(".opt").forEach((btn,k)=>{ btn.disabled = true;
+    if (x.opts[k].ok) btn.classList.add("correct"); else if (k===j) btn.classList.add("wrong"); });
+  const ex = document.createElement("div"); ex.className = "expl";
+  ex.innerHTML = (ok ? '<b class="ok">Správne.</b> ' : '<b class="no">Nie.</b> Správne je: <b>'+esc(x.opts.find(o=>o.ok).t)+'</b>. ') + esc(x.e);
+  box.appendChild(ex);
+  score();
+});
+function score(){
+  const tot = qs.length, done = Object.keys(ans).length, ok = Object.values(ans).filter(Boolean).length;
+  document.getElementById("sOk").textContent = ok;
+  document.getElementById("sTot").textContent = tot;
+  document.getElementById("mOk").style.width = (tot? ok/tot*100:0)+"%";
+  document.getElementById("mBad").style.width = (tot? (done-ok)/tot*100:0)+"%";
+  document.getElementById("btnRetryWrong").disabled = !(done && done>ok);
+  const d = document.getElementById("doneBox");
+  if (done === tot && tot){
+    const pct = Math.round(ok/tot*100);
+    const msg = pct>=90 ? "Výborne. Toto vyzerá, akoby si knihu čítal." : pct>=70 ? "Dobre. Prejdi si chybné otázky a kapitoly, na ktoré odkazujú." : "Ešte nie. Prečítaj si kapitoly pri chybných otázkach a skús znova.";
+    d.innerHTML = `<h3>${ok} z ${tot} · ${pct} %</h3><p>${msg}</p>`;
+    d.hidden = false;
+  } else d.hidden = true;
+}
+document.getElementById("btnReset").addEventListener("click", ()=>start(cur));
+document.getElementById("btnRetryWrong").addEventListener("click", ()=>{
+  const wrong = qs.filter((x,i)=>ans[i]===false).map(x=>({...x, opts: shuffle(x.opts)}));
+  if (wrong.length) start(cur, wrong);
+});
+let saved = "easy"; try { saved = localStorage.getItem("kcvz-level") || "easy"; } catch(e){}
+start(Q[saved] || saved==="mix" ? saved : "easy");
+
+/* ---------- ROUTING ---------- */
+const VIEWS = ["prehlad","postavy","kapitoly","symboly","fakty","testy"];
+function route(){
+  const h = location.hash.replace("#","");
+  const v = VIEWS.includes(h) ? h : "prehlad";
+  VIEWS.forEach(n => document.getElementById("v-"+n).hidden = n!==v);
+  document.querySelectorAll("nav.tabs a").forEach(a => a.getAttribute("href")==="#"+v ? a.setAttribute("aria-current","page") : a.removeAttribute("aria-current"));
+}
+window.addEventListener("hashchange", () => { route(); window.scrollTo({top:0}); });
+route();
+</script>
+
+</body></html>
