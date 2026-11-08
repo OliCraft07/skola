@@ -1,45 +1,40 @@
 <!doctype html>
-<html lang="sk">
+<html lang="sk" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="color-scheme" content="light dark">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0D0D0F">
 <title>Príprava na písomky</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Source+Sans+3:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700&display=swap">
 <style>
-/* Vzhľad: zošit s rozpisom, nie dashboard. Papierové pozadie, čierny atrament, jedna červená ako červené pero učiteľa.
-   Žiadne karty ani štítky: každá položka je riadok s dátumom vľavo, oddelený linkou. Predmety majú vlastnú farbu bodky. */
+/* Jeden tmavý systém, jedno písmo, jedna žltá na dôležité veci (blížiaca sa písomka, zameranie). Žiadne karty:
+   zoznam je tabuľka riadkov s dátumom vľavo. Farba predmetu je malý štvorček pri jeho názve. */
 :root {
-  --bg: #F4F0E6;
-  --ink: #1E1C17;
-  --muted: #6B6556;
-  --rule: #D9D2C0;
-  --accent: #B23A1C;
-  --mark: #F6DE8D;
-  --sl: 38%;   /* svetlosť farby predmetu */
-  --serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
-  --sans: 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', sans-serif;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #16150F; --ink: #EDE7D6; --muted: #A39B88; --rule: #2F2C22;
-    --accent: #EE8A66; --mark: #5C4A12; --sl: 68%;
-    color-scheme: dark;
-  }
+  --bg: #0D0D0F;
+  --raise: #141417;
+  --ink: #EAEAEC;
+  --muted: #8E8E96;
+  --rule: #232328;
+  --edge: #313138;
+  --accent: #F5C542;
+  --mark: #5B4A12;
+  --font: 'Schibsted Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-html { -webkit-text-size-adjust: 100%; }
-body { margin: 0; background: var(--bg); color: var(--ink); font: 400 17px/1.55 var(--sans); }
+html { -webkit-text-size-adjust: 100%; background: var(--bg); }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 17px/1.5 var(--font); }
 body::before {
   content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
   z-index: 10; background: var(--bg);
 }
 .page {
-  max-width: 760px; margin: 0 auto; padding-block: 56px 90px;
+  max-width: 720px; margin: 0 auto; padding-block: 44px 90px;
   padding-left: max(20px, env(safe-area-inset-left, 0px));
   padding-right: max(20px, env(safe-area-inset-right, 0px));
 }
@@ -47,102 +42,113 @@ button, input { font: inherit; color: inherit; }
 button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 /* hlavička */
-.today { margin: 0 0 6px; color: var(--muted); font-size: .95rem; }
-h1 {
-  margin: 0 0 34px; font: 400 clamp(3rem, 12vw, 5.4rem)/.95 var(--serif); letter-spacing: -.015em; text-wrap: balance;
-}
-h1 em { font-style: italic; color: var(--accent); }
+.top { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 26px; }
+h1 { margin: 0; font: 700 clamp(1.9rem, 7vw, 2.7rem)/1.04 var(--font); letter-spacing: -.035em; text-wrap: balance; }
+.today { color: var(--muted); font-size: .9rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
 
 /* hľadanie a filter */
-.ctl {
-  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 9; background: var(--bg);
-  padding: 8px 0 0;
-}
+.ctl { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 9; background: var(--bg); padding: 6px 0 12px; }
 .search { position: relative; display: block; }
 .search input {
-  width: 100%; border: 0; border-bottom: 2px solid var(--ink); border-radius: 0; background: transparent;
-  padding: 12px 40px 12px 0; font-size: 1.25rem; min-height: 52px; -webkit-appearance: none; appearance: none;
+  width: 100%; height: 50px; padding: 0 46px 0 15px; background: var(--raise); border: 1px solid var(--edge);
+  border-radius: 8px; font-size: 1rem; -webkit-appearance: none; appearance: none;
 }
 .search input::placeholder { color: var(--muted); opacity: 1; }
 .search input::-webkit-search-cancel-button { display: none; }
-.search input:focus-visible { outline: 0; border-bottom-color: var(--accent); }
-.clear {
-  position: absolute; right: 0; top: 50%; transform: translateY(-50%); width: 40px; height: 40px;
-  border: 0; background: none; color: var(--muted); font-size: 1.5rem; line-height: 1; cursor: pointer;
+.search input:focus-visible { outline: 0; border-color: var(--accent); }
+.key {
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%); pointer-events: none;
+  min-width: 22px; text-align: center; padding: 2px 6px; border: 1px solid var(--edge); border-radius: 4px; color: var(--muted); font-size: .78rem;
 }
-.clear:hover { color: var(--accent); }
+@media (hover: none) { .key { display: none; } }
+.search input:not(:placeholder-shown) ~ .key { display: none; }
+.clear {
+  position: absolute; right: 3px; top: 50%; transform: translateY(-50%); width: 44px; height: 44px;
+  border: 0; background: none; color: var(--muted); font-size: 1.4rem; line-height: 1; cursor: pointer;
+}
+.clear:hover { color: var(--ink); }
 .search input:placeholder-shown ~ .clear { display: none; }
 
-.meta { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0 20px; padding: 6px 0 10px; border-bottom: 1px solid var(--rule); }
-.subj { display: flex; flex-wrap: wrap; gap: 0 20px; }
+.meta { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px 16px; margin-top: 12px; }
+.meta:has(.subj[hidden]) { margin-top: 8px; justify-content: flex-end; }
+.subj { display: flex; flex-wrap: wrap; gap: 8px; }
 .subj button {
-  display: inline-flex; align-items: center; gap: 7px; border: 0; background: none; cursor: pointer;
-  padding: 10px 0 8px; color: var(--muted); font-weight: 600; font-size: .95rem; min-height: 40px;
-  border-bottom: 2px solid transparent; margin-bottom: -1px;
+  display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 13px; cursor: pointer;
+  background: transparent; border: 1px solid var(--edge); border-radius: 6px; color: var(--muted); font-weight: 500; font-size: .92rem;
 }
-.subj button:hover { color: var(--ink); }
-.subj button[aria-pressed="true"] { color: var(--ink); border-bottom-color: var(--accent); }
-.subj sup { font-weight: 400; font-size: .72rem; color: var(--muted); }
-.count { color: var(--muted); font-size: .88rem; font-variant-numeric: tabular-nums; }
+.subj button:hover { color: var(--ink); border-color: var(--muted); }
+.subj button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+.subj button sup { font-size: .72rem; font-weight: 400; opacity: .7; }
+.count { color: var(--muted); font-size: .85rem; font-variant-numeric: tabular-nums; }
 
 /* subjekt: farba z odtieňa --h */
-.sj { color: hsl(var(--h) 55% var(--sl)); font-weight: 600; }
-.dot { width: .62em; height: .62em; border-radius: 50%; background: hsl(var(--h) 55% var(--sl)); flex: none; display: inline-block; }
+.sq { width: 8px; height: 8px; border-radius: 1px; background: hsl(var(--h) 62% 62%); flex: none; display: inline-block; }
+.sj { display: inline-flex; align-items: center; gap: 8px; color: hsl(var(--h) 62% 70%); font-weight: 500; }
 
 /* zoznam */
-.list { border-top: 2px solid var(--ink); margin-top: 0; }
+.list { border-top: 1px solid var(--edge); }
 .row {
-  display: grid; grid-template-columns: 116px minmax(0, 1fr) 28px; gap: 4px 24px; align-items: start;
-  padding: 24px 0 26px; border-bottom: 1px solid var(--rule); color: inherit; text-decoration: none; min-width: 0;
+  display: grid; grid-template-columns: 84px minmax(0, 1fr) 22px; gap: 0 20px; align-items: start;
+  padding: 20px 0 21px; border-bottom: 1px solid var(--rule); color: inherit; text-decoration: none; min-width: 0;
 }
-.when { display: grid; gap: 2px; align-content: start; padding-top: 3px; }
-.when b { font: 400 2.1rem/1 var(--serif); letter-spacing: -.01em; font-variant-numeric: lining-nums; white-space: nowrap; }
-.when span { color: var(--muted); font-size: .88rem; }
-.row.hot .when b, .row.hot .when span { color: var(--accent); }
-.row.hot .when span { font-weight: 600; }
-.main { min-width: 0; display: grid; gap: 6px; }
-.row h2 { margin: 0; font: 400 clamp(1.6rem, 5vw, 2.05rem)/1.12 var(--serif); letter-spacing: -.005em; overflow-wrap: anywhere; text-wrap: balance; }
-.kind { display: flex; align-items: center; gap: 8px; font-size: .9rem; color: var(--muted); }
-.kind .sj { display: inline-flex; align-items: center; gap: 7px; }
-.desc { margin: 2px 0 0; color: var(--muted); max-width: 56ch; overflow-wrap: anywhere; }
-.hit { margin: 0; font-size: .86rem; color: var(--muted); }
-.arrow { justify-self: end; padding-top: 6px; font: 400 1.5rem/1 var(--serif); color: var(--muted); }
-a.row:hover h2 { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 6px; }
+.when { display: grid; gap: 1px; align-content: start; padding-top: 2px; font-variant-numeric: tabular-nums; }
+.when b { font-weight: 700; font-size: 1.12rem; line-height: 1.25; letter-spacing: -.01em; white-space: nowrap; }
+.when span { color: var(--muted); font-size: .8rem; line-height: 1.35; }
+.row.hot .when b { color: var(--accent); }
+.row.hot .when span { color: var(--accent); font-weight: 600; }
+.main { min-width: 0; display: grid; gap: 5px; }
+.row h2 { margin: 0; font: 600 1.28rem/1.22 var(--font); letter-spacing: -.02em; overflow-wrap: anywhere; text-wrap: balance; }
+.row h2 span {
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+  padding-bottom: 2px;
+}
+.kind { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; font-size: .85rem; color: var(--muted); }
+.desc {
+  margin: 2px 0 0; color: var(--muted); font-size: .94rem; max-width: 58ch; overflow-wrap: anywhere;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden;
+}
+.hit { margin: 2px 0 0; font-size: .82rem; color: var(--muted); }
+.arrow { justify-self: end; padding-top: 3px; color: var(--muted); font-size: 1.25rem; line-height: 1.2; }
+a.row:hover h2 span { background-size: 100% 1px; }
 a.row:hover .arrow { color: var(--accent); }
 @media (prefers-reduced-motion: no-preference) {
-  .arrow { transition: transform .15s ease, color .15s ease; }
+  .row h2 span { transition: background-size .28s ease; }
+  .arrow { transition: transform .16s ease, color .16s ease; }
   a.row:hover .arrow { transform: translateX(4px); }
+  a.row:active .arrow { transform: translateX(8px); }
 }
-.row.soon { cursor: default; }
 .row.soon h2, .row.soon .desc { color: var(--muted); }
-mark { background: var(--mark); color: inherit; padding: 0 2px; border-radius: 2px; }
+mark { background: var(--mark); color: var(--ink); padding: 0 2px; border-radius: 2px; }
 
-.empty { padding: 44px 0 20px; color: var(--muted); font-size: 1.1rem; }
+.empty { padding: 40px 0 16px; color: var(--muted); }
 .empty b { color: var(--ink); font-weight: 600; }
-.empty button { margin-left: 6px; border: 0; background: none; padding: 6px 0; color: var(--accent); font-weight: 600; text-decoration: underline; cursor: pointer; }
-.foot { margin: 40px 0 0; color: var(--muted); font-size: .85rem; }
+.empty button { margin-left: 8px; border: 0; background: none; padding: 8px 0; color: var(--accent); font-weight: 600; text-decoration: underline; cursor: pointer; }
+.foot { margin: 36px 0 0; color: var(--muted); font-size: .82rem; }
 
-@media (max-width: 600px) {
-  .page { padding-top: 36px; }
-  .row { grid-template-columns: minmax(0, 1fr) 20px; gap: 8px 12px; padding: 20px 0 22px; }
-  .when { grid-column: 1 / -1; display: flex; align-items: baseline; gap: 12px; padding-top: 0; }
-  .when b { font-size: 1.7rem; }
-  .arrow { grid-column: 2; grid-row: 2; padding-top: 3px; }
-  .main { grid-column: 1; grid-row: 2; }
+@media (max-width: 520px) {
+  .page { padding-top: 30px; }
+  .row { grid-template-columns: 72px minmax(0, 1fr) 18px; gap: 0 14px; }
+  .row h2 { font-size: 1.18rem; }
+  .today { font-size: .82rem; }
+  /* filter predmetov v jednom riadku, ktorý sa dá posúvať prstom */
+  .subj { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: -20px; padding-inline: 20px; width: calc(100% + 40px); }
+  .subj::-webkit-scrollbar { display: none; }
+  .subj button { flex: none; }
 }
 </style>
 </head>
 <body>
 <div class="page">
-  <header>
-    <p class="today" id="today"></p>
-    <h1>Príprava na <em>písomky</em></h1>
+  <header class="top">
+    <h1>Príprava na písomky</h1>
+    <span class="today" id="today"></span>
   </header>
 
   <div class="ctl">
     <label class="search">
       <span hidden>Hľadať</span>
       <input id="q" type="search" placeholder="Hľadať písomku, autora, dielo…" autocomplete="off" autocapitalize="off" spellcheck="false" aria-controls="list">
+      <span class="key" aria-hidden="true">/</span>
       <button class="clear" id="clear" type="button" aria-label="Vymazať hľadanie">×</button>
     </label>
     <div class="meta">
@@ -160,38 +166,38 @@ mark { background: var(--mark); color: inherit; padding: 0 2px; border-radius: 2
 <script>
 /* ---------- MATERIÁLY ----------
    Nový materiál = jeden objekt v poli TOPICS. Súbor dáš do priečinka predmetu (napr. slovencina/) a sem pridáš:
-     subject – názov predmetu; z neho sa sám vytvorí filter (zobrazí sa, keď sú predmety aspoň dva) a farba bodky
-     title   – nadpis
+     subject – názov predmetu; z neho sa sám vytvorí filter (zobrazí sa, keď sú predmety aspoň dva) a farba štvorčeka
+     title   – nadpis (bez pomlčky; autora a druh daj do kind)
      desc    – 1 až 2 vety, o čom to je
      tags    – kľúčové slová pre vyhľadávanie (autor, dielo, obdobie…)
      url     – cesta k súboru
      date    – termín písomky 'RRRR-MM-DD'; zoznam je zoradený podľa neho (najbližšie hore, minulé pod nimi)
-     kind    – krátky popis druhu (Test, Ťahák, Zhrnutie…)
+     kind    – druh a prípadne autor (Test, Ťahák · J. D. Salinger…)
      soon    – true, kým stránka nie je hotová; zobrazí sa, ale nedá sa otvoriť */
 const TOPICS = [
   {
     subject: 'Slovenčina',
-    title: 'Maturita 2024 a 2025 – opakovanie z SJL',
+    title: 'Maturitné testy 2024 a 2025',
     desc: 'Otázky z oboch testov externej časti, ktoré sa dajú vyriešiť bez čítania celej ukážky. Odpovedáš, kontroluješ podľa oficiálneho kľúča a priebeh sa ti uloží.',
-    tags: ['test', 'externá časť', 'maturita', 'jazyk', 'literatúra', '2024', '2025', 'cvičenie'],
+    tags: ['test', 'externá časť', 'maturita', 'jazyk', 'literatúra', '2024', '2025', 'cvičenie', 'opakovanie', 'SJL'],
     url: 'slovencina/maturita-24-25.html',
     date: '2026-10-25', /* približne, uprav podľa skutočného termínu */
-    kind: 'Test'
+    kind: 'Opakovanie'
   },
   {
     subject: 'Slovenčina',
-    title: 'J. D. Salinger – Kto chytá v žite',
+    title: 'Kto chytá v žite',
     desc: 'Ťahák na písomku: celý dej kapitolu po kapitole, postavy, symboly, otázky „prečo?“ a testy v troch úrovniach.',
-    tags: ['Salinger', 'Kto chytá v žite', 'The Catcher in the Rye', 'Holden Caulfield', 'ťahák', 'písomka', 'próza', 'americká literatúra', 'dielo', 'test'],
+    tags: ['Salinger', 'J. D. Salinger', 'The Catcher in the Rye', 'Holden Caulfield', 'ťahák', 'písomka', 'próza', 'americká literatúra', 'dielo', 'test'],
     url: 'slovencina/salinger-kto-chyta-v-zite.html',
     date: '2026-11-09',
-    kind: 'Ťahák'
+    kind: 'Ťahák · J. D. Salinger'
   }
 ];
 
 /* farby predmetov: pevný odtieň pre známe, ostatné sa vyberú podľa názvu (stále rovnaké) */
-const HUES = { 'Slovenčina': 14 };
-const PALETTE = [206, 152, 276, 38, 336, 178, 92, 250];
+const HUES = { 'Slovenčina': 12 };
+const PALETTE = [205, 150, 275, 40, 335, 175, 95, 250];
 
 (function () {
   /* normalizácia znak po znaku (bez diakritiky, malé písmená), aby sa dĺžka nemenila a zvýraznenie sedelo */
@@ -208,7 +214,7 @@ const PALETTE = [206, 152, 276, 38, 336, 178, 92, 250];
   };
 
   /* termíny */
-  const DAY = 864e5, MON = ['januára', 'februára', 'marca', 'apríla', 'mája', 'júna', 'júla', 'augusta', 'septembra', 'októbra', 'novembra', 'decembra'];
+  const DAY = 864e5;
   const WD = ['nedeľa', 'pondelok', 'utorok', 'streda', 'štvrtok', 'piatok', 'sobota'], WDS = ['ne', 'po', 'ut', 'st', 'št', 'pi', 'so'];
   const now = new Date(), today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const toDate = s => { const p = s.split('-').map(Number); return new Date(p[0], p[1] - 1, p[2]); };
@@ -228,7 +234,7 @@ const PALETTE = [206, 152, 276, 38, 336, 178, 92, 250];
   }
   const dateLabel = d => d.getDate() + '. ' + (d.getMonth() + 1) + '.' + (d.getFullYear() !== today.getFullYear() ? ' ' + d.getFullYear() : '');
 
-  $('today').textContent = 'Dnes je ' + WD[today.getDay()] + ' ' + today.getDate() + '. ' + MON[today.getMonth()];
+  $('today').textContent = WD[today.getDay()] + ' ' + dateLabel(today);
 
   /* jeden zoznam podľa času: najbližšie písomky hore, minulé pod nimi (od najnovšej), bez termínu na konci */
   const prep = TOPICS.map(t => Object.assign({}, t, {
@@ -265,7 +271,7 @@ const PALETTE = [206, 152, 276, 38, 336, 178, 92, 250];
     el.style.setProperty('--h', hue(t.subject));
     if (!t.soon) el.href = t.url;
 
-    let when = '';
+    let when;
     if (t.n !== null) {
       const d = toDate(t.date);
       when = '<div class="when"><b>' + dateLabel(d) + '</b><span>' + (t.n >= 0 ? WDS[d.getDay()] + ' · ' : '') + rel(t.n) + '</span></div>';
@@ -274,9 +280,9 @@ const PALETTE = [206, 152, 276, 38, 336, 178, 92, 250];
     }
     const hits = words.length ? (t.tags || []).filter(k => words.some(w => norm(k).indexOf(w) !== -1)) : [];
     el.innerHTML = when +
-      '<div class="main"><h2>' + mark(t.title, words) + '</h2>' +
-      '<div class="kind"><span class="sj"><i class="dot"></i>' + esc(t.subject) + '</span>' +
-      (t.kind ? '<span>· ' + esc(t.kind) + '</span>' : '') + (t.soon ? '<span>· pripravuje sa</span>' : '') + '</div>' +
+      '<div class="main"><h2><span>' + mark(t.title, words) + '</span></h2>' +
+      '<div class="kind"><span class="sj"><i class="sq"></i>' + esc(t.subject) + '</span>' +
+      (t.kind ? '<span>' + mark(t.kind, words) + '</span>' : '') + (t.soon ? '<span>pripravuje sa</span>' : '') + '</div>' +
       '<p class="desc">' + mark(t.desc, words) + '</p>' +
       (hits.length ? '<p class="hit">' + hits.map(k => '#' + mark(k, words)).join('  ') + '</p>' : '') + '</div>' +
       '<span class="arrow" aria-hidden="true">' + (t.soon ? '' : '→') + '</span>';
@@ -320,7 +326,7 @@ const PALETTE = [206, 152, 276, 38, 336, 178, 92, 250];
       const b = document.createElement('button');
       b.type = 'button'; b.dataset.s = s;
       const n = s ? prep.filter(t => t.subject === s).length : prep.length;
-      b.innerHTML = (s ? '<span class="sj" style="--h:' + hue(s) + '"><i class="dot"></i></span>' : '') + esc(s || 'Všetko') + '<sup>' + n + '</sup>';
+      b.innerHTML = (s ? '<i class="sq" style="--h:' + hue(s) + '"></i>' : '') + esc(s || 'Všetko') + '<sup>' + n + '</sup>';
       b.setAttribute('aria-pressed', String(s === subject));
       b.addEventListener('click', () => setSubject(s));
       seg.appendChild(b);
