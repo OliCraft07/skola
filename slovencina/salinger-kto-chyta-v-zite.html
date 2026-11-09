@@ -141,11 +141,18 @@ td:first-child{font-family:var(--f-mono);font-variant-numeric:tabular-nums;color
 .opt:disabled{cursor:default}
 .opt.correct{background:var(--ok-soft);border-color:var(--ok);color:var(--ink)}
 .opt.wrong{background:var(--bad-soft);border-color:var(--bad);text-decoration:line-through;text-decoration-color:var(--bad)}
+.fill{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.fill input{flex:1;min-width:0;font:inherit;padding:9px 12px;border-radius:9px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.fill input.correct{border-color:var(--ok);background:var(--ok-soft)}
+.fill input.wrong{border-color:var(--bad);background:var(--bad-soft);text-decoration:line-through;text-decoration-color:var(--bad)}
+.fill input:focus-visible{outline:2px solid var(--red);outline-offset:2px}
 .expl{margin-top:10px;font-size:.94rem;padding:10px 12px;border-radius:9px;background:var(--bg)}
 .expl b.ok{color:var(--ok)} .expl b.no{color:var(--bad)}
 .q.is-ok{border-color:var(--ok)} .q.is-bad{border-color:var(--bad)}
 .done{margin-top:18px;padding:16px;border-radius:12px;background:var(--rye-soft)}
 .done h3{margin-bottom:4px}
+
+
 footer{color:var(--muted);font-size:.85rem;padding-block:0 40px}
 
 @media (max-width:560px){
@@ -594,13 +601,13 @@ const CHARS = [
   {n:"Phoebe",r:"Mladšia sestra, 10 rokov",d:"Ryšavá, chudá, veľmi inteligentná, „vie presne, o čo ide“. Píše príbehy o detektívke Hazel Weatherfieldovej (píše „Hazle“). V školskej hre hrá Benedicta Arnolda. Jediná, kto Holdena naozaj zastaví. Na konci kolotoč."},
   {n:"Allie",r:"Mladší brat, zomrel",d:"O 2 roky mladší, najinteligentnejší a najmilší z rodiny, ryšavý. Zomrel na leukémiu 18. júla 1946 v Maine. Mal ľavácku bejzbalovú rukavicu popísanú básňami zeleným atramentom. Holden (13 r.) v tú noc rozbil päsťou všetky okná v garáži a zlomil si ruku."},
   {n:"D. B.",r:"Starší brat, spisovateľ",d:"Napísal knihu poviedok Tajná zlatá rybka. Teraz píše pre film v Hollywoode, preto o ňom Holden hovorí, že „robí zo seba prostitúta“. Bol 4 roky v armáde, nenávidel ju. Chodí Holdena navštevovať do liečebne, kúpil si jaguára."},
-  {n:"Rodičia",r:"Otec advokát, mama nervózna",d:"Otec je advokát (korporačný). Mama poslala Holdenovi nové korčule – kúpila hokejové „kanady“ namiesto pretekárskych „nožov“. V noci 21. kap. sú na návšteve v Norwalku v Connecticute. Phoebe opakuje: „Ocko ťa zabije.“"}
+  {n:"Rodičia",r:"Otec advokát, mama nervózna",d:"Otec je advokát (Phoebe: „Tak advokátom... ako ocko.“). Mama poslala Holdenovi nové korčule – kúpila hokejové „kanady“ namiesto pretekárskych „nožov“. V noci 21. kap. sú na návšteve v Norwalku v Connecticute. Phoebe opakuje: „Ocko ťa zabije.“"}
  ]},
  {g:"Pencey a staré školy", items:[
   {n:"Pán Spencer",r:"Profesor dejepisu, ~70 rokov",d:"Chorý na chrípku, v starom zodratom župane, s navajskou prikrývkou z Yellowstonu, číta Atlantic Monthly. Prečíta Holdenovi jeho písomku o Egypťanoch. Hovorí: „Život je zápas, chlapče. Život je zápas, ktorý sa má hrať podľa pravidiel.“"},
-  {n:"Ward Stradlater",r:"Spolubývajúci",d:"Pekný, obľúbený, zvonku upravený, ale „tajný bordelár“ (hrdzavá žiletka). Ide na rande s Jane v aute Eda Bankyho. Chce, aby mu Holden napísal sloh. Zbije Holdena, keď ho Holden napadne kvôli Jane."},
+  {n:"Ward Stradlater",r:"Spolubývajúci",d:"Pekný, obľúbený, zvonku upravený, ale v preklade „prasa zakuklené“ (príšerne hrdzavá britva, ktorú si nikdy nečistí). Ide na rande s Jane v aute Eda Bankyho. Chce, aby mu Holden napísal sloh. Zbije Holdena, keď ho Holden napadne kvôli Jane."},
   {n:"Robert Ackley",r:"Sused zo susednej izby",d:"18 rokov, asi 193 cm, hnusné zuby, akné, nikdy si nečistí zuby, strihá si nechty na zem, prehrabáva sa v cudzích veciach. Neznáša Stradlatera. Spolubývajúci sa volá Ely."},
-  {n:"Jane Gallagherová",r:"Holdenova kamarátka z leta",d:"Nikdy sa v deji neobjaví osobne. Poznali sa v Maine (jej doberman chodil na ich trávnik). Hrali spolu dámu – dámy si vždy nechávala v zadnom rade. Mala nevlastného otca, pána Cudahyho (opilec). Holden jej stále chce zavolať, ale nikdy to nedotiahne."},
+  {n:"Jane Gallagherová",r:"Holdenova kamarátka z leta",d:"Nikdy sa v deji neobjaví osobne. Poznali sa v Maine (jej doberman chodil na ich trávnik). Hrali spolu dámu – dámy si vždy nechávala v zadnom rade. Mala nevlastného otca, pána Cudahyho (podľa Holdena „ožran“, behal po dome nahý). Holden jej stále chce zavolať, ale nikdy to nedotiahne."},
   {n:"Pán Antolini",r:"Bývalý profesor angliny z Elkton Hills",d:"Mladý, inteligentný, žena je o veľa staršia a bohatá. Byt na Sutton Place. Pije whisky. Varuje Holdena pred „pádom“, dá mu citát od Wilhelma Stekela. V noci ho hladká po hlave – Holden ujde."},
   {n:"Ďalší zo škôl",r:"Mená na písomku",d:"Selma Thurmerová (dcéra riaditeľa Thurmera), Ossenburger (pohrebník, dal meno krídlu internátu), Marsalla (pustil vetry počas Ossenburgerovej reči), Mal Brossard, Ed Banky (tréner basketbalu), Frederick Woodruff (kúpil písací stroj), Haas (pokrytecký riaditeľ v Elkton Hills), James Castle (vyskočil z okna), Carl Luce (Whooton), Richard Kinsella a pán Vinson (ústny prejav)."}
  ]},
@@ -611,22 +618,22 @@ const CHARS = [
   {n:"Maurice a Sunny",r:"Výťahár a prostitútka",d:"Maurice ponúkne „číslo“ za 5 dolárov (15 do obeda). Sunny je mladá, nervózna, v zelených šatách; Holden s ňou len chce hovoriť. Potom pýtajú 10, Sunny vezme 5 z peňaženky, Maurice ho udrie do brucha."},
   {n:"Sally Hayesová",r:"Rande v nedeľu",d:"Pekná, ale povrchná, „farizejská“. Stretnutie pod hodinami v Biltmore o druhej, divadlo s Luntovcami, korčuľovanie v Radio City. Odmietne Holdenov plán utiecť do Vermontu, Holden ju urazí."},
   {n:"Dve mníšky",r:"Bufet, nedeľa ráno",d:"Majú lacné kufre, zbierajú milodary. Jedna učí angličtinu – rozprávajú sa o Rómeovi a Júlii. Holden im daruje 10 dolárov."},
-  {n:"Carl Luce",r:"Bývalý študentský poradca",d:"O 3 roky starší, z Whootonu, teraz na Columbii. Chodí so staršou čínskou sochárkou z Greenwich Village. Jeho otec je psychoanalytik; Holdenovi radí, aby k nemu šiel."},
+  {n:"Carl Luce",r:"Bývalý študentský poradca",d:"Starší spolužiak z Whootonu (bol „konzultantom našej skupiny“), teraz na Columbii. Chodí so staršou sochárkou (Číňankou zo Šanghaja, „pod štyridsať“), ktorá býva v Greenwich Village. Jeho otec je psychoanalytik; Holdenovi radí, aby k nemu šiel."},
   {n:"Ernie, Lillian Simmonsová",r:"Nočný klub",d:"Ernie je tučný černošský klavirista a snob. Lillian Simmonsová je bývalá dievčina D. B., príde s námorníkom; Holden sa vyhovorí a odíde."}
  ]}
 ];
 
 /* ---------- DATA: KAPITOLY ---------- */
 const CH = [
- {n:1,t:"Odchod z Pencey",d:"Sobota",s:"Holden rozpráva z miesta, kde sa „zotavuje“, a nechce písať svoj životopis, len o „bláznivých veciach“ pred minulými Vianocami. Pencey je škola v Agerstowne v Pennsylvánii. Je posledný zápas sezóny so Saxon Hallom, ale Holden stojí na Thomsenovom vŕšku, lebo sa práve vrátil s družstvom šermiarov z New Yorku, kde v metre nechal všetky kordy. Je kapitánom (vlastne správcom) družstva. Ide sa rozlúčiť so starým Spencerom. Cestou cíti, že sa „rozplynie“.",
+ {n:1,t:"Odchod z Pencey",d:"Sobota",s:"Holden rozpráva z miesta, kde sa „zotavuje“, a nechce písať svoj životopis, len o „bláznivých veciach“ pred minulými Vianocami. Pencey je škola v Agerstowne v Pennsylvánii. Je posledný zápas sezóny so Saxon Hallom, ale Holden stojí na Thomsenovom vŕšku, lebo sa práve vrátil s družstvom šermiarov z New Yorku, kde v metre nechal všetky kordy. Je kapitánom družstva. Ide sa rozlúčiť so starým Spencerom. Cestou cíti, že sa „rozplynie“.",
   x:["Ako kapitán šermiarov nechal v metre kordy aj výstroj, preto ho celé družstvo vo vlaku bojkotovalo.","Vyhodili ho, lebo prepadol zo štyroch predmetov; po vianočných prázdninách sa už nemá vrátiť.","Selma Thurmerová, dcéra riaditeľa: veľký nos, obhryzené nechty, vypchatá podprsenka, ale páčila sa mu, lebo sa nevystatovala otcom.","Kabát z ťavej srsti aj s kožušinovými rukavicami mu niekto ukradol týždeň predtým.","Má „nanič pľúca“: je ťažký fajčiar a vlani vyrástol o 16,5 cm, preto „dostal tuberu“.","D. B. napísal knihu poviedok Tajná zlatá rybka, teraz je v Hollywoode."]},
- {n:2,t:"U starého Spencera",d:"Sobota",s:"Spencer s manželkou bývajú neďaleko školy, slúžku nemajú. Spencer sedí v župane zabalený v navajskej prikrývke. Holdena dráždi, že mu prečíta jeho písomku o Egypťanoch aj s poznámkou, v ktorej Holden prosí, aby ho pokojne nechal prepadnúť. Holden počas rozhovoru myslí na kačice v Central Parku. Klame, že musí ísť do telocvične po veci, a uteká.",
+ {n:2,t:"U starého Spencera",d:"Sobota",s:"Spencer nebýva v areáli školy, ale na Ulici Anthonyho Waynea; slúžku nemajú, dvere otvára pani Spencerová. Spencer sedí v župane zabalený v navajskej prikrývke. Holdena dráždi, že mu prečíta jeho písomku o Egypťanoch aj s poznámkou, v ktorej Holden prosí, aby ho pokojne nechal prepadnúť. Holden počas rozhovoru myslí na kačice v Central Parku. Klame, že musí ísť do telocvične po veci, a uteká.",
   x:["„Život je zápas, chlapče. Život je zápas, ktorý sa má hrať podľa pravidiel.“ Holden si myslí: zápas je to len pre tých, čo sú na strane víťazov.","Egypťanov preberali od 4. novembra do 2. decembra; Holden napísal len pár viet o múmiách.","Z angliny prešiel, lebo Beowulfa a Lorda Randalla už preberal vo Whootone.","Holden mal vtedy 16, teraz má 17, meria 189 cm a má „milión šedivých vlasov“. Správa sa, akoby mal 12 – „každý to hovorí, najmä otec“.","Spomína Elkton Hills a riaditeľa Haasa – pokrytca, ktorý sa usmieval len na bohatých rodičov.","Spencer za ním zakričí „Veľa šťastia!“ – Holden to nenávidí."]},
  {n:3,t:"Ackley a čiapka",d:"Sobota",s:"Holden priznáva, že je najstrašnejší klamár. Býva v Ossenburgerovom krídle (Ossenburger zbohatol na pohrebných ústavoch a v kaplnke mal reč o tom, že sa modlí aj v aute). Doma číta Spomienky na Afriku od Isaka Dinesena a nasadí si novú červenú poľovnícku čiapku. Vtrhne k nemu Ackley, sused, ktorého nikto nemá rád, a hrabe sa mu vo veciach.",
-  x:["Čiapku kúpil v New Yorku v to ráno, keď stratil kordy – za dolár; nosí ju šiltom dozadu.","Ackley: „V takejto čiapke sa strieľajú jelene.“ Holden: „V tejto čiapke sa strieľajú ľudia.“","Marsalla pustil počas Ossenburgerovej reči vetry.","Najobľúbenejší spisovateľ: D. B., potom Ring Lardner. Páči sa mu Eustacia Vyeová z Hardyho Rodákovho návratu.","Ackley: 18 rokov, asi 193 cm, nikdy si nečistí zuby, má akné, strihá si nechty na zem. Holden mu hovorí „štopeľ“.","Ackley berie do ruky fotku Sally Hayesovej."]},
+  x:["Čiapku kúpil v New Yorku v to ráno, keď stratil kordy – za dolár; nosí ju šiltom dozadu.","Ackley: „V takejto čiapke sa strieľajú jelene.“ Holden: „V takej čiapke strieľajú ľudí. Ja v takej čiapke strieľam ľudí.“","Marsalla pustil počas Ossenburgerovej reči vetry.","Najobľúbenejší spisovateľ: D. B., potom Ring Lardner. Páči sa mu Eustacia Vyeová z Hardyho Rodákovho návratu.","Ackley: 18 rokov, asi 193 cm, nikdy si nečistí zuby, má akné, strihá si nechty na zem. Holden mu hovorí „štopeľ“.","Ackley berie do ruky fotku Sally Hayesovej."]},
  {n:4,t:"Stradlater a Jane",d:"Sobota",s:"V umyvárke sa Stradlater holí a Holden stepuje. Stradlater ide na rande a prosí Holdena, aby mu napísal sloh do angliny – opis izby, domu alebo niečoho. Ukáže sa, že ide s Jane Gallagherovou (sám ju volá Jean). Holden je strašne rozrušený, spomína, že spolu hrali dámu, ale za Jane nezíde.",
-  x:["Stradlater je „tajný bordelár“: vyzerá výborne, ale jeho žiletka je hrdzavá a plná chlpov.","Jane si pri dáme nechávala všetky dámy v zadnom rade a nehýbala nimi – páčilo sa jej, ako tam stoja.","Zoznámili sa cez jej dobermana, ktorý chodil na Caulfieldovský trávnik.","Jane robila balet a hrala golf; Holden ju učil.","Holden sa obáva, čo bude Stradlater s Jane robiť – nervózne sa pýta, či jej povie, že je tu."]},
- {n:5,t:"Sloh o Allieho rukavici",d:"Sobota večer",s:"Na sobotnú večeru bol steak (aby sa v nedeľu rodičia nepýtali). Sneží, Holden uhnieti snehovú guľu, ale nehodí ju. S Malom Brossardom a Ackleym ide autobusom do Agerstownu na hamburgery. Večer napíše sloh pre Stradlatera – o bejzbalovej rukavici mŕtveho brata Allieho.",
+  x:["Stradlater je „prasa zakuklené“: vyzerá vždy perfektne, ale jeho britva je príšerne hrdzavá, oblepená mydlom a chlpmi.","Jane si pri dáme nechávala všetky dámy v zadnom rade a nehýbala nimi – páčilo sa jej, ako tam stoja.","Zoznámili sa cez jej dobermana, ktorý chodil na Caulfieldovský trávnik.","Jane robila balet (denne cvičila). Holden kedysi nosil golfové palice jej mame.","Holden sa obáva, čo bude Stradlater s Jane robiť – nervózne sa pýta, či jej povie, že je tu."]},
+ {n:5,t:"Sloh o Allieho rukavici",d:"Sobota večer",s:"Na sobotnú večeru bol vždy biftek (riaditeľ Thurmer počítal s tým, že sa mamičky v nedeľu opýtajú, čo bolo na večeru). Sneží, Holden uhnieti snehovú guľu, ale nehodí ju. S Malom Brossardom a Ackleym ide autobusom do Agerstownu na hamburgery. Večer napíše sloh pre Stradlatera – o bejzbalovej rukavici mŕtveho brata Allieho.",
   x:["Rukavica bola na ľavú ruku – Allie bol ľavák. Na prstoch a všade mal napísané básne zeleným atramentom, aby mal čo čítať, keď na ihrisku nič nerobil.","Allie zomrel na leukémiu 18. júla 1946 v Maine. Bol o dva roky mladší a „päťdesiat ráz inteligentnejší“.","Holden mal 13; v noci spal v garáži a päsťou rozbil všetky okná, zlomil si ruku. Chceli ho dať na psychoanalýzu.","Allieho rukavicu Holden vozí so sebou.","Sloh píše na Stradlaterovom písacom stroji, lebo svoj požičal chlapcovi z chodby (Woodruffovi)."]},
  {n:6,t:"Bitka so Stradlaterom",d:"Sobota v noci",s:"Stradlater sa vráti a je nahnevaný, že sloh je o rukavici a nie o izbe alebo dome. Holden ho vytrhne a roztrhá. Vypytuje sa na Jane; Stradlater povie, že boli v aute Eda Bankyho. Holden sa ho pokúsi udrieť, Stradlater ho zrazí na zem a sadne si naňho. Holden ho volá debil, dostane druhýkrát a krváca z nosa.",
   x:["Ed Banky je tréner basketbalu; Stradlater je jeho miláčik, lebo hrá centra.","Holden sa pýta, či sa Jane opýtal, či si stále necháva dámy v zadnom rade.","Krv mal na ústach, na brade, na pyžame aj na župane – a trochu sa mu to páčilo, vyzeral drsne.","Holden si nasadí poľovnícku čiapku šiltom dozadu a ide k Ackleymu."]},
@@ -637,23 +644,23 @@ const CH = [
  {n:9,t:"Hotel Edmont",d:"Sobota v noci",s:"Na stanici chce niekomu zavolať, ale nakoniec nevolá nikomu. V taxíku sa pýta, kam idú kačice z jazierka v Central Parku, keď zamrzne. Ubytuje sa v hoteli Edmont, kde je to „plné zvrhlíkov“. Z okna sleduje cudzie izby. Zavolá Faith Cavendishovej.",
   x:["Poslíček v hoteli bol asi 65-ročný vetchý dedo – Holdena to ubíjalo.","V oknách videl muža, ktorý sa obliekal do ženských šiat, a pár, ktorý si striekal do tváre vodu/drink.","Faith Cavendishová (bývalá striptérka): číslo dostal od Eddieho Birdsella. Odmietne stretnutie hneď v noci, navrhne zajtra – Holden nechce.","Phoebe chodí spať o deviatej, preto jej nevolá."]},
  {n:10,t:"Lavender bar",d:"Sobota v noci",s:"Holden opisuje Phoebe. Potom ide do Lavender baru v hoteli. Tancuje s tromi ženami zo Seattlu, ktoré sa najviac zaujímajú o celebrity. Nakoniec zaplatí ich účet a ony odídu, lebo ráno idú do Radio City.",
-  x:["Predstavil sa ako Jim Steele.","Bernice (blondína) tancuje výborne; tancovať s Marty bolo „peklo“.","Holden si vymyslí, že práve zazrel Garyho Coopera; žena prestane tancovať a hľadá ho – potom mu je ľúto, že si z nej vystrelil.","Phoebe: ryšavá, 10 rokov, píše knihy o Hazel Weatherfieldovej; film 39 stupňov s Robertom Donatom vie naspamäť.","Čašník mu nechce dať alkohol, lebo je neplnoletý."]},
+  x:["Predstavil sa ako Jim Steele.","Bernice (blondína) tancuje výborne; tancovať s Marty bolo „peklo“.","Holden si vymyslí, že práve zazrel Garyho Coopera; žena prestane tancovať a hľadá ho – potom mu je ľúto, že si z nej vystrelil.","Phoebe: má červené vlasy, 10 rokov, je chudá, píše knihy o Hazel Weatherfieldovej; obľúbený film Tridsaťdeväť schodov s Robertom Donatom vie naspamäť.","Čašník mu nechce dať alkohol, lebo je neplnoletý."]},
  {n:11,t:"Spomienky na Jane",d:"Sobota v noci",s:"Vo vestibule hotela Holden spomína na leto s Jane v Maine. Hrali tenis, golf a dámu. Raz na verande ku nej prišiel jej nevlastný otec, pán Cudahy, a keď odišiel, Jane sa rozplakala – slza jej padla na šachovnicu. Holden ju bozkával všade, len nie na ústa. Odíde do Ernieho klubu.",
-  x:["Pán Cudahy chodil po dome nahý – Holden tuší, že s ním Jane mala zlú skúsenosť.","V kine sa držali za ruky a bolo to „úžasné“.","Bola to najbližšia vec k bozku, a predsa sa nepobozkali na ústa.","Holden: Jane „nebola úplne pekná“, ale ohromila ho."]},
+  x:["Pán Cudahy chodil po dome nahý – Holden tuší, že s ním Jane mala zlú skúsenosť.","V kine sa držali za ruky a bolo to „úžasné“.","Bola to najbližšia vec k bozku, a predsa sa nepobozkali na ústa.","Holdenova mama tvrdila, že Jane vôbec nie je pekná. Holden: „Ale podľa mňa bola.“"]},
  {n:12,t:"Horwitz a Ernie",d:"Sobota v noci",s:"Taxikár Horwitz sa nahnevá kvôli otázke o kačiciach a hovorí o rybách. V Ernieho nočnom klube hrá Ernie na klavíri, všetci tlieskajú. Holden je znechutený. Stretne Lillian Simmonsovú, bývalú dievčinu D. B., s námorníkom. Aby s ňou nemusel sedieť, odíde.",
-  x:["Horwitz: ryby primrznú do ľadu a živia sa cez póry – „tak sú už stvorené“.","Ernie je veľký tučný černoch, klavirista a „úžasný snob“; Holden nemá rád, keď sa niekto tvári pokorne.","Lillian ho volá Holden, D. B. k nej chodieval; Holden sa vyhovorí, že sa musí s niekým stretnúť."]},
+  x:["Horwitz: ryby primrznú do ľadu a živia sa cez póry – „tak sú už stvorené“.","Ernie je veľký tučný černoch, klavirista a „úžasný snob“; po hraní sa falošne „skromne“ ukloní a Holdena to znechutí.","Lillian ho volá Holden, D. B. k nej chodieval; Holden sa vyhovorí, že sa musí s niekým stretnúť."]},
  {n:13,t:"Maurice a Sunny",d:"Sobota v noci",s:"Holden ide pešo naspäť do Edmontu a premýšľa o zbabelosti (kto mu ukradol rukavice). Výťahár Maurice mu ponúkne dievča. Holden súhlasí. Prvá je Sunny, mladá a nervózna. Holden sa necíti „v nálade“, chce sa len rozprávať, vymýšľa si o operácii. Zaplatí jej a ona odíde.",
   x:["Cena: „päť dolárov jedno číslo, pätnásť do obeda“.","Holden povie Mauriceovi, že má 22 rokov; izba 1222.","Sunny mala zelené šaty, ktoré Holden zavesil do skrine – a to ho ubíjalo.","Výhovorka: mal operáciu „na klavichorde“.","Sunny tvrdí, že stojí desať; Holden jej dá päť."]},
  {n:14,t:"Maurice ho zbije",d:"Nedeľa skoro ráno",s:"Holden si spomína na Allieho, ktorého raz nevzal so sebou na bicykli. Potom zabúcha Maurice so Sunny a pýtajú ďalších 5 dolárov. Sunny ich vezme z jeho peňaženky, Maurice ho udrie do žalúdka. Holden potom predstiera, že je postrelený, a vo fantázii ide Mauricea zastreliť.",
   x:["Allie chcel ísť s Holdenom a Bobbym Fallonom k jazeru Sedebego na bicykli – Holden ho nevzal; teraz sa mu ospravedlňuje nahlas.","Maurice mu švihne prstami po pyžame a udrie ho do brucha.","Holden si predstavuje, že má v bruchu guľku a ide dolu za Mauriceom s pištoľou (ako vo filmoch).","Myslí na samovraždu – vyskočil by z okna, keby si bol istý, že ho hneď niekto zakryje."]},
  {n:15,t:"Sally a mníšky",d:"Nedeľa ráno",s:"Holden zavolá Sally Hayesovej a dohodnú si rande na matiné o druhej. Odhlási sa z hotela, kufre dá do skrinky na stanici a ide na raňajky. Do bufetu prídu dve mníšky s lacnými kuframi. Rozprávajú sa o literatúre a Holden im daruje peniaze.",
-  x:["Stretnutie: o druhej v Biltmore pod hodinami.","Lacné kufre mníšok mu pripomenú Dicka Slagla z Elkton Hills, ktorý sa hanbil za svoje lacné kufre.","Holden mníškam daruje 10 dolárov.","Jedna mníška učí angličtinu – Rómeo a Júlia. Holdenovi bolo najviac ľúto Mercutia."]},
+  x:["Stretnutie: o druhej v Biltmore pod hodinami.","Lacné kufre mníšok mu pripomenú Dicka Slagla z Elkton Hills, ktorý sa hanbil za svoje lacné kufre.","Holden mníškam daruje 10 dolárov.","Jedna mníška učí angličtinu – Rómeo a Júlia. Holdenovi bolo najviac ľúto Merkucia (zabil ho Tybalt)."]},
  {n:16,t:"Žito, platňa a múzeum",d:"Nedeľa",s:"Holden ide po Broadwayi kúpiť pre Phoebe platňu. Vidí chlapčeka, ktorý kráča po obrubníku a spieva si „Keď raz človek niekde v žite chytí človeka“ – zlepší mu to náladu. Kúpi lístky na Luntovcov. V parku hľadá Phoebe, pomôže dievčatku utiahnuť korčuľu. Ide do prírodovedného múzea, kde chodil s triedou, ale dnu nevojde.",
   x:["Platňa: Malá Shirley Beansová, spieva ju černošská speváčka Estelle Fletcherová; je o dievčatku, ktorému vypadli dva predné zuby. Stála 5 dolárov.","Chlapček spieval „Keď raz človek niekde v žite chytí človeka“ (nesprávne slová – správne je „stretne“).","V múzeu: indiánske vojnové kanoe dlhé ako tri cadillacy, Eskimák chytajúci ryby. Páčilo sa mu, že sa tam nič nemení – zmenil sa len človek.","Hamleta s Laurenceom Olivierom videl s D. B. a Phoebe."]},
- {n:17,t:"Rande so Sally",d:"Nedeľa",s:"Sally vyzerá úžasne. Hra s Luntovcami je podľa Holdena farizejská. Cez prestávku Sally stretne Georgea z Andoveru a predvádzajú sa. Idú korčuľovať do Radio City. Holden jej navrhne, aby spolu utiekli do Massachusetts a Vermontu, kde by žili v chatke pri potoku. Sally odmietne a Holden jej povie, že mu „ide na nervy“ (doslova ho „serie“). Ona sa rozplače, rande skončí.",
-  x:["Sally hovorí, že Holdenov plán je „fantastický“ – ale až po vysokej škole.","Holden ju zrazu nenávidí aj miluje naraz; potom priznáva, že ju vlastne vôbec nechcel brať so sebou.","Pozor na vulgarizmus v preklade – Sally sa urazí, Holden sa smeje v nevhodnej chvíli.","Sally mala na korčuliach krátku sukničku."]},
+ {n:17,t:"Rande so Sally",d:"Nedeľa",s:"Sally vyzerá úžasne. Hra s Luntovcami je podľa Holdena farizejská. Cez prestávku Sally stretne Georgea z Andoveru a predvádzajú sa. Idú korčuľovať do Radio City. Holden jej navrhne, aby spolu utiekli do Massachusetts a Vermontu, kde by žili v chatke pri potoku. Sally odmietne a Holden jej povie: „Nasrala si ma, aby som ti pravdu povedal.“ Ona sa rozplače, rande skončí.",
+  x:["Sally: „Také niečo predsa nemôžeme urobiť.“ Vraj na to majú čas, až skončí vysokú a zoberú sa.","Holden ju začína nenávidieť; neskôr priznáva, že ju vlastne vôbec nechcel brať so sebou.","Presná veta, ktorou ju urazí: „Nasrala si ma, aby som ti pravdu povedal.“ Sally sa rozplače.","Sally mala na korčuliach krátku sukničku."]},
  {n:18,t:"Radio City",d:"Nedeľa večer",s:"Holden zavolá Jane, ale nikto to nedvíha. Dohodne sa s Carlom Luceom na desiatu vo Wicker bare. Čas zabije v Radio City Music Hall: rockettky, vianočná šou s anjelmi a Kristom, film o vojakovi. Premýšľa o vojne a D. B.",
-  x:["Vianočná šou s anjelmi a krížmi ho znechutí – je mu to falošné.","D. B. bol 4 roky v armáde, bol aj pri vylodení, armádu nenávidel.","Holden je „skoro rád“, že vynašli atómovú bombu – keby bola vojna, sadne si na ňu dobrovoľne.","D. B. dal Holdenovi čítať Hemingwayovu knihu Zbohom zbraniam; Holden ju považuje za farizejskú."]},
+  x:["Vianočná šou s anjelmi a krížmi ho znechutí – je mu to falošné.","D. B. bol 4 roky v armáde, bol aj pri vylodení, armádu nenávidel.","Holden je „skoro rád“, že vynašli atómovú bombu – keby bola vojna, sadne si na ňu dobrovoľne.","D. B. nútil Holdena čítať Hemingwayovu knihu Zbohom zbraniam a vraví, že je vynikajúca. Holden ju volá „limonáda“ a nechápe, ako sa D. B. môže zároveň páčiť Ring Lardner a Veľký Gatsby."]},
  {n:19,t:"Carl Luce",d:"Nedeľa večer",s:"Wicker bar je v hoteli Seton. Carl Luce, bývalý Holdenov študentský poradca z Whootonu, je o tri roky starší a teraz študuje na Columbii. Holden ho otravuje otázkami o sexe. Luce mu odporúča psychoanalýzu, lebo jeho otec je psychoanalytik. Odíde skoro na rande.",
   x:["Luce vo Whootone viedol „sexuálne“ rozhovory pre mladších.","Jeho priateľka je Číňanka, sochárka z Greenwich Village, staršia od neho.","Holden: „Ty, a odkedy s ňou chodíš, s tou sochárkou?“"]},
  {n:20,t:"Opitý v parku",d:"Nedeľa v noci",s:"Holden zostane v bare a opije sa. Speváčka Valencia. Opitý zavolá Sally a ponúka, že jej príde na Štedrý deň ozdobiť stromček. V Central Parku hľadá kačice pri jazierku, nenájde ich. Platňa pre Phoebe mu spadne a rozbije sa. Je mu zima, premýšľa o zápale pľúc a vlastnom pohrebe. Rozhodne sa ísť domov za Phoebe.",
@@ -662,12 +669,12 @@ const CH = [
   x:["Rodičia sú na večierku v Norwalku v Connecticute.","Phoebe hrá v školskom vianočnom predstavení Benedicta Arnolda – „prakticky najväčšiu rolu“.","Phoebe opakuje: „Ocko ťa zabije.“","Otec musí letieť do Kalifornie.","Holden jej dá kúsky rozbitej platne – Phoebe si ich odloží."]},
  {n:22,t:"Chytač v žite",d:"Nedeľa v noci",s:"Phoebe vyčíta Holdenovi, že nemá rád nič. Má vymenovať aspoň jednu vec. Spomína na mníšky a na Jamesa Castla, ktorý vyskočil z okna. Povie, že má rád Allieho a sedieť s Phoebe. Potom priznáva, čím by chcel byť: chytačom v žite. Phoebe ho opraví, že báseň Roberta Burnsa hovorí „stretne“, nie „chytí“.",
   x:["James Castle z Elkton Hills nazval Phila Stabila nafúkancom, nechcel to odvolať, šiesti chlapci ho v izbe týrali – vyskočil z okna. Mal na sebe Holdenov rolák.","Tým, čo to spravili, sa nič nestalo – len ich vylúčili.","Advokát: ako môžeš vedieť, či zachraňuješ ľudí naozaj, alebo len chceš byť slávny – „pokrytec“.","„Proste, ja si v jednom kuse predstavujem, ako sa davy malých deciek hrajú na takom velikánskom žitnom poli... A ja stojím na kraji nejakej strašnej priepasti... Chytal by som tie decká v žite.“","Phoebe: „Ocko ťa zabije.“"]},
- {n:23,t:"Phoebine peniaze",d:"Nedeľa v noci",s:"Holden zavolá pánu Antolinimu, ktorý ho pozve hneď k sebe. Tancuje s Phoebe. Phoebe ukazuje, ako si vie urobiť horúčku. Rodičia sa vrátia, Holden sa schová v skrini. Phoebe mu požičia svoje vianočné peniaze. Holden sa rozplače. Na odchode jej dá svoju poľovnícku čiapku.",
+ {n:23,t:"Phoebine peniaze",d:"Nedeľa v noci",s:"Holden zavolá pánu Antolinimu, ktorý ho pozve hneď k sebe. Tancuje s Phoebe. Phoebe ukazuje, ako si vie urobiť horúčku. Rodičia sa vrátia, Holden zhasne, zadusí cigaretu a schová sa v skrini; do izby príde mama. Phoebe mu požičia svoje vianočné peniaze. Holden sa rozplače. Na odchode jej dá svoju poľovnícku čiapku.",
   x:["Phoebe mu dá 8 dolárov a 85 centov (65 centov už minula).","Mama príde do izby a cíti cigaretový dym – Phoebe Holdena kryje.","Holden sa rozplakal, nevedel prestať, Phoebe ho objala.","Mama sa pýta: „Phoebe, ty si tu fajčila?“"]},
  {n:24,t:"U pána Antoliniho",d:"Nedeľa v noci",s:"Antoliniovci majú elegantný byt na Sutton Place. Antolini pije, pýta sa na Pencey. Holden rozpráva o hodine ústneho prejavu, kde museli kričať „K veci!“. Antolini ho varuje, že smeruje k strašnému pádu, a napíše mu citát. Holden zaspí na gauči, zobudí sa a Antolini ho hladká po hlave. Holden sa vydesí a odíde.",
   x:["Pani Antoliniová je o veľa staršia (asi o 60 rokov) a bohatá.","Antolini bol ten, kto zdvihol mŕtveho Jamesa Castla a zakryl ho svojím kabátom.","Richard Kinsella rozprával o farme svojho otca vo Vermonte a odbočoval – trieda kričala „K veci!“, pán Vinson mu dal zlú známku.","Citát Wilhelma Stekela: „Známkou nezrelého človeka je, že chce za niečo vznešene zomrieť, kým známkou zrelého človeka je, že chce pre niečo pokorne žiť.“","Antolini: „Si čudný chlapec, veľmi čudný.“ Holden sa vyhovorí, že má kufre na stanici."]},
  {n:25,t:"Zmiznúť / kolotoč",d:"Pondelok",s:"Holden prespí v čakárni na Grand Central. Rozmýšľa, či Antoliniho neodsúdil zle. Kráča po Piatej Avenue a pri každom prechode cez ulicu má pocit, že zmizne – prosí Allieho. Plánuje odísť na Západ ako hluchonemý. Do Phoebinej školy odnesie lístok. Na stenách vidí sprosté nápisy. V múzeu ukazuje deťom múmie. Phoebe príde s kufrom, že ide s ním. Holden odmietne, ona sa urazí. Ide s ňou do zoo a na kolotoč.",
-  x:["Prosí: „Allie, nedovoľ, aby som zmizol.“","Plán: stopom na Západ, tankovať benzín, hrať hluchonemého, oženiť sa s hluchonemou a bývať v chatke.","Lístok: stretnúť sa o štvrť na jednu pred Múzeom výtvarného umenia, vráti jej vianočné peniaze.","Nápis na stene („J.... ťa“) zotrie rukou, druhý je vyrytý nožom – nedá sa. „Nikde na svete nenájdete pekné a tiché miesto.“","V hrobke múmií je ďalší nápis – červenou pastelkou. Potom Holden omdlie (spadne na zem).","Phoebe ťahá jeho starý kufor; hovorí, že nepôjde hrať Benedicta Arnolda.","Kolotoč hrá „Ó Marie!“ a „Dym ti stúpa do očí“. Phoebe sedí na veľkom, starom, ošklbanom hnedákovi a načahuje sa za zlatým krúžkom.","„S deckami je to tak, že keď sa načahujú za zlatým krúžkom, treba ich nechať... Ak spadnú, tak spadnú.“","Phoebe mu nasadí poľovnícku čiapku. Prší, Holden je zmoknutý a šťastný, skoro sa rozplače."]},
+  x:["Prosí: „Allie, nedovoľ, aby som zmizol.“","Plán: stopom na Západ, tankovať benzín, hrať hluchonemého, oženiť sa s hluchonemou a bývať v chatke.","Lístok: stretnúť sa o štvrť na jednu pred Múzeom výtvarného umenia, vráti jej vianočné peniaze.","Nápis na stene („J.... ťa“) zotrie rukou, druhý je vyrytý nožom – nedá sa. „Nikde na svete nenájdete pekné a tiché miesto.“","V hrobke múmií je ďalší nápis – červenou pastelkou. Potom má Holden hnačku a pri odchode z WC omdlie (spadne na bok).","Phoebe ťahá jeho starý kufor z Whootonu. Holden jej vyčíta: „Myslel som, že máš hrať v tej hre Benedicta Arnolda...“ a hnevá sa, že by kvôli nemu prišla o divadlo.","Kolotoč hrá „Ó Marie!“ a „Dym ti stúpa do očí“. Phoebe sedí na veľkom, starom, ošklbanom hnedákovi a načahuje sa za zlatým krúžkom.","„S deckami je to tak, že keď sa načahujú za zlatým krúžkom, treba ich nechať... Ak spadnú, tak spadnú.“","Phoebe mu nasadí poľovnícku čiapku. Prší, Holden je zmoknutý a šťastný, skoro sa rozplače."]},
  {n:26,t:"Epilóg",d:"O rok neskôr",s:"Holden nechce rozprávať, čo bolo potom, ako ochorel ani do akej školy pôjde v septembri. Psychoanalytik sa ho pýta, či sa bude učiť. D. B. ho navštívil s Angličankou, ktorá hrá v jeho filme. Holden ľutuje, že to rozprával toľkým ľuďom – všetci mu chýbajú.",
   x:["„Ako môžete vedieť, čo urobíte, kým to neurobíte?“","Chýbajú mu aj Stradlater, Ackley, ba aj Maurice.","Posledná veta: „Nikdy nikomu o ničom nerozprávajte. Lebo potom bude každý chýbať.“"]}
 ];
@@ -773,7 +780,7 @@ const Q = {
   {q:"Ako sa volá výťahár, ktorý Holdenovi dohodol prostitútku?",o:["Maurice","Horwitz","Ernie","Pete"],e:"Maurice potom Holdena aj zbije.",c:"13–14"},
   {q:"Ako sa volala prostitútka?",o:["Sunny","Faith","Lillian","Valencia"],e:"Faith Cavendishová je striptérka, ktorej Holden volá; Lillian je bývalá D. B.; Valencia speváčka.",c:"13"},
   {q:"Koľko peňazí daroval Holden mníškam?",o:["10 dolárov","5 dolárov","20 dolárov","1 dolár"],e:"Mníšky sa ho stále pýtali, či si to môže dovoliť.",c:"15"},
-  {q:"O akej hre sa Holden rozpráva s mníškou?",o:["Rómeo a Júlia","Hamlet","Macbeth","Kráľ Lear"],e:"Najviac mu bolo ľúto Mercutia. Hamleta videl s Olivierom.",c:"15"},
+  {q:"O akej hre sa Holden rozpráva s mníškou?",o:["Rómeo a Júlia","Hamlet","Macbeth","Kráľ Lear"],e:"Najviac mu bolo ľúto Merkucia. Hamleta videl s Olivierom.",c:"15"},
   {q:"Akú platňu kúpil Holden pre Phoebe?",o:["Malá Shirley Beansová","Dym ti stúpa do očí","Ó Marie!","Keď raz človek niekde v žite"],e:"Je o dievčatku, ktorému vypadli predné zuby; spieva ju Estelle Fletcherová.",c:"16"},
   {q:"Čo sa stalo s platňou pre Phoebe?",o:["Rozbila sa v parku","Ukradol ju Maurice","Nechal ju v taxíku","Dal ju Sally"],e:"Spadla mu v Central Parku a rozbila sa asi na 50 kúskov.",c:"20"},
   {q:"Kam chcel Holden utiecť so Sally?",o:["Do Massachusetts a Vermontu","Do Kalifornie","Do Kanady","Do Európy"],e:"Žili by v chatke pri potoku; Sally odmietne.",c:"17"},
@@ -784,13 +791,58 @@ const Q = {
   {q:"Čo plánuje Holden v posledných kapitolách?",o:["Odísť na Západ a hrať hluchonemého","Ísť do armády","Vrátiť sa do Pencey","Ísť k Jane do Maine"],e:"Tankoval by benzín a nikto by s ním nemusel hovoriť.",c:"25"},
   {q:"Komu dá Holden svoju poľovnícku čiapku?",o:["Phoebe","Allieho hrobu","Sunny","Antolinimu"],e:"Dá jej ju, keď od nej odchádza; ona mu ju na kolotoči vráti na hlavu.",c:"23, 25"}
  ],
+
+ ultra:[
+  {q:"Z ktorého vŕšku sleduje Holden posledný zápas? (meno vŕšku)",a:["thomsenov","thomsen"],s:"Thomsenov vŕšok",e:"Stojí hore na Thomsenovom vŕšku, lebo sa práve vrátil so šermiarmi.",c:"1"},
+  {q:"Ako sa volá Ackleyho spolubývajúci?",a:["ely"],s:"Ely",e:"Holden si chce ľahnúť do Elyho postele; Ely sa vracia až v nedeľu večer.",c:"7"},
+  {q:"Komu predal Holden písací stroj? (priezvisko)",a:["woodruff"],s:"Frederick Woodruff",e:"Za 20 dolárov, stroj stál asi 90.",c:"7"},
+  {q:"Ako sa predstaví pani Morrowovej? (meno a priezvisko)",a:["rudolf schmidt","schmidt"],s:"Rudolf Schmidt",e:"Tak sa volá vrátnik na internáte.",c:"8"},
+  {q:"Pod akým menom tancuje so ženami zo Seattlu?",a:["jim steele","steele"],s:"Jim Steele",e:"Lavender bar v hoteli Edmont.",c:"10"},
+  {q:"Od koho má Holden telefónne číslo na Faith Cavendishovú?",a:["eddie birdsell","birdsell"],s:"Eddie Birdsell",e:"Faith je bývalá striptérka; stretnutie odmietne.",c:"9"},
+  {q:"Ako sa volá taxikár, ktorý tvrdí, že ryby v ľade žijú cez póry?",a:["horwitz"],s:"Horwitz",e:"Holden sa ho pýtal na kačice.",c:"12"},
+  {q:"Na čom mal Holden podľa svojej výhovorky pred Sunny „operáciu“?",a:["klavichord"],s:"na klavichorde",e:"„Klavichord? Viete, to je v miechovom kanáli.“ Klavichord je v skutočnosti hudobný nástroj.",c:"13"},
+  {q:"Akú knihu číta Holden v izbe, keď k nemu vtrhne Ackley?",a:["spomienky na afriku"],s:"Spomienky na Afriku (Isak Dinesen)",e:"Myslel, že to bude nuda, ale páčila sa mu.",c:"3"},
+  {q:"Ktorý spisovateľ je Holdenov najobľúbenejší hneď po bratovi D. B.?",a:["ring lardner","lardner"],s:"Ring Lardner",e:"Knihu od neho dostal od D. B. na narodeniny.",c:"3"},
+  {q:"Ako sa volá jazero, kam Holden nevzal Allieho na bicykli?",a:["sedebego"],s:"Sedebego",e:"Išiel s Bobbym Fallonom a Allieho nevzal; teraz sa mu ospravedlňuje.",c:"14"},
+  {q:"Kto spieva platňu Malá Shirley Beansová?",a:["estelle fletcherova","fletcherova","estelle fletcher"],s:"Estelle Fletcherová",e:"Holden ju kúpil pre Phoebe za 5 dolárov.",c:"16"},
+  {q:"Akú historickú postavu hrá Phoebe v školskej hre?",a:["benedict arnold","benedikt arnold","arnold"],s:"Benedict Arnold",e:"„Mám prakticky najväčšiu rolu.“",c:"21"},
+  {q:"Ako sa volá detektívka z Phoebiných príbehov?",a:["hazel weatherfieldova","hazel weatherfield","weatherfield"],s:"Hazel Weatherfieldová",e:"Phoebe ju píše „Hazle“.",c:"10"},
+  {q:"Ktorý psychoanalytik je autorom citátu, ktorý Holdenovi napíše Antolini?",a:["wilhelm stekel","stekel"],s:"Wilhelm Stekel",e:"„Známkou nezrelého človeka je, že chce za niečo vznešene zomrieť…“",c:"24"},
+  {q:"Ktorý spolužiak na hodine ústneho prejavu stále odbočoval?",a:["richard kinsella","kinsella"],s:"Richard Kinsella",e:"Rozprával o farme svojho otca vo Vermonte, trieda kričala „K veci!“",c:"24"},
+  {q:"Koľko dolárov a centov požičala Phoebe Holdenovi? (napíš ako 1,23)",a:["8,85","8.85","8 85"],s:"8,85 $",e:"Osem dolárov a osemdesiatpäť centov z vianočných peňazí.",c:"23"},
+  {q:"Koľko centov z vianočných peňazí už Phoebe minula?",a:["65"],s:"65 centov",e:"Preto mala len 8,85 $.",c:"23"},
+  {q:"V ktorom hoteli je Wicker bar?",a:["seton"],s:"hotel Seton",e:"Na 54. ulici; tam sa stretne s Carlom Luceom.",c:"19"},
+  {q:"Doplň verš podľa Phoebe: „Keď raz človek niekde v žite ___ človeka.“",a:["stretne"],s:"stretne",e:"Holden si ho pamätal zle: „chytí“. Báseň je od Roberta Burnsa.",c:"22"},
+  {q:"Koľko blokov išiel Holden pešo z Ernieho klubu do hotela?",a:["41","styridsatjeden"],s:"41",e:"Cestou premýšľa o zbabelosti a ukradnutých rukaviciach.",c:"13"},
+  {q:"Aké číslo izby mal Holden v hoteli Edmont?",a:["1222"],s:"1222",e:"Povie ho výťahárovi Mauriceovi.",c:"13"},
+  {q:"Koho nazval James Castle nafúkancom?",a:["phil stabile","stabile"],s:"Phil Stabile",e:"Nechcel to odvolať, šiesti chlapci ho týrali a vyskočil z okna.",c:"22"},
+  {q:"Ako sa volá Janin nevlastný otec?",a:["cudahy"],s:"pán Cudahy",e:"Holden ho volá „ožran“; Jane sa po jeho príchode rozplakala nad šachovnicou.",c:"11"},
+  {q:"Ako sa volá kniha poviedok, ktorú napísal D. B.?",a:["tajna zlata rybka","zlata rybka"],s:"Tajná zlatá rybka",e:"Teraz píše pre Hollywood, preto o ňom Holden hovorí „prostitút“.",c:"1"},
+  {q:"Aký film vie Phoebe naspamäť?",a:["tridsatdevat schodov","39 schodov"],s:"Tridsaťdeväť schodov",e:"S Robertom Donatom.",c:"10"},
+  {q:"Jedným slovom: ako nazve Holden Hemingwayovu knihu Zbohom zbraniam?",a:["limonada"],s:"limonáda",e:"D. B. ju považuje za vynikajúcu; Holden nechápe, ako sa mu zároveň páči Ring Lardner a Veľký Gatsby.",c:"18"},
+  {q:"Na ktorej ulici býva pán Spencer?",a:["anthonyho waynea","anthony wayne","waynea","wayne"],s:"Ulica Anthonyho Waynea",e:"Nebýva v areáli školy.",c:"2"},
+  {q:"Kto pustil vetry počas Ossenburgerovej reči v kaplnke?",a:["marsalla"],s:"Marsalla",e:"Riaditeľ Thurmer to na druhý deň riešil prejavom.",c:"3"},
+  {q:"Pred kým (meno) Phoebe tajila kufor, keď ho zviezla zadným výťahom?",a:["charlene"],s:"Charlene",e:"„Zviezla som ho zadným výťahom, aby ma Charlene nevidela.“",c:"25"},
+  {q:"Ktorú pieseň hral kolotoč, keď k nemu s Phoebe prišli?",a:["o marie"],s:"Ó Marie!",e:"Tú istú, čo hrali, keď bol Holden malý. Neskôr hrá aj „Dym ti stúpa do očí“.",c:"25"},
+  {q:"Kto to povedal: „Si čudný chlapec, veľmi čudný.“?",a:["antolini"],s:"pán Antolini",e:"Keď Holden v noci odchádza z jeho bytu.",c:"24"},
+  {q:"Kto to povedal: „Život je zápas, chlapče.“?",a:["spencer"],s:"pán Spencer",e:"„…zápas, ktorý sa má hrať podľa pravidiel.“",c:"2"},
+  {q:"Čo mala Phoebe podľa vlastných slov v kufri?",o:["Dvoje šiat, mokasíny, bielizeň, pančuchy a drobnosti","Školské zošity a príbehy o Hazel","Holdenovu čiapku a kúsky platne","Len vianočné peniaze a pyžamo"],e:"„Nie je ťažký. Mám v ňom len dvoje šiat, mokasíny, bielizeň, pančuchy…“",c:"25"},
+  {q:"Prečo bol na Pencey v sobotu večer vždy biftek?",o:["Riaditeľ rátal s tým, že sa mamičky v nedeľu opýtajú, čo deti jedli","Bola to Ossenburgerova tradícia","Futbalisti vyhrali zápas so Saxon Hallom","Bola to posledná večera pred prázdninami"],e:"Podľa Holdena čistý pokrytecký trik pre rodičov.",c:"5"},
+  {q:"Kto zdvihol telefón, keď Holden opitý volal Sally?",o:["Sallyina stará mama","Sallyin otec","Sally hneď","slúžka Charlene"],e:"Potom príde Sally a pošle ho spať.",c:"20"},
+  {q:"S kým prišla Lillian Simmonsová do Ernieho klubu?",o:["s námorníkom","s D. B.","s Carlom Luceom","s Georgeom z Andoveru"],e:"Holden sa vyhovorí, že sa musí s niekým stretnúť, a odíde.",c:"12"},
+  {q:"Čo povie Phoebe, keď jej Holden ukáže kúsky rozbitej platne?",o:["„Daj mi tie kúsky. Ja to zbieram.“","„Vyhoď to, aj tak je to hlúpa pesnička.“","„Kúpim si novú.“","„Ocko ťa zabije.“"],e:"Kúsky si odloží do šuplíka.",c:"21"},
+  {q:"Prečo Holden v sobotu v noci nezavolá Phoebe?",o:["Chodí spávať asi o deviatej a telefón by zdvihli rodičia","Nemá drobné na telefón","Phoebe je na návšteve v Norwalku","Nepamätá si číslo"],e:"Sám hovorí, že by sa nenahnevala, ale ozvali by sa rodičia.",c:"9"},
+  {q:"Ktoré diela z angliny poznal Holden už z Whootonu?",o:["Beowulf a Lord Randall, môj syn","Hamlet a Rómeo a Júlia","Rodákov návrat a Veľký Gatsby","Zbohom zbraniam a Spomienky na Afriku"],e:"Preto z angliny prešiel bez učenia.",c:"2"},
+  {q:"Kam dal Holden Phoebin kufor pred múzeom?",o:["do šatne","do skrinky na Grand Central","do taxíka","nechal ho na chodníku"],e:"O tretej si ho mala zobrať, keď pôjde zo školy.",c:"25"},
+  {q:"Kto Holdenovi na konci knihy chýba okrem Stradlatera a Ackleyho?",o:["Maurice","pán Spencer","pán Antolini","Sunny"],e:"„Nikdy nikomu o ničom nerozprávajte. Lebo potom bude každý chýbať.“",c:"26"}
+ ],
  hard:[
   {q:"S ktorou školou hrala Pencey posledný futbalový zápas?",o:["Saxon Hall","Elkton Hills","Whooton","McBurneyho škola"],e:"S McBurneyho školou mali mať šermiari stretnutie v New Yorku.",c:"1"},
   {q:"Odkiaľ Holden sledoval zápas?",o:["Z Thomsenovho vŕšku","Z tribúny pri rodičoch","Z okna izby","Vôbec ho nesledoval, bol u Spencera"],e:"Stál hore na Thomsenovom vŕšku, lebo sa práve vrátil zo šermu.",c:"1"},
   {q:"Prečo šermiari s Holdenom vo vlaku nehovorili?",o:["Holden nechal kordy a výstroj v metre","Holden prehral rozhodujúci zápas","Holden zaspal a zmeškali vlak","Holden sa pohádal s trénerom"],e:"Ako kapitán zabudol všetky kordy v metre, takže zápas nebol.",c:"1"},
   {q:"Kedy v dejepise preberali Egypťanov?",o:["Od 4. novembra do 2. decembra","Celý október","Od septembra do Vianoc","Len jeden týždeň v decembri"],e:"Spencer to hovorí, keď mu ide čítať jeho písomku.",c:"2"},
   {q:"Akú knihu číta Holden v izbe, keď príde Ackley?",o:["Spomienky na Afriku (Isak Dinesen)","Zbohom zbraniam (Hemingway)","Rodákov návrat (Hardy)","Tajná zlatá rybka (D. B.)"],e:"Myslel, že to bude nuda, ale bola to dobrá kniha. Hemingwaya neznáša.",c:"3"},
-  {q:"Čo povedal Holden o svojej čiapke, keď Ackley tvrdil, že je na jelene?",o:["„V tejto čiapke sa strieľajú ľudia.“","„Je to šermiarska čiapka.“","„Je od Allieho.“","„Nosí sa na lov kačíc.“"],e:"Ackley: „V takejto čiapke sa strieľajú jelene.“",c:"3"},
+  {q:"Čo povedal Holden o svojej čiapke, keď Ackley tvrdil, že je na jelene?",o:["„Ja v takej čiapke strieľam ľudí.“","„Je to šermiarska čiapka.“","„Je od Allieho.“","„Nosí sa na lov kačíc.“"],e:"Ackley: „V takejto čiapke sa strieľajú jelene.“",c:"3"},
   {q:"Kedy a kde zomrel Allie?",o:["18. júla 1946 v Maine","Na Vianoce 1949 v New Yorku","V lete 1945 v Pennsylvánii","18. decembra 1946 v Kalifornii"],e:"Holden mal vtedy 13 rokov.",c:"5"},
   {q:"Čo robila Jane pri dáme?",o:["Nechávala všetky dámy v zadnom rade","Vždy podvádzala","Hrala len čiernymi","Nikdy nevyhrala"],e:"Páčilo sa jej, keď tam stáli všetky pekne v rade. Holden sa na to Stradlatera pýta.",c:"4, 6, 11"},
   {q:"Ako sa Holden s Jane zoznámil?",o:["Jej doberman chodil na ich trávnik","Na tanečnej zábave","V škole Pencey","Cez Sally Hayesovú"],e:"Leto v Maine, boli susedia.",c:"4, 11"},
@@ -866,7 +918,8 @@ const LEVELS = [
   {k:"easy",n:"Základné",d:"Kto, kde, čo – základ deja",b:"●○○"},
   {k:"med",n:"Stredné",d:"Kľúčové scény a postavy",b:"●●○"},
   {k:"hard",n:"Ťažké",d:"Detaily ako na skutočnej písomke",b:"●●●"},
-  {k:"mix",n:"Mix 20",d:"Náhodný výber zo všetkých",b:"⟳"}
+  {k:"mix",n:"Mix 20",d:"Náhodný výber zo všetkých",b:"⟳"},
+  {k:"ultra",n:"Ultra ťažké",d:"Dopisovačky aj výber, len pre tých, čo čítali",b:"✎✎✎"}
 ];
 const shuffle = a => { a = a.slice(); for (let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
 let cur = "easy", qs = [], ans = {};
@@ -877,7 +930,8 @@ lvlEl.addEventListener("click", e => { const b = e.target.closest(".lvl"); if (b
 
 function build(k){
   let base = k==="mix" ? shuffle([...Q.easy,...Q.med,...Q.hard]).slice(0,20) : Q[k];
-  return base.map(x => { const opts = shuffle(x.o.map((t,i)=>({t,ok:i===0}))); return {...x, opts}; });
+  if (k==="ultra") base = shuffle(base);
+  return base.map(x => x.a ? {...x} : {...x, opts: shuffle(x.o.map((t,i)=>({t,ok:i===0})))});
 }
 function start(k, list){
   cur = k; ans = {};
@@ -891,7 +945,7 @@ function render(){
   L.innerHTML = qs.map((x,i)=>`
    <div class="q" id="q${i}">
      <div class="qh"><span class="num">${i+1}.</span><span class="txt">${esc(x.q)}</span><span class="ref">kap. ${x.c}</span></div>
-     <div class="opts">${x.opts.map((o,j)=>`<button class="opt" type="button" data-q="${i}" data-o="${j}">${esc(o.t)}</button>`).join("")}</div>
+     ${x.a ? `<form class="fill" data-q="${i}"><input id="f${i}" type="text" autocomplete="off" spellcheck="false" placeholder="Napíš odpoveď…" aria-label="Odpoveď na otázku ${i+1}"><button class="btn" type="submit">Skontrolovať</button></form>` : `<div class="opts">${x.opts.map((o,j)=>`<button class="opt" type="button" data-q="${i}" data-o="${j}">${esc(o.t)}</button>`).join("")}</div>`}
    </div>`).join("");
   document.getElementById("doneBox").hidden = true;
   score();
@@ -908,6 +962,19 @@ document.getElementById("qlist").addEventListener("click", e => {
   ex.innerHTML = (ok ? '<b class="ok">Správne.</b> ' : '<b class="no">Nie.</b> Správne je: <b>'+esc(x.opts.find(o=>o.ok).t)+'</b>. ') + esc(x.e);
   box.appendChild(ex);
   score();
+});
+const norm = s => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[„“"'!?.:;()]/g,"").replace(/^(pan|pani|p)\s+/,"").replace(/\s+/g," ").trim();
+document.getElementById("qlist").addEventListener("submit", e => {
+  const f = e.target.closest("form.fill"); if (!f) return; e.preventDefault();
+  const i = +f.dataset.q; if (ans[i] !== undefined) return;
+  const inp = f.querySelector("input"); const v = norm(inp.value); if (!v) { inp.focus(); return; }
+  const x = qs[i]; const ok = x.a.some(a => { const n = norm(a); return v === n || v.replace(",",".") === n.replace(",",".") || (n.length >= 4 && v.includes(n)) || v.replace(",",".").split(" ").includes(n.replace(",",".")); });
+  ans[i] = ok; inp.disabled = true; f.querySelector("button").disabled = true;
+  inp.classList.add(ok ? "correct" : "wrong");
+  const box = document.getElementById("q"+i); box.classList.add(ok ? "is-ok" : "is-bad");
+  const ex = document.createElement("div"); ex.className = "expl";
+  ex.innerHTML = (ok ? '<b class="ok">Správne.</b> ' : '<b class="no">Nie.</b> Správne je: <b>'+esc(x.s)+'</b>. ') + esc(x.e);
+  box.appendChild(ex); score();
 });
 function score(){
   const tot = qs.length, done = Object.keys(ans).length, ok = Object.values(ans).filter(Boolean).length;
@@ -926,7 +993,7 @@ function score(){
 }
 document.getElementById("btnReset").addEventListener("click", ()=>start(cur));
 document.getElementById("btnRetryWrong").addEventListener("click", ()=>{
-  const wrong = qs.filter((x,i)=>ans[i]===false).map(x=>({...x, opts: shuffle(x.opts)}));
+  const wrong = qs.filter((x,i)=>ans[i]===false).map(x=> x.a ? {...x} : {...x, opts: shuffle(x.opts)});
   if (wrong.length) start(cur, wrong);
 });
 let saved = "easy"; try { saved = localStorage.getItem("kcvz-level") || "easy"; } catch(e){}
