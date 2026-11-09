@@ -3,7 +3,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@500&family=Oswald:wght@500;600;700&display=swap">
 <style>
 /* Layout: úzky čitateľný stĺpec, sticky lišta so sekciami, karty len pre postavy a otázky */
 :root{
@@ -156,6 +156,119 @@ footer{color:var(--muted);font-size:.85rem;padding-block:0 40px}
   .scorebar{top:calc(env(safe-area-inset-top,0px) + 54px)}
 }
 @media (prefers-reduced-motion:no-preference){.opt,.lvl,nav.tabs a{transition:background .15s,border-color .15s}}
+
+/* ======== PLAGÁT (obmedzené na #v-plagat) ======== */
+#v-plagat{--bg:#f4f2ee; --card:#ffffff; --ink:#1b1e27; --muted:#61646f; --line:#dedad2;
+  --holden:#14213D; --red:#b5121b;
+  --c-rod:#c0392b; --c-pen:#1f5fae; --c-die:#a2368f; --c-sko:#2c7a4b; --c-ny:#c27400;
+  --t-rod:#fbe8e5; --t-pen:#e4eefa; --t-die:#f7e4f3; --t-sko:#e2f2e8; --t-ny:#fcefd9;
+  --f-cond:"Oswald","Arial Narrow",Impact,sans-serif; --f-body:"Source Sans 3","Segoe UI",system-ui,sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,monospace;}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) #v-plagat{--bg:#121318; --card:#1b1d24; --ink:#ecebe7; --muted:#a3a6b1; --line:#2f323c; --holden:#dfe6f5; --red:#ff6b6b;
+  --c-rod:#ff7a6b; --c-pen:#6aa6ff; --c-die:#e07ad0; --c-sko:#5fcf8e; --c-ny:#ffb547;
+  --t-rod:#3a1f1d; --t-pen:#1a2a42; --t-die:#38203a; --t-sko:#173326; --t-ny:#3a2c14; color-scheme:dark}}
+:root[data-theme="dark"] #v-plagat{--bg:#121318; --card:#1b1d24; --ink:#ecebe7; --muted:#a3a6b1; --line:#2f323c; --holden:#dfe6f5; --red:#ff6b6b;
+  --c-rod:#ff7a6b; --c-pen:#6aa6ff; --c-die:#e07ad0; --c-sko:#5fcf8e; --c-ny:#ffb547;
+  --t-rod:#3a1f1d; --t-pen:#1a2a42; --t-die:#38203a; --t-sko:#173326; --t-ny:#3a2c14; color-scheme:dark}
+#v-plagat .pwrap{max-width:1800px;margin:0 auto;display:grid;gap:22px}
+#v-plagat h1,#v-plagat h2{font-family:var(--f-cond);font-weight:700;text-transform:uppercase;letter-spacing:.01em;margin:0;line-height:1}
+#v-plagat h1{font-size:clamp(2rem,4.5vw,3.4rem)}
+#v-plagat h1 em{font-style:normal;color:var(--red)}
+#v-plagat h2{font-size:1.5rem;display:flex;align-items:baseline;gap:12px}
+#v-plagat h2 small{font-family:var(--f-mono);font-size:.72rem;font-weight:500;color:var(--muted);letter-spacing:.06em}
+#v-plagat .head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px}
+#v-plagat .pfacts{display:flex;flex-wrap:wrap;gap:8px}
+#v-plagat .fact{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:.92rem;white-space:nowrap}
+#v-plagat .fact b{font-family:var(--f-cond);font-weight:600;font-size:1.05rem;margin-right:4px}
+#v-plagat .legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:.88rem;color:var(--muted)}
+#v-plagat .legend span{display:inline-flex;align-items:center;gap:6px}
+#v-plagat .legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+#v-plagat section{display:grid;gap:12px;min-width:0}
+#v-plagat .pdays{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+#v-plagat .pday{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;min-width:0}
+#v-plagat .pday header{background:var(--holden);color:var(--bg);padding:10px 16px;display:flex;justify-content:space-between;align-items:baseline}
+#v-plagat .pday header b{font-family:var(--f-cond);font-size:1.5rem;font-weight:700;text-transform:uppercase}
+#v-plagat .pday header span{font-family:var(--f-mono);font-size:.75rem;opacity:.85}
+#v-plagat .pday ol{list-style:none;margin:0;padding:10px 14px 14px;display:grid;gap:6px;counter-reset:e}
+#v-plagat .pday li{display:grid;grid-template-columns:3.6em 1fr;gap:6px;align-items:baseline;font-size:.95rem}
+#v-plagat .pday li::before{counter-increment:e;content:attr(data-k);font-family:var(--f-mono);font-size:.75rem;color:var(--muted)}
+#v-plagat .pn{font-weight:700;padding:0 5px;border-radius:5px;white-space:nowrap}
+#v-plagat .pn.rod{background:var(--t-rod);color:var(--c-rod)}
+#v-plagat .pn.pen{background:var(--t-pen);color:var(--c-pen)}
+#v-plagat .pn.die{background:var(--t-die);color:var(--c-die)}
+#v-plagat .pn.sko{background:var(--t-sko);color:var(--c-sko)}
+#v-plagat .pn.ny{background:var(--t-ny);color:var(--c-ny)}
+#v-plagat .pn.hol{background:var(--holden);color:var(--bg)}
+#v-plagat .map{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px;overflow-x:auto}
+#v-plagat .map svg{display:block;width:100%;min-width:900px;height:auto}
+#v-plagat .map text{font-family:var(--f-body)}
+#v-plagat .pgroups{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;align-items:start}
+#v-plagat .grp{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;min-width:0}
+#v-plagat .grp h3{margin:0;padding:10px 14px;font-family:var(--f-cond);font-size:1.25rem;text-transform:uppercase;color:#fff}
+#v-plagat .grp.rod h3{background:var(--c-rod)}
+#v-plagat .grp.pen h3{background:var(--c-pen)}
+#v-plagat .grp.die h3{background:var(--c-die)}
+#v-plagat .grp.sko h3{background:var(--c-sko)}
+#v-plagat .grp.ny h3{background:var(--c-ny)}
+:root[data-theme="dark"] #v-plagat .grp h3{color:#111}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) #v-plagat .grp h3{color:#111}}
+#v-plagat .grp ul{list-style:none;margin:0;padding:6px 0}
+#v-plagat .grp li{padding:7px 14px;border-top:1px solid var(--line)}
+#v-plagat .grp li:first-child{border-top:0}
+#v-plagat .grp li b{display:block;font-size:1rem}
+#v-plagat .grp li span{font-size:.88rem;color:var(--muted)}
+#v-plagat .grp li em{font-style:normal;font-size:.8rem;font-family:var(--f-mono);display:block;margin-top:2px}
+#v-plagat .grp.rod em{color:var(--c-rod)}
+#v-plagat .grp.pen em{color:var(--c-pen)}
+#v-plagat .grp.die em{color:var(--c-die)}
+#v-plagat .grp.sko em{color:var(--c-sko)}
+#v-plagat .grp.ny em{color:var(--c-ny)}
+#v-plagat .psub{padding:8px 14px 2px;font-family:var(--f-mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+#v-plagat .nums{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+#v-plagat .num{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+#v-plagat .num b{display:block;font-family:var(--f-cond);font-size:1.9rem;color:var(--red);line-height:1}
+#v-plagat .num span{font-size:.86rem;color:var(--muted)}
+#v-plagat .two{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:22px;align-items:start}
+#v-plagat .quotes{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+#v-plagat .pq{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;border-top:4px solid var(--qc,var(--holden))}
+#v-plagat .pq p{margin:0 0 6px;font-size:1rem;font-weight:600}
+#v-plagat .pq small{font-family:var(--f-mono);font-size:.74rem;color:var(--qc,var(--muted));text-transform:uppercase;letter-spacing:.04em}
+#v-plagat .traps{display:grid;gap:8px}
+#v-plagat .trap{background:var(--card);border:1px solid var(--line);border-radius:12px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);overflow:hidden}
+#v-plagat .trap div{padding:9px 12px;font-size:.92rem;min-width:0}
+#v-plagat .trap div+div{border-left:1px dashed var(--line)}
+#v-plagat .trap h4{margin:0 0 6px;grid-column:1/-1;font-family:var(--f-cond);font-size:1.05rem;text-transform:uppercase;padding:8px 12px 0;color:var(--red)}
+#v-plagat .trap b{display:block}
+#v-plagat .tools{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:8px;display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;border-bottom:1px solid var(--line)}
+#v-plagat .tools input{font:inherit;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);min-width:0;width:260px;max-width:100%}
+#v-plagat .chipbtn{font:inherit;font-size:.88rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;border:1.5px solid var(--line);background:var(--card);color:var(--ink)}
+#v-plagat .chipbtn i{width:11px;height:11px;border-radius:3px}
+#v-plagat .chipbtn[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+#v-plagat .chipbtn:focus-visible,#v-plagat .tools input:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+#v-plagat .hint{font-size:.82rem;color:var(--muted)}
+#v-plagat.focus .pn:not(.hit),#v-plagat.focus .grp li:not(.hit),#v-plagat.focus .pq:not(.hit),#v-plagat.focus .trap:not(.hit){opacity:.22}
+#v-plagat.focus .grp:not(.hitg) h3{opacity:.35}
+#v-plagat .hit{outline:2px solid var(--ink);outline-offset:1px;border-radius:6px}
+#v-plagat .grp li.hit{outline:0;background:var(--bg)}
+#v-plagat .pq.hit,#v-plagat .trap.hit{outline:2px solid var(--ink)}
+#v-plagat #plMap .node{cursor:pointer}
+#v-plagat #plMap.dim .node:not(.on),#v-plagat #plMap.dim .edge:not(.on),#v-plagat #plMap.dim .lab:not(.on){opacity:.12}
+#v-plagat #plMap .edge,#v-plagat #plMap .node,#v-plagat #plMap .lab{transition:opacity .15s}
+@media (prefers-reduced-motion:reduce){#v-plagat #plMap .edge,#v-plagat #plMap .node,#v-plagat #plMap .lab{transition:none}}
+#v-plagat .grp li{cursor:pointer}
+@media (max-width:1300px){#v-plagat .pgroups{grid-template-columns:repeat(3,minmax(0,1fr))}
+#v-plagat .two{grid-template-columns:1fr}}
+@media (max-width:860px){#v-plagat .pdays{grid-template-columns:1fr}
+#v-plagat .pgroups{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){#v-plagat .pgroups{grid-template-columns:1fr}
+#v-plagat .trap{grid-template-columns:1fr}
+#v-plagat .trap div+div{border-left:0;border-top:1px dashed var(--line)}}
+
+/* ---- Plagát: väzba na stránku ---- */
+#v-plagat{font-family:var(--f-body);font-size:15px;line-height:1.4;color:var(--ink)}
+#v-plagat h3,#v-plagat h4{font-weight:700;line-height:1.4}
+#v-plagat .tools{top:calc(env(safe-area-inset-top,0px) + var(--tabs-h,58px));z-index:4}
+#v-plagat .tools input{font-size:16px}
+body.wide .wrap{max-width:1800px}
 </style>
 
 <div class="wrap">
@@ -172,6 +285,7 @@ footer{color:var(--muted);font-size:.85rem;padding-block:0 40px}
   <a href="#kapitoly">Kapitoly</a>
   <a href="#symboly">Symboly a „prečo“</a>
   <a href="#fakty">Čísla a mená</a>
+  <a href="#plagat">Plagát</a>
   <a href="#testy" class="test-tab">Testy</a>
 </nav>
 
@@ -274,6 +388,184 @@ footer{color:var(--muted);font-size:.85rem;padding-block:0 40px}
     <thead><tr><th>Čo</th><th>Význam</th></tr></thead>
     <tbody id="factRows"></tbody>
   </table></div>
+</section>
+
+<!-- ============ PLAGÁT ============ -->
+<section class="view" id="v-plagat" hidden>
+<div class="pwrap">
+  <div class="head">
+    <h2>Plagát <small>všetko na jednej strane</small></h2>
+    <div class="pfacts">
+      <span class="fact"><b>J. D. Salinger</b>1951</span>
+      <span class="fact"><b>Holden</b>16 r. (rozpráva ako 17-ročný z liečebne)</span>
+      <span class="fact"><b>26</b>kapitol, ich-forma</span>
+      <span class="fact"><b>3 dni</b>sobota – pondelok pred Vianocami</span>
+      <span class="fact"><b>Pencey</b>→ New York</span>
+      <span class="fact"><b>Vyhodený</b>prepadol zo 4 predmetov</span>
+    </div>
+  </div>
+  <div class="tools" role="toolbar" aria-label="Zvýraznenie">
+    <input id="plQ" type="search" placeholder="Hľadaj meno, napr. Sunny, Castle, Jane…" aria-label="Hľadať meno">
+    <button class="chipbtn" data-g="hol" aria-pressed="false"><i style="background:var(--holden)"></i>Holden</button>
+    <button class="chipbtn" data-g="rod" aria-pressed="false"><i style="background:var(--c-rod)"></i>Rodina</button>
+    <button class="chipbtn" data-g="pen" aria-pressed="false"><i style="background:var(--c-pen)"></i>Pencey</button>
+    <button class="chipbtn" data-g="die" aria-pressed="false"><i style="background:var(--c-die)"></i>Dievčatá</button>
+    <button class="chipbtn" data-g="sko" aria-pressed="false"><i style="background:var(--c-sko)"></i>Staré školy</button>
+    <button class="chipbtn" data-g="ny" aria-pressed="false"><i style="background:var(--c-ny)"></i>New York</button>
+    <span class="hint">Klikni na skupinu, meno v mape alebo v zozname: zvýrazní sa všade.</span>
+  </div>
+
+  <section>
+    <h2>Tri dni <small>čo sa deje a kto tam je</small></h2>
+    <div class="pdays">
+      <div class="pday"><header><b>Sobota</b><span>kap. 1–8 · Pencey</span></header><ol>
+        <li data-k="kap. 1"><span>Zápas so Saxon Hallom sleduje z Thomsenovho vŕšku; kordy nechal v metre.</span></li>
+        <li data-k="kap. 2"><span>Rozlúčka so <span class="pn pen">Spencerom</span>: „Život je zápas…“</span></li>
+        <li data-k="kap. 3"><span>Nová červená čiapka za 1 $; otravuje <span class="pn pen">Ackley</span>.</span></li>
+        <li data-k="kap. 4"><span><span class="pn pen">Stradlater</span> ide na rande s <span class="pn die">Jane</span>, chce sloh.</span></li>
+        <li data-k="kap. 5"><span>Agerstown s <span class="pn pen">Malom Brossardom</span>; sloh o rukavici <span class="pn rod">Allieho</span>.</span></li>
+        <li data-k="kap. 6"><span>Bitka so <span class="pn pen">Stradlaterom</span> (auto <span class="pn pen">Eda Bankyho</span>).</span></li>
+        <li data-k="kap. 7"><span>Stroj predá <span class="pn pen">Woodruffovi</span> za 20 $: „Spite sladko, debili!“</span></li>
+        <li data-k="kap. 8"><span>Vlak: <span class="pn ny">pani Morrowová</span>, Holden je „Rudolf Schmidt“.</span></li>
+      </ol></div>
+      <div class="pday"><header><b>Nedeľa</b><span>kap. 9–23 · New York</span></header><ol>
+        <li data-k="kap. 9"><span>Hotel Edmont, volá <span class="pn ny">Faith Cavendishovej</span>.</span></li>
+        <li data-k="kap. 10"><span>Lavender bar: <span class="pn ny">Bernice, Marty, Laverne</span>; „Jim Steele“.</span></li>
+        <li data-k="kap. 12"><span>Taxikár <span class="pn ny">Horwitz</span>, klub <span class="pn ny">Ernieho</span>, <span class="pn ny">Lillian</span>.</span></li>
+        <li data-k="kap. 13–14"><span><span class="pn ny">Maurice</span> a <span class="pn ny">Sunny</span>: 5 $, potom ho zbijú.</span></li>
+        <li data-k="kap. 15–16"><span><span class="pn ny">Mníšky</span> (10 $), platňa pre <span class="pn rod">Phoebe</span>.</span></li>
+        <li data-k="kap. 17"><span>Rande so <span class="pn die">Sally</span>: divadlo, korčule, Vermont.</span></li>
+        <li data-k="kap. 18–20"><span><span class="pn sko">Carl Luce</span> vo Wicker bare, opitý v parku.</span></li>
+        <li data-k="kap. 21–23"><span>Potajomky domov k <span class="pn rod">Phoebe</span>: „chytač v žite“, 8,85 $.</span></li>
+      </ol></div>
+      <div class="pday"><header><b>Pondelok</b><span>kap. 24–26</span></header><ol>
+        <li data-k="kap. 24"><span>V noci u <span class="pn sko">Antoliniho</span> (Sutton Place); citát Stekela.</span></li>
+        <li data-k="kap. 24"><span>Zobudí sa, Antolini ho hladká po hlave, uteká.</span></li>
+        <li data-k="kap. 25"><span>Grand Central; Piata Avenue: „<span class="pn rod">Allie</span>, nedovoľ, aby som zmizol.“</span></li>
+        <li data-k="kap. 25"><span>Lístok pre <span class="pn rod">Phoebe</span>: 12:15 pred Múzeom výtvarného umenia.</span></li>
+        <li data-k="kap. 25"><span>Nápisy na stenách, múmie, Holden omdlie.</span></li>
+        <li data-k="kap. 25"><span><span class="pn rod">Phoebe</span> príde s kufrom; zoo, kolotoč, dážď.</span></li>
+        <li data-k="kap. 26"><span> liečebňa, psychoanalytik, „Nikdy nikomu o ničom nerozprávajte…“</span></li>
+      </ol></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Mapa vzťahov <small>čiara = súvis, popis = ako</small></h2>
+    <div class="map"><svg id="plMap" viewBox="0 0 1600 760" role="img" aria-label="Mapa vzťahov postáv okolo Holdena"></svg></div>
+  </section>
+
+  <section>
+    <h2>Kto je kto <small>všetky mená podľa skupín</small></h2>
+    <div class="pgroups">
+      <div class="grp rod"><h3>Rodina</h3><ul>
+        <li><b>Phoebe</b><span>sestra, 10 r., červené vlasy, chudá, bystrá</span><em>Benedict Arnold · 8,85 $ · kolotoč</em></li>
+        <li><b>Allie</b><span>mladší brat, zomrel 18. 7. 1946 na leukémiu</span><em>rukavica, básne zeleným atramentom</em></li>
+        <li><b>D. B.</b><span>starší brat, spisovateľ, teraz Hollywood</span><em>Tajná zlatá rybka · ex Lillian</em></li>
+        <li><b>Otec</b><span>advokát</span><em>„Ocko ťa zabije.“</em></li>
+        <li><b>Mama</b><span>nervózna; kúpila zlé korčule</span><em>v kap. 23 príde do izby</em></li>
+      </ul></div>
+      <div class="grp pen"><h3>Pencey</h3><ul>
+        <li><b>Pán Spencer</b><span>dejepis, ~70 r., chrípka, navajská prikrývka</span><em>„Život je zápas…“</em></li>
+        <li><b>Ward Stradlater</b><span>spolubývajúci, „prasa zakuklené“</span><em>rande s Jane · bitka</em></li>
+        <li><b>Robert Ackley</b><span>sused, uhry, zlé zuby, strihá si nechty</span><em>spolubývajúci Ely</em></li>
+        <li><b>Dr. Thurmer</b><span>riaditeľ</span><em>dcéra Selma</em></li>
+        <li><b>Ossenburger</b><span>pohrebník, meno krídla internátu</span><em>Marsalla pustil vetry</em></li>
+        <li><b>Mal Brossard</b><span>s ním do Agerstownu</span><em>hamburgery, kino</em></li>
+        <li><b>Ed Banky</b><span>tréner basketbalu</span><em>jeho auto: Stradlater + Jane</em></li>
+        <li><b>Frederick Woodruff</b><span>kúpil písací stroj</span><em>20 $ (stál 90)</em></li>
+        <li><b>Ernest Morrow</b><span>„najväčší sviniar“, mokrý uterák</span><em>syn pani Morrowovej</em></li>
+      </ul></div>
+      <div class="grp die"><h3>Dievčatá</h3><ul>
+        <li><b>Jane Gallagherová</b><span>kamarátka z leta v Maine, nikdy sa neobjaví</span><em>dámy v zadnom rade · doberman</em></li>
+        <li><b>Pán Cudahy</b><span>Janin nevlastný otec, „ožran“</span><em>Jane plače nad šachovnicou</em></li>
+        <li><b>Sally Hayesová</b><span>rande v nedeľu: Biltmore o 14:00</span><em>„Nasrala si ma…“</em></li>
+        <li><b>George</b><span>Sallyin známy z Andoveru</span><em>stretnú ho v divadle</em></li>
+        <li><b>Selma Thurmerová</b><span>dcéra riaditeľa, veľký nos</span><em>páčila sa mu</em></li>
+      </ul></div>
+      <div class="grp sko"><h3>Staré školy</h3>
+        <div class="psub">Whooton</div><ul>
+        <li><b>Carl Luce</b><span>konzultant skupiny, teraz Columbia</span><em>Wicker bar · otec psychoanalytik</em></li></ul>
+        <div class="psub">Elkton Hills</div><ul>
+        <li><b>Pán Antolini</b><span>profesor angliny, Sutton Place</span><em>Stekel · hladká ho po hlave</em></li>
+        <li><b>Haas</b><span>pokrytecký riaditeľ</span><em>úsmev len na bohatých</em></li>
+        <li><b>James Castle</b><span>vyskočil z okna v Holdenovom roláku</span><em>Antolini ho zakryl kabátom</em></li>
+        <li><b>Phil Stabile</b><span>nafúkanec, ktorého Castle urazil</span><em>so 6 chlapcami ho týral</em></li>
+        <li><b>Dick Slagle</b><span>spolubývajúci</span><em>lacné kufre</em></li>
+      </ul></div>
+      <div class="grp ny"><h3>New York</h3><ul>
+        <li><b>Pani Morrowová</b><span>vo vlaku, matka Ernesta</span><em>„Rudolf Schmidt“, nádor</em></li>
+        <li><b>Faith Cavendishová</b><span>striptérka, číslo od E. Birdsella</span><em>len telefón</em></li>
+        <li><b>Bernice, Marty, Laverne</b><span>tri ženy zo Seattlu</span><em>Lavender bar · „Jim Steele“</em></li>
+        <li><b>Horwitz</b><span>taxikár</span><em>ryby žijú „cez póry“</em></li>
+        <li><b>Ernie</b><span>klavirista, snob</span><em>Ernieho klub</em></li>
+        <li><b>Lillian Simmonsová</b><span>bývalá dievčina D. B.</span><em>s námorníkom</em></li>
+        <li><b>Maurice</b><span>výťahár</span><em>5 $ / 15 $ · udrie Holdena</em></li>
+        <li><b>Sunny</b><span>prostitútka, zelené šaty</span><em>„klavichord“</em></li>
+        <li><b>Dve mníšky</b><span>lacné kufre, angličtina</span><em>Rómeo a Júlia · 10 $</em></li>
+        <li><b>Estelle Fletcherová · Valencia</b><span>speváčky (platňa · Wicker bar)</span><em>Malá Shirley Beansová</em></li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Čísla <small>tieto sa pýtajú najčastejšie</small></h2>
+    <div class="nums">
+      <div class="num"><b>16 / 17</b><span>vek počas deja / pri rozprávaní</span></div>
+      <div class="num"><b>189 cm</b><span>Holdenova výška</span></div>
+      <div class="num"><b>4</b><span>predmety, z ktorých prepadol</span></div>
+      <div class="num"><b>18. 7. 1946</b><span>Allieho smrť (Holden mal 13)</span></div>
+      <div class="num"><b>1 $</b><span>poľovnícka čiapka</span></div>
+      <div class="num"><b>20 $</b><span>písací stroj (stál 90)</span></div>
+      <div class="num"><b>13 $</b><span>účet v Lavender bare</span></div>
+      <div class="num"><b>41</b><span>blokov pešo do hotela</span></div>
+      <div class="num"><b>5 / 15 $</b><span>Maurice: číslo / do obeda</span></div>
+      <div class="num"><b>22 · 1222</b><span>vek pre Mauricea · izba</span></div>
+      <div class="num"><b>10 $</b><span>dar mníškam</span></div>
+      <div class="num"><b>5 $</b><span>platňa pre Phoebe</span></div>
+      <div class="num"><b>≈ 50</b><span>kúskov rozbitej platne</span></div>
+      <div class="num"><b>8,85 $</b><span>Phoebine vianočné peniaze</span></div>
+      <div class="num"><b>12:15</b><span>stretnutie pred múzeom</span></div>
+      <div class="num"><b>14:00</b><span>Sally v Biltmore</span></div>
+    </div>
+  </section>
+
+  <div class="two">
+    <section>
+      <h2>Citáty <small>farba = kto to povedal</small></h2>
+      <div class="quotes">
+        <div class="pq" style="--qc:var(--c-pen)"><p>„Život je zápas, ktorý sa má hrať podľa pravidiel.“</p><small>Spencer · kap. 2</small></div>
+        <div class="pq"><p>„Ja v takej čiapke strieľam ľudí.“</p><small>Holden Ackleymu · kap. 3</small></div>
+        <div class="pq"><p>„Spite sladko, debili!“</p><small>Holden pri odchode · kap. 7</small></div>
+        <div class="pq"><p>„Mám len taký maličký nádor na mozgu.“</p><small>Holden pani Morrowovej · kap. 8</small></div>
+        <div class="pq"><p>„Klavichord? Viete, to je v miechovom kanáli.“</p><small>Holden Sunny · kap. 13</small></div>
+        <div class="pq"><p>„Nasrala si ma, aby som ti pravdu povedal.“</p><small>Holden Sally · kap. 17</small></div>
+        <div class="pq" style="--qc:var(--c-rod)"><p>„Ocko ťa zabije.“</p><small>Phoebe · kap. 21–22</small></div>
+        <div class="pq" style="--qc:var(--c-rod)"><p>„To má byť … stretne človeka! Od Roberta Burnsa.“</p><small>Phoebe opravuje Holdena · kap. 22</small></div>
+        <div class="pq"><p>„Chytal by som tie decká v žite.“</p><small>Holden Phoebe · kap. 22</small></div>
+        <div class="pq" style="--qc:var(--c-sko)"><p>„Známkou nezrelého človeka je, že chce za niečo vznešene zomrieť…“</p><small>Stekel, cez Antoliniho · kap. 24</small></div>
+        <div class="pq" style="--qc:var(--c-sko)"><p>„Si čudný chlapec, veľmi čudný.“</p><small>Antolini · kap. 24</small></div>
+        <div class="pq"><p>„Allie, nedovoľ, aby som zmizol.“</p><small>Holden · kap. 25</small></div>
+        <div class="pq"><p>„Ak spadnú, tak spadnú.“</p><small>Holden pri kolotoči · kap. 25</small></div>
+        <div class="pq"><p>„Nikdy nikomu o ničom nerozprávajte. Lebo potom bude každý chýbať.“</p><small>posledná veta · kap. 26</small></div>
+      </div>
+    </section>
+    <section>
+      <h2>Pasce <small>nepomýľ si</small></h2>
+      <div class="traps">
+        <div class="trap"><h4>Spencer vs. Antolini</h4><div><b class="pn pen">Spencer</b>dejepis, Pencey, starý, chorý</div><div><b class="pn sko">Antolini</b>anglina, Elkton Hills, mladý, Sutton Place</div></div>
+        <div class="trap"><h4>Stradlater vs. Ackley</h4><div><b class="pn pen">Stradlater</b>spolubývajúci, pekný, rande s Jane</div><div><b class="pn pen">Ackley</b>sused, uhry, spolubývajúci Ely</div></div>
+        <div class="trap"><h4>Jane vs. Sally</h4><div><b class="pn die">Jane</b>z Maine, nikdy sa neobjaví</div><div><b class="pn die">Sally</b>rande v nedeľu, Vermont</div></div>
+        <div class="trap"><h4>Faith vs. Sunny vs. Lillian</h4><div><b class="pn ny">Faith</b>striptérka, len telefón · <b class="pn ny">Sunny</b>prostitútka od Mauricea</div><div><b class="pn ny">Lillian</b>ex D. B., Ernieho klub</div></div>
+        <div class="trap"><h4>Allie vs. D. B.</h4><div><b class="pn rod">Allie</b>mladší, zomrel, rukavica</div><div><b class="pn rod">D. B.</b>starší, spisovateľ, Hollywood</div></div>
+        <div class="trap"><h4>Falošné mená</h4><div><b>Rudolf Schmidt</b>vlak, pani Morrowová (vrátnik)</div><div><b>Jim Steele</b>Lavender bar, ženy zo Seattlu</div></div>
+        <div class="trap"><h4>Chytí vs. stretne</h4><div><b>Holden</b>„chytí človeka“</div><div><b>Burns (Phoebe)</b>„stretne človeka“</div></div>
+        <div class="trap"><h4>Dve múzeá</h4><div><b>Prírodovedné · nedeľa</b>Eskimák, kanoe; dnu nevojde</div><div><b>Výtvarného umenia · pondelok</b>múmie, čaká Phoebe</div></div>
+        <div class="trap"><h4>Kto ho zbije</h4><div><b class="pn pen">Stradlater</b>kvôli Jane, krv z nosa</div><div><b class="pn ny">Maurice</b>kvôli 5 $, do brucha</div></div>
+      </div>
+    </section>
+  </div>
+</div>
 </section>
 
 <!-- ============ TESTY ============ -->
@@ -641,15 +933,97 @@ let saved = "easy"; try { saved = localStorage.getItem("kcvz-level") || "easy"; 
 start(Q[saved] || saved==="mix" ? saved : "easy");
 
 /* ---------- ROUTING ---------- */
-const VIEWS = ["prehlad","postavy","kapitoly","symboly","fakty","testy"];
+const VIEWS = ["prehlad","postavy","kapitoly","symboly","fakty","plagat","testy"];
 function route(){
   const h = location.hash.replace("#","");
   const v = VIEWS.includes(h) ? h : "prehlad";
   VIEWS.forEach(n => document.getElementById("v-"+n).hidden = n!==v);
+  document.body.classList.toggle("wide", v==="plagat");
   document.querySelectorAll("nav.tabs a").forEach(a => a.getAttribute("href")==="#"+v ? a.setAttribute("aria-current","page") : a.removeAttribute("aria-current"));
 }
 window.addEventListener("hashchange", () => { route(); window.scrollTo({top:0}); });
 route();
 </script>
+<script>
+/* ---------- PLAGÁT: mapa vzťahov a zvýrazňovanie ----------
+   Mapa meria text (getBBox), čo v skrytej sekcii nejde, preto sa vykreslí až pri prvom otvorení záložky. */
+(function(){
+const ROOT=document.getElementById("v-plagat");
+const TABS=document.querySelector("nav.tabs");
+function setTabsH(){ if(TABS) document.documentElement.style.setProperty("--tabs-h",TABS.offsetHeight+"px"); }
+setTabsH(); addEventListener("resize",setTabsH); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(setTabsH);
+let started=false;
+function build(){
+// Mapa vzťahov: uzly podľa skupín, čiary podľa súvislostí
+const C={hol:"var(--holden)",rod:"var(--c-rod)",pen:"var(--c-pen)",die:"var(--c-die)",sko:"var(--c-sko)",ny:"var(--c-ny)"};
+const T={hol:"var(--holden)",rod:"var(--t-rod)",pen:"var(--t-pen)",die:"var(--t-die)",sko:"var(--t-sko)",ny:"var(--t-ny)"};
+const N={
+ holden:[800,380,"Holden","hol"],
+ phoebe:[560,200,"Phoebe","rod"],allie:[380,100,"Allie","rod"],db:[600,80,"D. B.","rod"],rodicia:[400,230,"Rodičia","rod"],
+ spencer:[1010,90,"Spencer","pen"],stradlater:[1110,220,"Stradlater","pen"],ackley:[1270,130,"Ackley","pen"],ely:[1450,90,"Ely","pen"],
+ banky:[1320,290,"Ed Banky","pen"],woodruff:[1460,200,"Woodruff","pen"],thurmer:[1180,40,"Thurmer","pen"],ernest:[1060,320,"Ernest Morrow","pen"],
+ selma:[1400,30,"Selma","die"],jane:[1360,430,"Jane","die"],cudahy:[1500,510,"p. Cudahy","die"],sally:[1090,470,"Sally","die"],george:[1240,530,"George","die"],
+ haas:[170,370,"Haas","sko"],luce:[340,410,"Carl Luce","sko"],antolini:[440,500,"Antolini","sko"],castle:[200,470,"James Castle","sko"],stabile:[150,550,"Phil Stabile","sko"],
+ seattle:[620,640,"Seattle ×3","ny"],faith:[800,640,"Faith","ny"],ernie:[970,640,"Ernie","ny"],morrow:[1150,640,"p. Morrowová","ny"],horwitz:[1340,640,"Horwitz","ny"],nuns:[1490,640,"mníšky","ny"],
+ maurice:[680,715,"Maurice","ny"],sunny:[860,715,"Sunny","ny"],lillian:[1040,715,"Lillian","ny"]
+};
+const Z=[["rod","Rodina",300,30,420,260,704,54],["pen","Pencey",940,8,640,350,1564,342],["die","Dievčatá",1000,390,580,180,1564,414],["sko","Staré školy",60,300,450,290,494,324],["ny","New York",540,598,1040,152,1564,738]];
+const E=[
+ ["holden","phoebe","sestra"],["holden","allie","brat †"],["holden","db","brat"],["holden","rodicia",""],
+ ["holden","spencer","profesor"],["holden","stradlater","spolubývajúci"],["holden","ackley","sused"],["ackley","ely","spolubývajúci"],
+ ["stradlater","jane","rande"],["stradlater","banky","auto"],["holden","woodruff","stroj 20 $"],["thurmer","selma","dcéra"],["holden","thurmer","riaditeľ"],
+ ["jane","cudahy","nevlastný otec"],["holden","jane","leto v Maine"],["holden","sally","rande"],["sally","george","známy"],
+ ["holden","luce","Wicker bar"],["holden","antolini","profesor"],["antolini","castle","zakryl ho"],["castle","stabile","šikana"],["holden","castle","rolák"],["holden","haas","pokrytec"],
+ ["ernest","morrow","syn"],["holden","morrow","vlak"],["holden","maurice","5 $"],["maurice","sunny","pasák"],["db","lillian","ex"],["holden","lillian",""],
+ ["holden","faith","telefón"],["holden","seattle","Jim Steele"],["holden","horwitz","taxík"],["holden","ernie","klub"],["holden","nuns","10 $"],["holden","spencer",""]
+];
+const svg=document.getElementById("plMap"), ns="http://www.w3.org/2000/svg";
+function el(t,a,p=svg){const e=document.createElementNS(ns,t);for(const k in a)e.setAttribute(k,a[k]);p.appendChild(e);return e;}
+const zones=el("g",{}), lines=el("g",{}), labels=el("g",{}), nodes=el("g",{});
+for(const [g,name,x,y,w,h,lx,ly] of Z){el("rect",{x,y,width:w,height:h,rx:22,fill:T[g],opacity:.55},zones);const t=el("text",{x:lx,y:ly,"text-anchor":"end","font-size":16,"font-weight":700,fill:C[g],"letter-spacing":"1.5"},zones);t.textContent=name.toUpperCase();}
+const seen=new Set(), adj={};
+for(const k in N) adj[k]=new Set([k]);
+for(const [a,b,l] of E){const k=[a,b].sort().join("-"); if(seen.has(k))continue; seen.add(k);
+  adj[a].add(b); adj[b].add(a);
+  const [x1,y1]=N[a],[x2,y2]=N[b]; const direct=a==="holden"||b==="holden";
+  el("line",{x1,y1,x2,y2,class:"edge","data-a":a,"data-b":b,stroke:direct?"var(--muted)":C[N[b][3]],"stroke-opacity":direct?.35:.95,"stroke-width":direct?2:3,"stroke-dasharray":direct?"":"6 5"},lines);
+  if(l){const f=direct?0.66:0.5,mx=x1+(x2-x1)*f,my=y1+(y2-y1)*f; const g=el("g",{class:"lab","data-a":a,"data-b":b},labels); const t=el("text",{x:mx,y:my+5,"text-anchor":"middle","font-size":14,fill:"var(--ink)","font-weight":600},g); t.textContent=l;
+    const bb=t.getBBox(); const r=document.createElementNS(ns,"rect"); r.setAttribute("x",bb.x-5);r.setAttribute("y",bb.y-2);r.setAttribute("width",bb.width+10);r.setAttribute("height",bb.height+4);r.setAttribute("rx",6);r.setAttribute("fill","var(--card)");r.setAttribute("stroke","var(--line)"); g.insertBefore(r,t);}
+}
+for(const k in N){const [x,y,name,g]=N[k]; const big=k==="holden";
+  const grp=el("g",{class:"node","data-k":k,"data-g":g,tabindex:0,role:"button","aria-label":name},nodes);
+  const t=document.createElementNS(ns,"text"); t.setAttribute("font-size",big?26:18); t.setAttribute("font-weight",700); t.textContent=name; grp.appendChild(t);
+  const w=t.getBBox().width+(big?44:26), h=big?52:36; grp.removeChild(t);
+  el("rect",{x:x-w/2,y:y-h/2,width:w,height:h,rx:h/2,fill:big?C.hol:"var(--card)",stroke:C[g],"stroke-width":big?0:2.5},grp);
+  const tt=el("text",{x,y:y+(big?9:6),"text-anchor":"middle","font-size":big?26:18,"font-weight":700,fill:big?"var(--bg)":C[g]},grp); tt.textContent=name;
+}
+// --- zvýrazňovanie
+const NAME={holden:["holden"],phoebe:["phoebe"],allie:["allie"],db:["d. b."],rodicia:["otec","mama","rodičia"],spencer:["spencer"],stradlater:["stradlater"],ackley:["ackley"],ely:["ely"],banky:["banky"],woodruff:["woodruff"],thurmer:["thurmer"],ernest:["ernest"],selma:["selma"],jane:["jane"],cudahy:["cudahy"],sally:["sally"],george:["george"],haas:["haas"],luce:["luce"],antolini:["antolini"],castle:["castle"],stabile:["stabile"],seattle:["bernice","marty","laverne","seattle"],faith:["faith"],ernie:["ernie"],morrow:["morrow"],horwitz:["horwitz"],nuns:["mníš"],maurice:["maurice"],sunny:["sunny"],lillian:["lillian"]};
+const items=[...ROOT.querySelectorAll(".pn,.grp li,.pq,.trap")];
+const groupOf=el=>{const c=el.closest(".grp");if(c)return [...c.classList].find(x=>x!=="grp");const m=el.classList;return ["rod","pen","die","sko","ny","hol"].find(x=>m.contains(x));};
+function clear(){ROOT.classList.remove("focus");items.forEach(e=>e.classList.remove("hit"));ROOT.querySelectorAll(".grp").forEach(g=>g.classList.remove("hitg"));svg.classList.remove("dim");svg.querySelectorAll(".on").forEach(e=>e.classList.remove("on"));ROOT.querySelectorAll(".chipbtn").forEach(b=>b.setAttribute("aria-pressed","false"));}
+function mapOn(keys){svg.classList.add("dim");keys.forEach(k=>svg.querySelector(`.node[data-k="${k}"]`)?.classList.add("on"));svg.querySelectorAll(".edge,.lab").forEach(e=>{if(keys.has(e.dataset.a)&&keys.has(e.dataset.b))e.classList.add("on");});}
+function byWords(words){let n=0;ROOT.classList.add("focus");items.forEach(e=>{const t=e.textContent.toLowerCase();if(words.some(w=>t.includes(w))){e.classList.add("hit");n++;const g=e.closest(".grp");if(g)g.classList.add("hitg");}});return n;}
+function focusPerson(k){clear();const keys=adj[k];mapOn(keys);byWords(NAME[k]||[N[k][2].toLowerCase()]);}
+function focusGroup(g){clear();ROOT.classList.add("focus");const keys=new Set(Object.keys(N).filter(k=>N[k][3]===g));if(g!=="hol")keys.add("holden");mapOn(keys);
+  items.forEach(e=>{if(groupOf(e)===g||(e.matches(".pq")&&e.style.getPropertyValue("--qc").includes(g)))e.classList.add("hit");});
+  ROOT.querySelectorAll(".grp."+g).forEach(x=>x.classList.add("hitg"));ROOT.querySelector(`.chipbtn[data-g="${g}"]`).setAttribute("aria-pressed","true");}
+svg.addEventListener("click",e=>{const n=e.target.closest(".node");if(!n){clear();return;}const k=n.dataset.k;if(n.classList.contains("on")&&svg.dataset.cur===k){clear();svg.dataset.cur="";return;}svg.dataset.cur=k;focusPerson(k);});
+svg.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.closest(".node")){e.preventDefault();e.target.closest(".node").dispatchEvent(new MouseEvent("click",{bubbles:true}));}});
+ROOT.querySelectorAll(".chipbtn").forEach(b=>b.addEventListener("click",()=>{const on=b.getAttribute("aria-pressed")==="true";if(on)clear();else focusGroup(b.dataset.g);}));
+ROOT.querySelectorAll(".grp li").forEach(li=>li.addEventListener("click",()=>{const nm=li.querySelector("b").textContent.toLowerCase();const k=Object.keys(NAME).find(k=>NAME[k].some(w=>nm.includes(w)));if(k){focusPerson(k);document.getElementById("plMap").scrollIntoView({behavior:"smooth",block:"center"});}else{clear();byWords([nm]);}}));
+const q=document.getElementById("plQ");
+q.addEventListener("input",()=>{const v=q.value.trim().toLowerCase();if(v.length<2){clear();return;}clear();byWords([v]);const keys=new Set(Object.keys(N).filter(k=>N[k][2].toLowerCase().includes(v)||(NAME[k]||[]).some(w=>w.includes(v)||v.includes(w))));if(keys.size)mapOn(keys);});
+}
+function check(){
+  if(started||ROOT.hidden) return;
+  started=true;
+  (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(()=>{ if(ROOT.hidden){started=false;return;} build(); });
+}
+new MutationObserver(check).observe(ROOT,{attributes:true,attributeFilter:["hidden"]});
+check();
+})();
+</script>
+
 
 </body></html>
