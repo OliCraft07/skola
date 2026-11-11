@@ -1,0 +1,803 @@
+<!doctype html>
+<html lang="sk" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14121a">
+<title>Meno ruže – ťahák</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Rovnaká stavba ako ťahák na Salingera: úzky stĺpec, sticky lišta so sekciami, karty len pre postavy a otázky.
+   Farby: ruža (dôležité, testy) a pergamen/zlato (rámčeky „Na písomku“). */
+:root{
+  --bg:#f4f2ef; --surface:#ffffff; --ink:#1c1a22; --muted:#5f5b68; --line:#dedae2;
+  --rose:#9e1b42; --rose-soft:#f8e6ec; --gold:#8a6a1c; --gold-soft:#f5eedc;
+  --ok:#1f7a45; --ok-soft:#e5f4ea; --bad:#b5121b; --bad-soft:#fbe9ea;
+  --f-display:"Instrument Serif", Georgia, "Times New Roman", serif;
+  --f-body:"Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#14121a; --surface:#1d1b25; --ink:#ebe8e4; --muted:#a39fae; --line:#302d3a;
+  --rose:#ff7c9d; --rose-soft:#3b1d28; --gold:#e3bd63; --gold-soft:#2f2817;
+  --ok:#5fd08e; --ok-soft:#173023; --bad:#ff6b6b; --bad-soft:#3a1d20; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#14121a; --surface:#1d1b25; --ink:#ebe8e4; --muted:#a39fae; --line:#302d3a;
+  --rose:#ff7c9d; --rose-soft:#3b1d28; --gold:#e3bd63; --gold-soft:#2f2817;
+  --ok:#5fd08e; --ok-soft:#173023; --bad:#ff6b6b; --bad-soft:#3a1d20; color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%;background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:860px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;text-wrap:balance;line-height:1.1;margin:0}
+h2{font-size:2.3rem;margin-bottom:.4rem}
+h3{font-size:1.55rem}
+p{margin:.6rem 0}
+a{color:var(--rose)}
+i.la{font-style:italic}
+
+.back{display:inline-block;margin-top:22px;font-family:var(--f-mono);font-size:.8rem;letter-spacing:.04em;color:var(--muted);text-decoration:none;padding:10px 0}
+.back:hover{color:var(--rose)}
+
+header.top{padding-block:40px 18px}
+.kicker{font-family:var(--f-mono);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+header.top h1{font-size:clamp(2.8rem,9vw,4.6rem);margin:.3rem 0 .2rem}
+header.top h1 em{color:var(--rose);font-style:italic}
+header.top .sub{color:var(--muted);max-width:62ch}
+
+nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);
+  display:flex;gap:4px;overflow-x:auto;padding-block:10px;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs a{flex:none;text-decoration:none;color:var(--muted);font-weight:600;font-size:.95rem;padding:7px 13px;border-radius:999px;border:1px solid transparent}
+nav.tabs a:hover{color:var(--ink);border-color:var(--line)}
+nav.tabs a[aria-current="page"]{background:var(--ink);color:var(--bg)}
+nav.tabs a.test-tab{color:var(--rose)}
+nav.tabs a.test-tab[aria-current="page"]{background:var(--rose);color:#16121a}
+a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--rose);outline-offset:2px}
+
+section.view{padding-block:28px 64px}
+.lead{font-size:1.12rem}
+.note{background:var(--gold-soft);border-radius:10px;padding:12px 16px;margin:16px 0;font-size:.97rem}
+.note b{color:var(--gold)}
+
+.video{margin:20px 0 6px}
+.video iframe{display:block;width:100%;aspect-ratio:16/9;border:0;border-radius:12px;background:#000}
+.cap{font-size:.86rem;color:var(--muted);margin:6px 0 18px}
+.vids{display:grid;gap:8px;margin:12px 0 4px}
+.vids a{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;align-items:baseline;text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.vids a:hover{border-color:var(--rose)}
+.vids a b{font-weight:600}
+.vids a span{grid-column:2;font-size:.86rem;color:var(--muted)}
+.vids a i{font-style:normal;font-family:var(--f-mono);color:var(--rose);font-size:.85rem}
+
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:20px 0}
+.facts div{background:var(--surface);padding:12px 16px;min-width:0}
+.facts dt{font-family:var(--f-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.facts dd{margin:2px 0 0}
+
+.hours{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin:14px 0}
+.hours div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 12px}
+.hours b{display:block}
+.hours span{font-family:var(--f-mono);font-size:.78rem;color:var(--muted)}
+
+.days{display:grid;gap:22px;margin-top:18px}
+.day h3{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.day h3 .mono{font-family:var(--f-mono);font-size:.8rem;color:var(--rose);letter-spacing:.06em;text-transform:uppercase}
+ol.steps{margin:.5rem 0 0;padding-left:1.4rem}
+ol.steps li{margin:.25rem 0}
+ol.steps li::marker{font-family:var(--f-mono);color:var(--muted);font-size:.85em}
+
+.groups{display:grid;gap:30px;margin-top:10px}
+.group h3{margin-bottom:10px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;min-width:0}
+.card h4{margin:0;font-size:1.08rem}
+.card .role{font-size:.85rem;color:var(--rose);font-weight:600;margin-bottom:4px}
+.card p{margin:.3rem 0 0;font-size:.95rem}
+.card .fate{display:block;margin-top:8px;font-family:var(--f-mono);font-size:.74rem;color:var(--gold);letter-spacing:.02em}
+
+.search{display:flex;gap:10px;align-items:center;margin:14px 0 18px}
+.search input{flex:1;min-width:0;font:inherit;font-size:16px;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.toggle-all{font:inherit;font-size:.9rem;font-weight:600;background:none;border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:9px 12px;cursor:pointer;flex:none}
+details.ch{border-top:1px solid var(--line)}
+details.ch:last-child{border-bottom:1px solid var(--line)}
+details.ch summary{cursor:pointer;list-style:none;display:grid;grid-template-columns:3.2rem 1fr auto;gap:10px;align-items:baseline;padding:14px 4px}
+details.ch summary::-webkit-details-marker{display:none}
+details.ch summary .n{font-family:var(--f-mono);color:var(--rose);font-size:.95rem}
+details.ch summary .t{font-weight:600;min-width:0}
+details.ch summary .d{font-family:var(--f-mono);font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+details.ch[open] summary .t{color:var(--rose)}
+.ch-body{padding:0 4px 18px 3.8rem}
+.ch-body .det{background:var(--gold-soft);border-radius:10px;padding:10px 14px;margin-top:10px}
+.ch-body .det b.lbl{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.07em;text-transform:uppercase;color:var(--gold)}
+.ch-body .det ul{margin:.3rem 0 0;padding-left:1.1rem}
+.ch-body .det li{margin:.15rem 0}
+mark{background:var(--gold-soft);color:inherit;padding:0 2px;border-radius:3px;box-shadow:inset 0 -2px 0 var(--gold)}
+
+.sym{display:grid;gap:14px;margin-top:14px}
+.sym .card h4{font-family:var(--f-display);font-weight:400;font-size:1.45rem}
+.why{margin-top:10px}
+.why details{border-top:1px solid var(--line);padding:4px 0}
+.why details:last-child{border-bottom:1px solid var(--line)}
+.why summary{cursor:pointer;font-weight:600;padding:10px 0}
+.why details p{margin:0 0 12px}
+
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface);margin-top:14px}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:none}
+th{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.tbl.kv td:first-child{font-family:var(--f-mono);font-variant-numeric:tabular-nums;color:var(--rose);width:38%;min-width:9rem}
+.tbl.dead table{min-width:760px}
+.tbl.dead td:nth-child(1){font-family:var(--f-mono);font-size:.82rem;color:var(--muted);white-space:nowrap}
+.tbl.dead td:nth-child(2){font-weight:700;color:var(--rose);min-width:8rem}
+.tbl.dead td:nth-child(5){font-family:var(--f-mono);font-size:.82rem;color:var(--gold)}
+.tbl.vs td:first-child{font-weight:600;width:22%;min-width:8rem}
+.tbl.vs td:nth-child(2){background:var(--gold-soft)}
+
+.levels{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:16px 0}
+.lvl{font:inherit;text-align:left;cursor:pointer;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.lvl b{display:block;font-size:1.02rem}
+.lvl span{font-size:.85rem;color:var(--muted)}
+.lvl[aria-pressed="true"]{border-color:var(--rose);box-shadow:inset 0 0 0 1px var(--rose)}
+.lvl .bars{font-family:var(--f-mono);color:var(--rose);letter-spacing:2px}
+.scorebar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 58px);z-index:4;background:var(--bg);display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;padding-block:10px;border-bottom:1px solid var(--line)}
+.scorebar .s{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.scorebar .s b{color:var(--rose);font-size:1.15rem}
+.meter{flex:1;min-width:120px;height:8px;background:var(--line);border-radius:99px;overflow:hidden;display:flex}
+.meter i{display:block;height:100%}
+.meter .g{background:var(--ok)} .meter .r{background:var(--bad)}
+.btn{font:inherit;font-size:.9rem;font-weight:600;cursor:pointer;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:7px 12px}
+.btn:hover{border-color:var(--ink)}
+.btn:disabled{opacity:.45;cursor:default}
+.qlist{display:grid;gap:14px;margin-top:16px}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;min-width:0}
+.q .qh{display:flex;gap:10px;align-items:baseline}
+.q .qh .num{font-family:var(--f-mono);color:var(--muted);font-size:.85rem;flex:none}
+.q .qh .txt{font-weight:600;min-width:0}
+.q .ref{font-family:var(--f-mono);font-size:.7rem;color:var(--muted);margin-left:auto;flex:none;white-space:nowrap}
+.opts{display:grid;gap:7px;margin-top:10px}
+.opt{font:inherit;font-size:.97rem;text-align:left;cursor:pointer;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:9px 12px}
+.opt:hover:not(:disabled){border-color:var(--ink)}
+.opt:disabled{cursor:default}
+.opt.correct{background:var(--ok-soft);border-color:var(--ok);color:var(--ink)}
+.opt.wrong{background:var(--bad-soft);border-color:var(--bad);text-decoration:line-through;text-decoration-color:var(--bad)}
+.fill{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.fill input{flex:1;min-width:0;font:inherit;font-size:16px;padding:9px 12px;border-radius:9px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.fill input.correct{border-color:var(--ok);background:var(--ok-soft)}
+.fill input.wrong{border-color:var(--bad);background:var(--bad-soft);text-decoration:line-through;text-decoration-color:var(--bad)}
+.expl{margin-top:10px;font-size:.94rem;padding:10px 12px;border-radius:9px;background:var(--bg)}
+.expl b.ok{color:var(--ok)} .expl b.no{color:var(--bad)}
+.q.is-ok{border-color:var(--ok)} .q.is-bad{border-color:var(--bad)}
+.done{margin-top:18px;padding:16px;border-radius:12px;background:var(--gold-soft)}
+.done h3{margin-bottom:4px}
+
+footer{color:var(--muted);font-size:.85rem;padding-block:0 40px}
+
+@media (max-width:560px){
+  body{font-size:16px}
+  .ch-body{padding-left:4px}
+  details.ch summary{grid-template-columns:2.6rem 1fr}
+  details.ch summary .d{grid-column:2}
+  .scorebar{top:calc(env(safe-area-inset-top,0px) + 54px)}
+}
+/* tabuľka mŕtvych: na mobile ako karty */
+@media (max-width:680px){
+  .tbl.dead table{min-width:0}
+  .tbl.dead thead{display:none}
+  .tbl.dead tr{display:block;padding:12px 14px;border-bottom:1px solid var(--line)}
+  .tbl.dead tr:last-child{border-bottom:0}
+  .tbl.dead td{display:block;padding:2px 0;border:0}
+  .tbl.dead td[data-l]::before{content:attr(data-l);display:block;font-family:var(--f-mono);font-size:.68rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+  .tbl.dead td:nth-child(2){font-size:1.1rem}
+}
+@media (prefers-reduced-motion:no-preference){.opt,.lvl,nav.tabs a,.vids a{transition:background .15s,border-color .15s}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← Príprava na písomky</a>
+<header class="top">
+  <div class="kicker">Ťahák na písomku · Umberto Eco · 1980</div>
+  <h1>Meno <em>ruže</em></h1>
+  <p class="sub">Sedem dní v opátstve, kde mnísi zomierajú kvôli jednej knihe. Celý dej deň po dni, všetky postavy, kto ako zomrel a prečo, symboly a testy v piatich úrovniach. Slovenský preklad: Adriana Ferenčíková (Petit Press 2004, Slovart 2006).</p>
+</header>
+
+<nav class="tabs" aria-label="Sekcie">
+  <a href="#prehlad">Prehľad</a>
+  <a href="#postavy">Postavy</a>
+  <a href="#dni">Deň po dni</a>
+  <a href="#mrtvi">Kto zomrel</a>
+  <a href="#symboly">Symboly a „prečo“</a>
+  <a href="#fakty">Čísla a mená</a>
+  <a href="#testy" class="test-tab">Testy</a>
+</nav>
+
+<!-- ============ PREHĽAD ============ -->
+<section class="view" id="v-prehlad">
+  <h2>Kniha za päť minút</h2>
+  <p class="lead">Koncom novembra 1327 prichádza učený anglický františkán Viliam z Baskervillu so svojím mladým pomocníkom, benediktínskym novicom Adsom z Melku, do bohatého benediktínskeho opátstva v horách severného Talianska. Majú sa tu stretnúť pápežovi vyslanci s františkánmi a hádať sa o to, či bol Kristus chudobný. Opát však Viliama, bývalého inkvizítora, požiada o niečo iné: aby vyšetril záhadnú smrť mladého mnícha Adelma. Za sedem dní zomrie ďalších päť ľudí a všetky stopy vedú do zakázanej knižnice – labyrintu, do ktorého smie len knihovník. Viliam napokon nájde tajnú miestnosť <i>finis Africae</i> a v nej slepého starca Jorgeho, ktorý celé roky ukrýval a napokon otrávil jedinú kópiu stratenej druhej knihy Aristotelovej <i>Poetiky</i> – knihy o komédii a smiechu. Jorge knihu radšej zje, ako by ju vydal, a v zápase vznikne požiar, ktorý zničí knižnicu aj celé opátstvo.</p>
+
+  <div class="video">
+    <iframe src="https://www.youtube.com/embed/9mXeGlF4hCA" title="Umberto Eco, Jméno růže – obsah" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+  </div>
+  <p class="cap">Obsah knihy po česky – kanál Knihy trochu jinak (Olga Lounová, Jakub Ludvík). Mená sú v českom tvare: Vilém = Viliam, Adson = Adso.</p>
+
+  <dl class="facts">
+    <div><dt>Autor</dt><dd>Umberto Eco (1932 – 2016), taliansky semiotik, filozof a profesor v Bologni; Meno ruže je jeho prvý román</dd></div>
+    <div><dt>Vydanie</dt><dd>1980 (taliansky <i>Il nome della rosa</i>), v roku 1981 cena Premio Strega</dd></div>
+    <div><dt>Rozprávač</dt><dd>Adso z Melku, ich-forma; píše ako starec koncom 14. storočia o tom, čo zažil ako asi 18-ročný</dd></div>
+    <div><dt>Kedy a kde</dt><dd>Koniec novembra 1327, bezmenné benediktínske opátstvo v Apeninách (severné Taliansko)</dd></div>
+    <div><dt>Stavba</dt><dd>Úvod „Prirodzene, rukopis“, Prológ, 7 dní (každý delený podľa modlitbových hodín), Posledná strana</dd></div>
+    <div><dt>Žáner</dt><dd>Historický detektívny román, zároveň filozofický román a román o knihách</dd></div>
+    <div><dt>Smer</dt><dd>Postmodernizmus: hra s citátmi a inými knihami (intertextualita), zmes žánrov, „nájdený rukopis“</dd></div>
+    <div><dt>Hlavný konflikt</dt><dd>Rozum, pochybnosť a smiech (Viliam) proti slepej autorite a strachu (Jorge, inkvizítor Bernard Gui)</dd></div>
+  </dl>
+
+  <div class="note"><b>Na čo si dať pozor:</b> Viliam je <b>františkán</b>, Adso <b>benediktín</b> (opátstvo je benediktínske). Vrahom v pravom zmysle nie je len jeden človek: Adelmo sa zabil sám, troch zabila otrávená kniha, Severína zabil Malachiáš a opáta uväznil Jorge. Na ďalšej záložke je tabuľka „Kto zomrel“.</div>
+
+  <h2 style="margin-top:34px">Hodiny, podľa ktorých je delený každý deň</h2>
+  <p>Mnísi sa modlia osemkrát za deň a Adso podľa toho delí rozprávanie. Časy sú približné, novembrové.</p>
+  <div class="hours">
+    <div><b>Matutínum</b><span>v noci, ~2:30</span></div>
+    <div><b>Laudy</b><span>úsvit, ~5:00</span></div>
+    <div><b>Prima</b><span>~7:30</span></div>
+    <div><b>Tercia</b><span>~9:00</span></div>
+    <div><b>Sexta</b><span>poludnie</span></div>
+    <div><b>Nona</b><span>~14:00</span></div>
+    <div><b>Vešpery</b><span>západ slnka, ~16:30</span></div>
+    <div><b>Kompletórium</b><span>~18:00, potom spánok</span></div>
+  </div>
+
+  <h2 style="margin-top:34px">Časová os: sedem dní</h2>
+  <div class="days">
+    <div class="day">
+      <h3>1. deň <span class="mono">príchod</span></h3>
+      <ol class="steps">
+        <li>Viliam podľa stôp v snehu nájde opátovho koňa Brunella.</li>
+        <li>Opát Abbone ho požiada, aby vyšetril smrť iluminátora Adelma. Do knižnice však nesmie.</li>
+        <li>Zoznámia sa s mníchmi; Jorge sa pohorší nad Adelmovými smiešnymi kresbami, prvý spor o smiech.</li>
+      </ol>
+    </div>
+    <div class="day">
+      <h3>2. deň <span class="mono">Venantius</span></h3>
+      <ol class="steps">
+        <li>Venantia nájdu hlavou dole v sude s prasacou krvou.</li>
+        <li>Bencius vyzradí, že Berengar ponúkol Adelmovi tajomstvo knižnice za telesnú lásku.</li>
+        <li>V noci vojdú do labyrintu, niekto im ukradne knihu aj Viliamove okuliare.</li>
+      </ol>
+    </div>
+    <div class="day">
+      <h3>3. deň <span class="mono">Adso a dievča</span></h3>
+      <ol class="steps">
+        <li>Berengar zmizne. Viliam rozlúšti Venantiovu šifru a nakreslí plán knižnice.</li>
+        <li>Adso ide sám do knižnice, potom v kuchyni stretne dievča z dediny.</li>
+        <li>V noci nájdu Berengara utopeného vo vani.</li>
+      </ol>
+    </div>
+    <div class="day">
+      <h3>4. deň <span class="mono">Bernard Gui</span></h3>
+      <ol class="steps">
+        <li>Berengar má čierny jazyk a prsty ako Venantius: jed.</li>
+        <li>Prichádzajú delegácie, s pápežskou aj inkvizítor Bernard Gui.</li>
+        <li>Viliam pochopí, že knižnica je mapa sveta a Finis Africae je za zrkadlom. Bernard zatkne Salvatora a dievča.</li>
+      </ol>
+    </div>
+    <div class="day">
+      <h3>5. deň <span class="mono">disputa a Severín</span></h3>
+      <ol class="steps">
+        <li>Disputa o chudobe Krista skončí bitkou.</li>
+        <li>Severín nájde „zvláštnu knihu“ a o chvíľu je mŕtvy, kniha zmizne.</li>
+        <li>Bernard odsúdi Remigia, Salvatora a dievča. Jorge káže o Antikristovi.</li>
+      </ol>
+    </div>
+    <div class="day">
+      <h3>6. deň <span class="mono">Malachiáš</span></h3>
+      <ol class="steps">
+        <li>Malachiáš zomrie v kostole: „mala silu tisícich škorpiónov“.</li>
+        <li>Opát prikáže Viliamovi odísť.</li>
+        <li>Vďaka Salvatorovmu „tertius equi“ rozlúštia hádanku a o polnoci otvoria zrkadlo.</li>
+      </ol>
+    </div>
+    <div class="day">
+      <h3>7. deň <span class="mono">Finis Africae a požiar</span></h3>
+      <ol class="steps">
+        <li>Jorge všetko prizná, opát sa medzitým udusil v tajnej chodbe.</li>
+        <li>Jorge zje otrávené stránky, vznikne požiar.</li>
+        <li>Opátstvo horí tri dni a tri noci. Viliam a Adso odchádzajú.</li>
+      </ol>
+    </div>
+  </div>
+
+  <h2 style="margin-top:34px">Ďalšie videá</h2>
+  <div class="video">
+    <iframe src="https://www.youtube.com/embed/ExUf-LRRW0g" title="Umberto Eco – Jméno růže, rozbor a životopis" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+  </div>
+  <p class="cap">Rozbor a životopis autora (od 9:09) – rovnaký kanál, po česky.</p>
+  <div class="vids">
+    <a href="https://www.youtube.com/watch?v=9mXeGlF4hCA" target="_blank" rel="noopener"><i>▶</i><b>Umberto Eco, Jméno růže – obsah</b><span>Knihy trochu jinak · česky · dej knihy</span></a>
+    <a href="https://www.youtube.com/watch?v=ExUf-LRRW0g" target="_blank" rel="noopener"><i>▶</i><b>Umberto Eco – Jméno růže, rozbor a životopis</b><span>Knihy trochu jinak · česky · rozbor ako na maturitu</span></a>
+    <a href="https://www.youtube.com/watch?v=lGzWFjztqBo" target="_blank" rel="noopener"><i>▶</i><b>EP124 Umberto Eco – Jméno růže</b><span>Na potítku (David Jirsa) · česky · dej a znaky postmoderny</span></a>
+  </div>
+</section>
+
+<!-- ============ POSTAVY ============ -->
+<section class="view" id="v-postavy" hidden>
+  <h2>Postavy</h2>
+  <p>Mená sú v slovenskej podobe, v zátvorke pôvodné alebo iné bežné tvary (v českých videách napr. Vilém, Adson, Bencius). Pri každom je jeho osud.</p>
+  <div class="groups" id="chars"></div>
+</section>
+
+<!-- ============ DNI ============ -->
+<section class="view" id="v-dni" hidden>
+  <h2>Deň po dni</h2>
+  <p>Každá časť má krátky dej a pod ním rámček „Na písomku“ s detailmi, na ktoré sa učitelia radi pýtajú.</p>
+  <div class="search">
+    <input id="chSearch" type="search" placeholder="Hľadaj meno, miesto alebo slovo (napr. Brunellus, zrkadlo, rukavice)" aria-label="Hľadať v dňoch">
+    <button class="toggle-all" id="toggleAll" type="button">Otvoriť všetky</button>
+  </div>
+  <div id="chapters"></div>
+  <p id="noHits" class="note" hidden>Nič sa nenašlo. Skús iné slovo.</p>
+</section>
+
+<!-- ============ MŔTVI ============ -->
+<section class="view" id="v-mrtvi" hidden>
+  <h2>Kto zomrel a prečo</h2>
+  <p>Najčastejšia otázka na písomke. Pri každom je, kedy ho našli, čo sa naozaj stalo a „trúba“ z Apokalypsy, podľa ktorej si Viliam (a Alinardo) mysleli, že vrah postupuje.</p>
+  <div class="tbl dead"><table>
+    <thead><tr><th>Kedy</th><th>Kto</th><th>Ako ho našli</th><th>Čo sa naozaj stalo</th><th>Trúba</th></tr></thead>
+    <tbody id="deadRows"></tbody>
+  </table></div>
+  <div class="note"><b>Pointa:</b> Viliam veril, že vraždy idú podľa siedmich trúb Apokalypsy. Bol to omyl – smrti mali rôzne príčiny. Jorge sa však o Viliamovej teórii dozvedel a potom ju sám „dohrával“ (Malachiášovi povedal o škorpiónoch). Viliam sa k pravde dostal vďaka chybnej stope a na konci hovorí, že žiadny plán neexistoval.</div>
+  <h2 style="margin-top:34px">Kto ešte neprežil alebo zmizol</h2>
+  <div class="cards" id="otherFates"></div>
+</section>
+
+<!-- ============ SYMBOLY ============ -->
+<section class="view" id="v-symboly" hidden>
+  <h2>Symboly a témy</h2>
+  <div class="sym" id="symbols"></div>
+  <h2 style="margin-top:36px">Otázky „prečo?“</h2>
+  <p>Typ otázok, kde nestačí vedieť, čo sa stalo. Najprv si skús odpovedať sám, potom klikni.</p>
+  <div class="why" id="whys"></div>
+</section>
+
+<!-- ============ FAKTY ============ -->
+<section class="view" id="v-fakty" hidden>
+  <h2>Čísla, mená, miesta</h2>
+  <p>Drobnosti, ktoré sa nedajú vymyslieť – a presne preto sa na ne učitelia pýtajú.</p>
+  <div class="tbl kv"><table>
+    <thead><tr><th>Čo</th><th>Význam</th></tr></thead>
+    <tbody id="factRows"></tbody>
+  </table></div>
+  <h2 style="margin-top:36px">Pasca: kniha a film</h2>
+  <p>Kto knihu nečítal a videl len film (1986, réžia Jean-Jacques Annaud, Viliam: Sean Connery, Adso: Christian Slater), zvyčajne sa pomýli práve tu.</p>
+  <div class="tbl vs"><table>
+    <thead><tr><th>Čo</th><th>V knihe</th><th>Vo filme 1986</th></tr></thead>
+    <tbody id="vsRows"></tbody>
+  </table></div>
+</section>
+
+<!-- ============ TESTY ============ -->
+<section class="view" id="v-testy" hidden>
+  <h2>Testy</h2>
+  <p>Vyber úroveň. Po kliknutí na odpoveď hneď uvidíš, či je správna, a krátke vysvetlenie. Možnosti sa pri každom spustení premiešajú.</p>
+  <div class="levels" id="levels"></div>
+  <div class="scorebar">
+    <div class="s">Správne <b id="sOk">0</b> / <span id="sTot">0</span></div>
+    <div class="meter" aria-hidden="true"><i class="g" id="mOk"></i><i class="r" id="mBad"></i></div>
+    <button class="btn" id="btnRetryWrong" type="button">Zopakovať chybné</button>
+    <button class="btn" id="btnReset" type="button">Začať znova</button>
+  </div>
+  <div class="qlist" id="qlist"></div>
+  <div class="done" id="doneBox" hidden></div>
+</section>
+
+<footer>Zdroj: Umberto Eco, <i>Meno ruže</i> (preklad Adriana Ferenčíková). Dej a detaily overené podľa podrobných prehľadov knihy po jednotlivých dňoch; videá v češtine sú od kanálov Knihy trochu jinak a Na potítku. Tvary mien sa v slovenskom preklade môžu mierne líšiť.</footer>
+</div>
+
+<script>
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ---------- DATA: POSTAVY ---------- */
+const CHARS = [
+ {g:"Hlavné postavy", items:[
+  {n:"Viliam z Baskervillu",r:"Františkán z Anglicka, detektív",d:"Asi 50-ročný, vysoký a chudý, s prenikavým pohľadom; nosí okuliare, čo je vtedy nevídané. Bývalý inkvizítor – prestal, lebo nevedel s istotou odsudzovať ľudí a diabla videl aj v sudcoch. Žiak Rogera Bacona, priateľ Viliama Occama. Verí rozumu, pozorovaniu a znakom („svet hovorí ako veľká kniha“). Meno odkazuje na Sherlocka Holmesa (Pes baskervillský) a Occama.",f:"Prežije; v Mníchove sa rozlúči s Adsom, neskôr zomrie na mor."},
+  {n:"Adso z Melku",r:"Rozprávač, benediktínsky novic, ~18 rokov",d:"Syn nemeckého šľachtica, ktorý bojuje na strane cisára; otec ho z kláštora v Melku poslal s Viliamom ako pisára a pomocníka. Naivný, všetko vidí očami viery a kníh, ale veľa sa učí. Je to stredoveký „doktor Watson“. Prežije jedinú lásku života s dievčaťom z dediny, ktorej meno nikdy nezistí. Príbeh píše ako starec v Melku.",f:"Prežije; po rokoch zbiera útržky kníh z ruín."},
+  {n:"Jorge z Burgosu",r:"Slepý starec zo Španielska, skutočný pán knižnice",d:"Druhý najstarší mních. Nenávidí smiech – Kristus sa podľa neho nikdy nesmial a smiech ničí strach, na ktorom stojí poriadok. Kedysi priniesol zo Španielska (Silos) vzácne knihy aj druhú knihu Aristotelovej Poetiky. Asi 40 rokov cez knihovníkov tajne riadil knižnicu. Knihu napustil jedom, Malachiáša naviedol zabiť Severína, opáta uväznil. Meno je narážka na slepého spisovateľa a knihovníka J. L. Borgesa.",f:"Zje otrávené stránky, spôsobí požiar."}
+ ]},
+ {g:"Opátstvo: vedenie a knižnica", items:[
+  {n:"Opát Abbone (Abo) z Fossanovy",r:"Opát benediktínskeho opátstva",d:"Hrdý, pyšný na poklad a na svoj prsteň (symbol moci). Viliama požiada o vyšetrenie, ale knižnicu mu zakáže. Chce hlavne ochrániť povesť opátstva a škandál ututlať. Keď Viliam pritlačí, prikáže mu odísť. Napokon chce knihu sám vyriešiť s Jorgem.",f:"Udusí sa v tajnej chodbe, ktorú Jorge zablokoval."},
+  {n:"Malachiáš z Hildesheimu",r:"Knihovník (Nemec)",d:"Vysoký, chudý, zachmúrený; jediný oficiálne smie do knižnice. V skutočnosti nevedel grécky ani arabsky a bol nástrojom Jorgeho. Bol Berengarovým milencom. Každý deň nosil do knižnice bylinky vyvolávajúce vízie. Zo žiarlivosti zabije Severína.",f:"Zomrie 6. deň pri matutíne, otrávený knihou."},
+  {n:"Berengar z Arundelu",r:"Pomocník knihovníka",d:"Zmyselný, nervózny. Adelmovi prezradil tajomstvo Finis Africae výmenou za telesnú lásku. Keď našiel mŕtveho Venantia, zľakol sa vyšetrovania a hodil telo do suda s krvou. Potom si sám vzal knihu.",f:"Utopený vo vani, otrávený (3./4. deň)."},
+  {n:"Adelmo z Otranta",r:"Mladý iluminátor (maliar kníh)",d:"Slávny vtipnými kresbami na okrajoch rukopisov – svet naruby, zvieratá ako ľudia. Za prístup ku knihe sa podvolil Berengarovi, potom sa vyspovedal Jorgemu, ktorý mu nedal rozhrešenie a vydesil ho peklom.",f:"Prvý mŕtvy, ešte pred príchodom: samovražda."},
+  {n:"Venantius zo Salvemecu",r:"Prekladateľ z gréčtiny a arabčiny",d:"Obhajoval Adelma aj smiech a spomenul stratenú Aristotelovu knihu o komédii. Ako prvý sa dostal do Finis Africae a nechal zašifrované poznámky (znaky zverokruhu, viditeľné nad plameňom).",f:"2. deň v sude s prasacou krvou; otrávený."},
+  {n:"Bencius (Benno) z Uppsaly",r:"Študent rétoriky zo Švédska",d:"Zvedavý, veľa vie a Viliamovi vyzradí vzťahy medzi mníchmi. Ukradne zvláštnu knihu zo Severínovej nemocnice, ale vráti ju Malachiášovi, keď ho ten urobí pomocníkom knihovníka. Je to obraz zvedavosti, ktorá sa dá kúpiť.",f:"Počas požiaru vbehne do dymu a viac ho nevidno."},
+  {n:"Severín zo Sankt Wendelu",r:"Bylinkár a lekár (nemocnica)",d:"Viliamov priateľ, zaujíma ho veda. Spozná, že Venantius sa neutopil, a spomenie, že mu kedysi ukradli strašný jed. Nájde v nemocnici „zvláštnu knihu“ a chce ju dať Viliamovi.",f:"5. deň zabitý armilárnou (nebeskou) sférou; mal na rukách kožené rukavice."},
+  {n:"Alinardo z Grottaferraty",r:"Najstarší mních",d:"Takmer senilný, ale hovorí pravdu v hádankách: prezradí vchod do knižnice cez kostnicu a ako prvý tvrdí, že smrti idú podľa trúb Apokalypsy. Zahorknutý, lebo knihovníkom urobili cudzinca. Hovorí o „nepriateľovi“, ktorý šiel do Silosu a skoro „odišiel do ríše tmy“ (slepý Jorge).",f:"Zahynie pri požiari (ušliapu ho splašené kone)."},
+  {n:"Remigio z Varagine",r:"Pivničný (cellerarius), správca zásob",d:"Bývalý stúpenec heretika Fra Dolcina. Platí jedlom dievčatám z dediny za lásku. Našiel mŕtveho Venantia v kuchyni a nechal ho tak. Pri súde pred hrozbou mučenia „prizná“ všetky vraždy, hoci je nevinný.",f:"Bernard Gui ho odvezie na smrť (upálenie)."},
+  {n:"Salvatore (z Montferratu)",r:"Znetvorený mních, Remigiov pomocník",d:"Hovorí zmesou latinčiny, provensálčiny a talianskych nárečí, kričí „Penitenziagite!“. Bol žobrák a člen sekty dolciniánov. Vodí dievčatá pre Remigia; chce ľúbostné kúzlo s čiernou mačkou. Jeho „tertius equi“ pomôže Viliamovi otvoriť Finis Africae.",f:"Zatknutý s dievčaťom, mučený, odvezený na smrť."},
+  {n:"Mikuláš z Morimonda",r:"Majster sklár",d:"Obdivuje Viliamove okuliare a vybrúsi mu nové, keď staré zmiznú. Po zatknutí Remigia je novým pivničným, ukáže poklad v krypte a vysvetlí, že knihovník sa zvykne stať opátom. Pri požiari organizuje hasenie.",f:"Prežije."},
+  {n:"Aymaro z Alessandrie",r:"Posmešný klebetník",d:"Ohovára Berengara a Adelma, sťažuje sa, že opátstvu vládnu cudzinci (Nemci, Španieli), a vedie „taliansku“ stranu mníchov proti nim.",f:"Prežije."},
+  {n:"Ďalší mnísi",r:"Len mená",d:"Pacificus z Tivoli, Peter zo Sant'Albana, Waldo z Herefordu, Magnus z Iony, Patrick z Clonmacnois, Rabano z Toleda. Spomínaní bývalí knihovníci: Paolo z Rimini a Roberto z Bobbia (Malachiášov predchodca)."}
+ ]},
+ {g:"Hostia: dve delegácie", items:[
+  {n:"Ubertín z Casale",r:"Starý františkán, spirituál (skutočná osoba)",d:"Viliamov priateľ, ukrýva sa v opátstve pred pápežom. Mystik, hlása absolútnu chudobu, ale zo strachu sa dištancuje od dolciniánov. Varuje Adsa pred ženami a o dievčati povie, že jej krása dokazuje, že je bosorka.",f:"Po 5. dni v noci uteká z opátstva."},
+  {n:"Michal z Ceseny",r:"Generál františkánov (skutočná osoba)",d:"Vodca františkánskej delegácie. V roku 1322 vyhlásil, že Kristus a apoštoli nič nevlastnili. Má ísť do Avignonu k pápežovi.",f:"Rozhodne sa ísť do Avignonu; neskôr odtiaľ uteká."},
+  {n:"Hieronym z Kaffy",r:"Biskup, františkánska strana",d:"Na dispute hovorí zmätene a bez logiky; je skôr komická postava."},
+  {n:"Bernard Gui",r:"Dominikán, inkvizítor (skutočná osoba)",d:"Prichádza s pápežskou delegáciou a lukostrelcami. Opak Viliama: nehľadá pravdu, ale vinníka, ktorý sa hodí – heretika z radov zástancov chudoby. Mučením vynúti priznanie od Remigia, odsúdi Salvatora a dievča.",f:"V knihe prežije a odíde s väzňami (vo filme zahynie)."},
+  {n:"Kardinál Bertrand del Poggetto",r:"Vedie pápežskú delegáciu",d:"Pápežov legát; na disputu prichádza s Bernardom Guiom a vojakmi."}
+ ]},
+ {g:"Mimo opátstva a spomínaní", items:[
+  {n:"Dievča z dediny",r:"Adsova jediná láska, bez mena",d:"Chudobné dievča v Adsovom veku, hovorí len miestnym nárečím. Chodí do opátstva za jedlo pre rodinu. V noci 3. dňa stretne Adsa v kuchyni. Keďže nik nerozumie jej reči, nemôže sa brániť.",f:"Odsúdená ako bosorka, odvezená na upálenie."},
+  {n:"Fra Dolcino a Margaréta",r:"Vodcovia sekty „apoštolov“",d:"Pokračovateľ Gherarda Segarelliho (jeho výkrik „Penitenziagite!“ – robte pokánie). Hlásali chudobu a zrušenie majetku, plienili. Obaja upálení v roku 1307. Ich bývalí stúpenci sú Remigio a Salvatore."},
+  {n:"Pápež Ján XXII. a cisár Ľudovít Bavorský",r:"Politické pozadie",d:"Pápež sídli v Avignone a odsudzuje učenie o chudobe Krista; cisár podporuje františkánov, aby oslabil pápeža. Disputa v opátstve sa má pokúsiť o zmier."},
+  {n:"Roger Bacon a Viliam Occam",r:"Skutoční učenci",d:"Bacon je Viliamov učiteľ, Occam jeho priateľ („Occamova britva“: najjednoduchšie vysvetlenie býva správne)."},
+  {n:"Anonymný rozprávač rámca",r:"„Ja“ z úvodu",d:"Tvrdí, že v roku 1968 našiel v Prahe francúzsky preklad Adsovho rukopisu od abbé Valleta, knihu potom stratil a príbeh prerozprával po taliansky."}
+ ]}
+];
+
+/* ---------- DATA: DNI ---------- */
+const CH = [
+ {n:"0",t:"Prirodzene, rukopis",d:"Úvod",s:"Nemenovaný rozprávač (moderný človek) píše, že 16. augusta 1968 mu v Prahe padla do rúk kniha abbé Valleta z roku 1842 – francúzsky preklad latinského rukopisu Adsa z Melku zo 14. storočia. Kým stihol overiť, či rukopis existuje, knihu stratil. Neskôr nachádza len stopy a citáty v iných knihách (v Buenos Aires v roku 1970). Nevie, či je príbeh pravý, ale rozhodne sa ho vydať.",
+  x:["Rámec „nájdeného rukopisu“: Eco sa tvári, že len prekladá. Typický postmoderný trik – kniha je preklad prekladu prekladu.","Abbé Vallet, Paríž 1842; Adsov rukopis vraj kedysi našiel učenec Mabillon v Melku.","Rozprávač knihu stratí (odnesie mu ju spoločník na ceste), preto sa nedá overiť.","Už tu zaznie motív, že knihy hovoria o iných knihách."]},
+ {n:"P",t:"Prológ: Adso a jeho doba",d:"Úvod",s:"Starý Adso v kláštore v Melku cíti, že sa blíži smrť, a chce zapísať strašné udalosti, ktoré zažil ako mladík. Vysvetlí politickú situáciu: pápež Ján XXII. v Avignone proti cisárovi Ľudovítovi Bavorskému, spor o chudobe Krista. Jeho otec bojoval za cisára a poslal ho s Viliamom z Baskervillu ako pisára a pomocníka.",
+  x:["Adso má vtedy asi 18 rokov, je benediktínsky novic z Melku (Rakúsko).","Viliam je františkán z Anglicka, Adso ho volá „môj učiteľ“.","Adso nikdy neprezradí, kde opátstvo leží – „je lepšie mlčať“.","Opisuje Viliama: vysoký, chudý, ostrý pohľad, rád pozoruje rastliny a znaky."]},
+ {n:"1",t:"Kôň Brunellus a smrť Adelma",d:"Prvý deň",s:"Pri stúpaní k opátstvu stretnú pivničného Remigia, ktorý hľadá ušlého koňa. Viliam podľa stôp v snehu a zlomených vetvičiek opíše koňa, uhádne jeho meno Brunellus aj to, kam bežal. Opát Abbone poprosí Viliama, bývalého inkvizítora, aby vyšetril smrť mladého iluminátora Adelma z Otranta, kým prídu delegácie. Viliam smie ísť všade a vypočúvať každého – okrem knižnice. Adso obdivuje a zároveň sa desí portálu kostola. Stretnú Salvatora (hovorí zmesou jazykov), Ubertína z Casale, bylinkára Severína, v skriptóriu knihovníka Malachiáša, Berengara, Venantia, Bencia a slepého Jorgeho, ktorý sa pohorší nad Adelmovými smiešnymi kresbami. Pri večeri sa Viliam s Jorgem pohádajú o smiech. V noci vidia Malachiáša vychádzať z kostola – musí existovať tajný vchod.",
+  x:["Aedificium: mohutná stavba so štyrmi sedembokými vežami (zvonku vidno 5 strán každej). Prízemie: kuchyňa a refektár, 1. poschodie: skriptórium, najvyššie: knižnica.","Adso vidí v stavbe posvätné čísla: 8 (dokonalosť), 4 (evanjeliá), 5 (zóny sveta), 7 (dary Ducha Svätého).","Viliam čítal stopy v snehu a chlpy na ostružinách vo výške päť stôp. Hovorí: svet k nám hovorí ako veľká kniha.","Adelma našli mŕtveho pod Aedificiom, ale okná boli zavreté – vypadol, skočil, alebo ho zhodili?","Do Aedificia nesmie v noci nikto, ani asi 150 sluhov; do knižnice len knihovník.","Adelmove kresby na okrajoch: svet naruby (napr. bozkávajúce sa opice). Jorge: „posledných sedem dní“ netreba márniť smiechom.","Mikuláš z Morimonda obdivuje Viliamove okuliare; Viliam: sme trpaslíci na pleciach obrov.","Viliam podľa „Occamovej britvy“ tipuje najjednoduchšie: Adelmo sa zabil sám.","Spor pri večeri: Jorge – Kristus sa nikdy nesmial; Viliam – smiech je vlastný človeku (sv. Vavrinec žartoval na rošte)."]},
+ {n:"2",t:"Venantius v krvi, prvá noc v labyrinte",d:"Druhý deň",s:"Po matutíne nájdu v sude s prasacou krvou (pripravenou na jaternice) hlavou dole Venantia. Severín zistí, že sa neutopil – bol mŕtvy už predtým; stopy v snehu vedú z Aedificia. Bencius rozpovie o spore v skriptóriu: Venantius spomenul stratenú druhú knihu Aristotelovej Poetiky o komédii a Berengar narážal na „Afriku“. Berengar vyrozpráva, že videl Adelmovho „ducha“, ktorý ho „spálil“. Bencius napokon prezradí, že Adelmo sa za prístup ku knihe podvolil Berengarovi, vyspovedal sa Jorgemu a v zúfalstve sa zabil. Opát ukáže Viliamovi poklad a hovoria o politike. Najstarší mních Alinardo prezradí vchod cez kostnicu. V noci v skriptóriu nájdu Venantiove zašifrované poznámky, no niekto ukradne knihu z jeho stola aj Viliamove okuliare. V knižnici sa stratia, Adsa vydesí zrkadlo a má vízie. Keď konečne vyjdú, opát hlási: Berengar zmizol.",
+  x:["Zo suda trčia len nohy. Severín: tvár nie je opuchnutá, teda sa neutopil.","„Duch“ Adelma oslovil Berengara „môj krásny majster“; pálivý „pot“ bol podľa Viliama horúci vosk zo sviece – Adelmo bol ešte živý.","Spor o smiech: Bencius spomenul africkú hádanku o rybách, Jorge nechcel Afričanov za vzor, Berengar sa zasmial – Malachiáš ho poslal preč.","Aymaro klebetí a hnevá sa, že opátstvu vládnu cudzinci namiesto Talianov.","Druhý spor s Jorgem: Viliam – „smeješ sa na smiechu, ale smeješ sa“.","Vchod do knižnice: kostnica pod kostolom, štvrtá lebka sprava, stlačiť jej oči.","Venantiove poznámky: grécky text a tajné znaky zverokruhu, ktoré sa ukážu až nad plameňom.","V labyrinte: sedemboká miestnosť s nápisom „Apocalypsis Iesu Christi“; miestnosť so skresľujúcim zrkadlom a nápisom „Super thronos viginti quatuor“; knihy v arabčine.","Labyrint chránia dymiace bylinky (vízie) a prievan cez štrbiny (strašidelné zvuky)."]},
+ {n:"3",t:"Berengar zmizne, Adso a dievča",d:"Tretí deň",s:"V Berengarovej cele je len handra od krvi. Adso premýšľa, či má knižnica poznanie chrániť, alebo ho dávať ľuďom. Salvatore mu rozpráva svoj život – hlad, žobranie, sekty. Mikuláš brúsi Viliamovi nové sklíčka. Viliam rozlúšti Venantiovu šifru („ruka nad modlou, stlač prvé a siedme zo štyroch“), ale nerozumie jej. Opát oznámi, že s pápežskými vyslancami príde inkvizítor Bernard Gui. Viliam podľa veží zvonku nakreslí plán knižnice. Ubertín rozpráva Adsovi o Gherardovi Segarellim a Fra Dolcinovi, ktorého upálili aj s milou Margarétou, a varuje ho pred ženami. Adso ide v noci sám do knižnice, číta o Dolcinovi a Apokalypsu, má vízie a utečie do kuchyne. Tam je dievča z dediny. Prežijú spolu noc; ráno je preč a zostal po nej len balík s veľkým srdcom. Adso sa vyspovedá Viliamovi, ten ho rozhreší. Keď idú do kúpeľov, nájdu vo vani mŕtveho Berengara.",
+  x:["Celé znenie šifry: „Secretum finis Africae manus supra idolum age primum et septimum de quatuor.“","Viliamov plán: 56 miestností, štyri sedemboké (jedna v každej veži), ostatné štvoruholníkové. Nápisy nad dverami sú verše z Apokalypsy; ich začiatočné písmená tvoria mená krajín.","Salvatore pri jedle sľubuje, že kúzlom zrýchli „tertius equi“ (tretieho koňa) – zatiaľ len smiešna veta.","Adso spomína, ako videl vo Florencii upáliť františkána brata Michala, lebo tvrdil, že Kristus bol chudobný.","Dievča hovorí len nárečím; Adso si zážitok vysvetľuje slovami Piesne piesní. Meno sa nikdy nedozvie.","Viliam: nie je také strašné, že si bol pokúšaný; tuší, že Remigio platí dievčatám jedlom.","„Penitenziagite!“ – skomolené „robte pokánie“, výkrik Segarelliho a dolciniánov."]},
+ {n:"4",t:"Berengar vo vani, prichádza Bernard Gui",d:"Štvrtý deň",s:"Severín zistí, že Berengar sa utopil, ale má čierny jazyk a končeky prstov ako Venantius – teda jed. Spomenie, že mu pred rokmi z nemocnice ukradli fľaštičku veľmi nebezpečného jedu. Salvatore a Remigio priznajú obchod s dievčatami aj dolcínsku minulosť; Remigio našiel Venantia mŕtveho v kuchyni pri rozbitom pohári vody a nechal ho tak. Severín nájde Viliamove ukradnuté okuliare v Berengarovom habite a vzápätí Mikuláš donesie nové – Viliam prečíta grécke poznámky a pochopí, že hovoria o inej knihe. Prichádzajú delegácie: františkáni (Michal z Ceseny, Ubertín, biskup Hieronym z Kaffy) a pápežskí vyslanci s kardinálom Bertrandom del Poggetto a inkvizítorom Bernardom Guiom. Alinardo tvrdí, že smrti idú podľa Apokalypsy. V noci v knižnici Viliam pochopí systém: miestnosti tvoria mapu sveta. Finis Africae je zamurovaná sedemboká miestnosť južnej veže (Leones), vchod je za zrkadlom – ale nevedia ho otvoriť. Po návrate vidia, že Bernard chytil Salvatora s dievčaťom pri čarovaní. Dievča obvinia z bosoráctva a Adso jej nemôže pomôcť.",
+  x:["Prečo je jed v ústach a na prstoch: obete si oblizovali prsty pri obracaní strán.","Jed spôsobuje únavu, ochrnutie a smrť; ukradli ho Severínovi dávno pred dejom – vrah teda plánoval dlho.","Viliamova veta: knihy často hovoria o iných knihách.","Adso pri hľadaní hľuzoviek: taliansky „tartufo“ mu znie ako nemecké „der Teufel“ (diabol).","Krajiny v knižnici: napr. Hibernia (Írsko, západná veža), Anglia, Germania, Gallia, Yspania, Roma, Acaia (Grécko), Aegyptus, Iudaea, Fons Adae (raj, východ), Leones (juh – Afrika, pohanské knihy).","„Idolum“ zo šifry = obraz v zrkadle, teda vchod je za zrkadlom.","Salvatorovo kúzlo: zabiť čiernu mačku, oči vložiť do vajec čiernej sliepky… Bernard v tom vidí diabla.","Adso číta traktáty o „chorobe lásky“: uzdraví sa, ak tú ženu už neuvidí."]},
+ {n:"5",t:"Disputa o chudobe, smrť Severína, súd",d:"Piaty deň",s:"Delegácie sa hádajú, či bol Kristus chudobný a či má cirkev vlastniť majetok a moc. Disputa sa zvrhne na nadávky a bitku a rozdeliť ich musia lukostrelci. Severín pošepky povie Viliamovi, že v nemocnici našiel „zvláštnu knihu“; Viliam mu prikáže zamknúť sa. Rozhovor počujú Jorge, Remigio a Aymaro. Viliam potom prednesie odvážne názory: cirkev nemá mať svetskú moc a zákony má dávať zhromaždenie ľudu. Keď prídu do nemocnice, Severín leží mŕtvy s rozbitou hlavou a v izbe je neporiadok. Bernard tam zatkne Remigia. Bencius videl, že sa tam predtým skrýval Malachiáš. Viliam si všimne, že Severín mal kožené rukavice, ale arabský zväzok odloží – a neskôr pochopí, že práve to bola hľadaná kniha (obsahovala viac textov vrátane gréckeho). Keď sa vrátia, kniha je preč. Na súde Salvatore, zjavne mučený, vypovie proti Remigiovi; ten zo strachu z mučenia „prizná“ všetky vraždy. Bernard odsúdi Remigia, Salvatora a dievča. Ubertín v noci uteká. Bencius prizná, že knihu ukradol a dal Malachiášovi, keď sa stal pomocníkom knihovníka. Jorge má hrozivú kázeň o Antikristovi a pýche poznania.",
+  x:["Severína zabili armilárnou (nebeskou) sférou – kovovým modelom vesmíru.","Viliamova teória „trúb“: krupobitie (Adelmo), krv (Venantius), voda (Berengar), hviezdy (Severín – sféra).","Viliamova chyba: zväzok začínal arabsky, preto ho prehliadol; v skutočnosti obsahoval arabský, sýrsky, latinský a grécky text.","Remigio dal kedysi Dolcinove listy Malachiášovi do úschovy – preto je Malachiáš v Remigiovom dlhu.","Bernard nechce poznať vraha; chce spojiť vraždy so zástancami chudoby a poškodiť františkánov.","Jorge v kázni: nie je pokrok, len „rekapitulácia“ – opakovanie a uchovávanie poznania.","Adso: za hriechy mocných trpia jednoduchí ľudia – Remigio, Salvatore a dievča."]},
+ {n:"6",t:"Malachiáš a škorpióny, opát ich vyháňa",d:"Šiesty deň",s:"Pri matutíne, počas spevu Sederunt, sa Malachiáš zrúti v kostole a s čiernymi prstami zašepká: „Povedal mi… naozaj… mala silu tisícich škorpiónov.“ Novým pivničným je Mikuláš, ktorý Viliamovi ukáže poklad v krypte a vysvetlí, že knihovník sa zvykne stať opátom. Adso počas spevu Dies irae zaspí a má divoký sen, ktorý Viliam prirovná ku Coena Cypriani (Cypriánovej hostine). V katalógu nájdu pod značkou finis Africae zväzok s viacerými textami a Viliam podľa rukopisov zisťuje postupnosť knihovníkov. Bencius opíše ukradnutú knihu: arabsky, sýrsky, latinsky a grécky, zvláštny papier. Opát odmietne Viliamove podozrenia a prikáže mu ráno odísť. Jorge chýba na vešperách, opát v noci vojde sám do Aedificia. V stajni Adso zopakuje Salvatorovo „tertius equi“ – a Viliam pochopí, že „quatuor“ je slovo. Počujú búchanie zo steny (opát je uväznený), bežia cez knižnicu a o polnoci stlačia na nápise nad zrkadlom písmená q a r. Zrkadlo sa otvorí.",
+  x:["Malachiášove posledné slová o „tisícich škorpiónoch“ zodpovedajú piatej trúbe (kobylky so silou škorpiónov).","Mikuláš: relikvie v krypte (napr. trieska z Kristovho kríža) – Viliam ich považuje za falošné, ale poklad za skutočný.","Taliani (Alinardo, Aymaro) sú radi, že zomrel „Nemec“; nový knihovník má vraj vedieť grécky a arabsky.","Kniha je napísaná na ľanovom papieri (charta lintea), ktorý sa vyrábal pri Silose v Španielsku.","Opátov prsteň: drahokamy znamenajú viac právd, ale vybrať tú správnu môže len autorita.","„Tertius equi“ = tretie písmeno slova „equus“ – teda sa majú počítať písmená slova, nie predmety.","„Primum et septimum de quatuor“ = prvé a siedme písmeno slova QUATUOR = Q a R.","Adsova lampa skoro zapáli väzbu knihy – Viliam: „Chceš podpáliť knižnicu?“ (predzvesť)."]},
+ {n:"7",t:"Finis Africae a požiar",d:"Siedmy deň",s:"V tajnej miestnosti čaká Jorge: „Si to ty, Viliam z Baskervillu?“ Opát sa medzitým dusí v tajnej chodbe, ktorej mechanizmus Jorge pokazil. Viliam vyloží, čo zistil, a Jorge to potvrdí: knihu, druhú knihu Aristotelovej Poetiky o komédii, priniesol zo Španielska, ukrýval ju a strany napustil ukradnutým jedom. Venantius ju čítal a zomrel v kuchyni pri vode, Berengar ho hodil do krvi a sám zomrel vo vani, Severína zabil Malachiáš zo žiarlivosti, lebo mu Jorge nahovoril, že Severín mal s Berengarom pomer, a Malachiáš zomrel, keď knihu neposlúchol a otvoril. Jorge podá knihu Viliamovi; ten ju prezerá v rukaviciach. Potom ju Jorge vytrhne, začne jesť otrávené stránky („vezmi a zjedz“) a prvý raz sa zasmeje. Zhasne svetlo („teraz vidím najlepšie ja“) a uteká. Pri zápase v knižnici prevrhne lampu, knihy vzplanú a prievan oheň rozdúcha. Adso zvoní na poplach, mnísi nevedia, ako hasiť, oheň preskočí na kostol, stajne a celé opátstvo. Bencius vbehne do dymu, Alinardo zahynie. Viliam plače: „Bola to najväčšia knižnica kresťanstva.“",
+  x:["Jorge priamo zabil len opáta (uväznil ho) – ostatné smrti boli reťaz náhod a jedu, nie dokonalý plán.","Jorge sa o Viliamovej teórii trúb dozvedel a začal ju „dohrávať“ – uveril, že ide o Boží plán.","Prečo Jorge nenávidí túto knihu: Aristoteles by zo smiechu urobil vážnu vec a umenie; smiech zbavuje strachu a bez strachu nie je poslušnosť.","Jorgeho úvaha: Boh dal zachovať len jednu kópiu – teda nechce, aby sa čítala.","Viliam Jorgemu: diabol je viera bez úsmevu, pravda, o ktorej nikto nepochybuje.","Adso sa snaží oheň udusiť habitom, nepomôže to; Viliam vynesie z kuchyne len malý hrniec vody.","Viliam na záver: boj sa prorokov a tých, čo sú ochotní zomrieť za pravdu. Uzná, že žiadny plán nebol – k pravde sa dostal omylom."]},
+ {n:"Z",t:"Posledná strana: ostanú len mená",d:"Epilóg",s:"Opátstvo horí tri dni a tri noci, mnísi sa rozpŕchnu. Viliam s Adsom odídu, v Mníchove sa rozlúčia a už sa nikdy nestretnú. Viliam dá Adsovi na pamiatku okuliare, ktoré mu urobil Mikuláš; Adso ich nosí ešte ako starec pri písaní. Viliam neskôr zomrie počas moru (čiernej smrti). Adso sa po rokoch vráti na miesto opátstva: z kostola ostali kúsky portálu, z Aedificia dve veže, v sutinách nájde útržky pergamenov a zbiera ich ako „menšiu knižnicu“. Kniha končí latinským veršom: „Stat rosa pristina nomine, nomina nuda tenemus.“",
+  x:["Preklad poslednej vety: pôvodná ruža ostáva už len v mene, máme len holé mená.","Verš je zo stredovekej básne Bernarda z Cluny (Morlas) o pominuteľnosti sveta.","Eco o názve: ruža má toľko významov, že už takmer nemá žiadny – názov má čitateľa zmiasť, nie mu napovedať.","Politika: cisár si dosadí vlastného protipápeža (Mikuláš V.), Michal z Ceseny utečie z Avignonu.","Adso o svojom texte: nevie, či má nejaký zmysel – je to „obrovská akrostichida“."]}
+];
+
+/* ---------- DATA: KTO ZOMREL ---------- */
+const DEAD = [
+ ["pred dejom","Adelmo z Otranta","Mŕtvy pod Aedificiom, za búrky s krupobitím; okná zavreté","Samovražda. Za tajomstvo knižnice sa podvolil Berengarovi, Jorge mu pri spovedi pohrozil peklom.","1. krupobitie"],
+ ["2. deň ráno","Venantius zo Salvemecu","Hlavou dole v sude s prasacou krvou","Čítal otrávenú knihu vo Finis Africae, zomrel v kuchyni pri vode. Telo do krvi hodil Berengar.","2. krv"],
+ ["noc 3./4. dňa","Berengar z Arundelu","Utopený vo vani v kúpeľoch; čierny jazyk a prsty","Vzal si knihu, čítal ju, jed ho oslabil a utopil sa pri kúpeli.","3. voda"],
+ ["5. deň","Severín zo Sankt Wendelu","V nemocnici s rozbitou hlavou, v rukaviciach","Zabil ho Malachiáš armilárnou sférou – zo žiarlivosti, naviedol ho Jorge.","4. hviezdy (nebeská sféra)"],
+ ["6. deň, matutínum","Malachiáš z Hildesheimu","Zrúti sa v kostole: „sila tisícich škorpiónov“","Otvoril a čítal knihu, hoci mu Jorge prikázal ju len priniesť.","5. škorpióny (kobylky)"],
+ ["noc 6./7. dňa","Opát Abbone","Zavrený v tajnej chodbe pod Finis Africae","Jorge ho vlákal do chodby a pokazil mechanizmus – udusil sa.","(6.)"],
+ ["7. deň","Jorge z Burgosu","Zje otrávené stránky, zmizne v požiari","Sám sa otrávil, aby kniha nepadla do rúk Viliamovi.","(7.)"]
+];
+const OTHER = [
+ {t:"Bencius z Uppsaly",d:"Počas požiaru vbehne do horiacej knižnice a Adso ho už nikdy neuvidí."},
+ {t:"Alinardo z Grottaferraty",d:"Zahynie pri požiari – ušliapu ho splašené kone."},
+ {t:"Remigio a Salvatore",d:"Bernard Gui ich odvezie ako heretikov; čaká ich smrť."},
+ {t:"Dievča z dediny",d:"Odsúdená ako bosorka a odvezená na upálenie. Adso ju už nikdy neuvidí."},
+ {t:"Viliam z Baskervillu",d:"Prežije požiar, zomrie neskôr na mor (čiernu smrť)."},
+ {t:"Kniha",d:"Jediná kópia druhej knihy Aristotelovej Poetiky zhorí – časť zje Jorge, zvyšok hodí do ohňa."}
+];
+
+/* ---------- DATA: SYMBOLY ---------- */
+const SYMS = [
+ {t:"Knižnica – labyrint",d:"Najväčšia knižnica kresťanstva, ale knihy v nej nie sú na čítanie, len na stráženie. Labyrint je obraz sveta aj poznania: dá sa v ňom stratiť a chránia ho klamy (zrkadlá, dym, zvuky). Je usporiadaná ako mapa sveta."},
+ {t:"Druhá kniha Poetiky",d:"Stratená Aristotelova kniha o komédii a smiechu. Pre Jorgeho najnebezpečnejšia kniha na svete, lebo by smiech, ktorý zbavuje strachu, urobila učeným a vážnym. Kvôli nej sa vraždí a nakoniec zhorí."},
+ {t:"Smiech",d:"Celý román je vlastne spor o smiech. Jorge: smiech je od diabla, Kristus sa nesmial. Viliam: smiech je ľudský a odhaľuje klamstvo. Jorge sa prvý raz zasmeje, až keď je knihu."},
+ {t:"Zrkadlo",d:"Skresľuje a desí, a pritom je to dvere do Finis Africae. Pravda je skrytá za klamom; „idolum“ v šifre je obraz v zrkadle."},
+ {t:"Ruža a meno",d:"Posledný verš: z ruže zostalo len meno. Z knižnice, z opátstva aj z Adsovej lásky ostali len slová a útržky. Eco tvrdí, že ruža má toľko významov, že už nemá žiadny."},
+ {t:"Okuliare",d:"Znak vedy a rozumu (Viliam bez nich nemôže čítať). Vrah ich ukradne, keď sa Viliam blíži k pravde. Na konci ich Viliam daruje Adsovi – odovzdá mu svoj spôsob videnia."},
+ {t:"Oheň",d:"Upaľovanie heretikov (Dolcino, brat Michal, dievča) a napokon požiar knižnice. Kto chce pravdu ovládnuť, nakoniec ju zničí."},
+ {t:"Apokalypsa a sedem trúb",d:"Nápisy v knižnici sú verše z Apokalypsy; Viliam aj Alinardo podľa nej čítajú vraždy. Ukáže sa, že je to falošný vzor, ktorý ľudia do sveta vkladajú."},
+ {t:"Znaky a stopy",d:"Od stôp koňa Brunella až po šifru: svet je kniha, ktorú treba vedieť čítať. Ale znaky možno vyložiť aj nesprávne – to je hlavná téma Eca, profesora semiotiky."}
+];
+const THEMES = "Hľadanie pravdy a výklad znakov · rozum a pochybnosť proti slepej viere · cenzúra a strážené poznanie · smiech a strach · moc cirkvi, inkvizícia a herézy · spor o chudobu (pápež proti cisárovi a františkánom) · láska a hriech (Adso a dievča) · pominuteľnosť";
+
+const WHYS = [
+ {q:"Prečo opát požiada o pomoc práve Viliama?",a:"Viliam bol inkvizítor a je známy bystrým úsudkom. Opát potrebuje, aby sa smrť Adelma vysvetlila skôr, ako prídu delegácie – inak by pápežova strana mohla obviniť opátstvo a využiť to proti františkánom."},
+ {q:"Prečo mali obete čierne prsty a jazyk?",a:"Jorge napustil jedom strany knihy. Kto ju čítal, slinil si prsty, aby otočil zlepené strany, a jed sa mu tak dostal do úst."},
+ {q:"Prečo Jorge knihu skrýval a napokon zjedol?",a:"Bál sa, že ak by Aristoteles, ktorého všetci uznávajú, obhájil smiech, ľudia by sa prestali báť – diabla aj autority. Smiech ľudu pri karnevale mu neprekážal, ale smiech povýšený na učenosť by podľa neho rozbil poriadok sveta."},
+ {q:"Prečo sa Adelmo zabil?",a:"Za tajomstvo knižnice sa podvolil Berengarovi, potom sa vyspovedal Jorgemu, ktorý mu nedal rozhrešenie a vystrašil ho zatratením. V zúfalstve skočil."},
+ {q:"Prečo Venantius skončil v sude s krvou?",a:"Zomrel v kuchyni na jed. Našiel ho Berengar a zľakol sa, že vyšetrovanie odhalí jeho hriech s Adelmom. Telo preto preniesol a hodil do suda, aby to vyzeralo inak."},
+ {q:"Prečo Malachiáš zabil Severína?",a:"Jorge mu nahovoril, že Berengar mal so Severínom pomer kvôli knihe. Malachiáš Berengara miloval a zo žiarlivosti udrel Severína armilárnou sférou. Mal knihu priniesť Jorgemu, ale otvoril ju a zomrel."},
+ {q:"Prečo Viliam veril, že vrah postupuje podľa Apokalypsy, a prečo to bol omyl?",a:"Smrti sa náhodou podobali trúbam (krupobitie, krv, voda, hviezdy) a Alinardo to hlásal. V skutočnosti každá smrť mala inú príčinu. Jorge vzor len dodatočne využil. Viliam na konci uzná, že poriadok, ktorý hľadal, neexistoval."},
+ {q:"Prečo Bernard Gui odsúdi Remigia, hoci nie je vrah?",a:"Bernardovi nejde o pravdu, ale o politiku: dolcinián v opátstve, kde sa stretávajú františkáni, mu dovolí spojiť vraždy s herézou o chudobe a zničiť zmier medzi pápežom a františkánmi. Priznanie vynúti strachom z mučenia."},
+ {q:"Prečo je dôležitá disputa o chudobe Krista?",a:"Ak bol Kristus chudobný, cirkev by nemala mať majetok ani svetskú moc. To je zbraň cisára proti pápežovi. Preto je to politický spor, nie len teologický."},
+ {q:"Prečo sa kniha volá Meno ruže?",a:"Podľa posledného verša: z niekdajšej ruže zostalo len meno. Z celého sveta opátstva ostali len slová a útržky. Eco hovorí, že názov zvolil zámerne tak, aby mal veľa významov a čitateľa zmiatol."},
+ {q:"Prečo kniha začína príbehom o nájdenom rukopise?",a:"Je to postmoderná hra: Eco sa tvári, že len prekladá preklad starého rukopisu. Čitateľ nevie, čo je pravda – a to je aj téma celého románu."},
+ {q:"Prečo Viliam hovorí, že zlyhal?",a:"Vraha našiel až neskoro, knižnicu nezachránil a k riešeniu sa dostal cez falošný vzor. Pochopí, že vo svete nemusí byť poriadok, ktorý v ňom hľadáme."},
+ {q:"Prečo Adso nezachráni dievča?",a:"Nevie ani jej meno, ona hovorí len nárečím, ktorému nikto nerozumie, a Bernard Gui má úplnú moc. Viliam mu povie, že sa nedá nič urobiť. Adso si to nesie celý život."}
+];
+
+const FACTS = [
+ ["1327","rok deja, koniec novembra"],
+ ["7 dní","dej v opátstve; každý deň delený na 8 modlitbových hodín"],
+ ["1980 / 1981","vydanie románu / cena Premio Strega"],
+ ["~18 / ~80","Adsov vek počas deja / keď píše"],
+ ["~50","Viliamov vek"],
+ ["16. 8. 1968, Praha","kedy a kde rozprávač rámca našiel knihu abbé Valleta"],
+ ["1842","rok vydania Valletovho francúzskeho prekladu"],
+ ["Brunellus","opátov kôň, ktorého Viliam nájde podľa stôp"],
+ ["Aedificium","hlavná budova: kuchyňa, skriptórium, knižnica"],
+ ["4 veže, 7 strán","veže Aedificia sú sedemboké"],
+ ["56","miestností knižnice podľa Viliamovho plánu (4 sedemboké)"],
+ ["~150","sluhov opátstva"],
+ ["Finis Africae","tajná zamurovaná miestnosť v južnej veži (Leones)"],
+ ["Leones","„africká“ časť knižnice, južná veža"],
+ ["Super thronos viginti quatuor","nápis nad zrkadlom („Na tróny dvadsiatich štyroch“)"],
+ ["Q a R","prvé a siedme písmeno slova quatuor – otvárajú zrkadlo"],
+ ["4. lebka sprava","v kostnici – stlačiť oči, otvorí sa vchod do Aedificia"],
+ ["Tertius equi","Salvatorova skomolená latinčina („tretí kôň“), ktorá napovie riešenie"],
+ ["Penitenziagite!","výkrik dolciniánov (robte pokánie), opakuje ho Salvatore"],
+ ["Coena Cypriani","latinská paródia (Cypriánova hostina) v tom istom zväzku; aj Adsov sen"],
+ ["Arabsky, sýrsky, latinsky, grécky","štyri texty v hľadanom zväzku; grécky je Aristoteles"],
+ ["Ľanový papier","materiál gréckeho textu, vyrábal sa pri Silose"],
+ ["Burgos, Silos","Jorgeho rodisko a miesto, odkiaľ priniesol knihy"],
+ ["„Tisíc škorpiónov“","posledné Malachiášove slová"],
+ ["Armilárna sféra","kovový model nebies, ktorým zabili Severína"],
+ ["1307","upálenie Fra Dolcina a Margaréty z Trenta"],
+ ["1322","Michal z Ceseny vyhlási, že Kristus nič nevlastnil"],
+ ["Avignon","sídlo pápeža Jána XXII."],
+ ["3 dni a 3 noci","ako dlho horí opátstvo"],
+ ["Mníchov","kde sa Viliam a Adso navždy rozlúčia"],
+ ["Okuliare","Viliamov dar Adsovi na rozlúčku"],
+ ["Mor (čierna smrť)","na čo Viliam neskôr zomrie"],
+ ["Stat rosa pristina nomine…","posledná veta knihy (verš Bernarda z Cluny)"],
+ ["Adriana Ferenčíková","prekladateľka do slovenčiny"],
+ ["Zdeněk Frýbort","prekladateľ do češtiny (Jméno růže)"],
+ ["1986 / 2019","film J.-J. Annauda (Sean Connery) / seriál s Johnom Turturrom"]
+];
+
+const VS = [
+ ["Dievča","Odsúdená a odvezená na upálenie; Adso ju už nikdy neuvidí","Dedinčania ju zachránia, Adso sa s ňou na konci stretne a predsa odíde s Viliamom"],
+ ["Bernard Gui","Prežije a odíde s väzňami","Zahynie pri útoku rozzúrených dedinčanov"],
+ ["Knihy pri požiari","Viliam zachráni len ich dva vaky, knižnica je stratená","Viliam vynesie z horiacej knižnice náruč kníh"],
+ ["Rozsah","Dlhé teologické a politické debaty, rámec s rukopisom","Hlavne detektívka, debaty sú skrátené"]
+];
+
+/* ---------- DATA: TESTY ---------- */
+const Q = {
+ easy:[
+  {q:"Kto napísal Meno ruže?",o:["Umberto Eco","Italo Calvino","Alberto Moravia","Dante Alighieri"],e:"Taliansky semiotik a spisovateľ Umberto Eco, román vyšiel v roku 1980.",c:"úvod"},
+  {q:"Kto je rozprávač?",o:["Adso z Melku","Viliam z Baskervillu","Jorge z Burgosu","Opát Abbone"],e:"Rozpráva Adso v ich-forme ako starec, ktorý spomína na mladosť.",c:"prológ"},
+  {q:"V ktorom roku sa odohráva dej?",o:["1327","1453","1215","1492"],e:"Koniec novembra 1327.",c:"prológ"},
+  {q:"Kde sa odohráva dej?",o:["V benediktínskom opátstve v severnom Taliansku","Vo františkánskom kláštore v Ríme","V kláštore Melk v Rakúsku","V pápežskom paláci v Avignone"],e:"Bezmenné bohaté benediktínske opátstvo v horách severného Talianska.",c:"1. deň"},
+  {q:"Koľko dní trvá dej v opátstve?",o:["Sedem","Tri","Štyridsať","Jeden"],e:"Kniha je rozdelená na sedem dní.",c:"úvod"},
+  {q:"Akého rádu je Viliam?",o:["Františkán","Benediktín","Dominikán","Cisterciát"],e:"Viliam je anglický františkán. Benediktín je Adso aj mnísi opátstva, dominikán je Bernard Gui.",c:"prológ"},
+  {q:"Kto je Adso?",o:["Benediktínsky novic, Viliamov pomocník a pisár","Starý slepý mních","Pápežov tajomník","Viliamov starší brat"],e:"Asi 18-ročný novic z Melku, ktorého otec poslal s Viliamom.",c:"prológ"},
+  {q:"Kto stojí za smrťami v opátstve?",o:["Jorge z Burgosu","Bernard Gui","Opát Abbone","Remigio"],e:"Slepý Jorge otrávil knihu a uväznil opáta; Remigio sa k vraždám len falošne priznal.",c:"7. deň"},
+  {q:"Akú knihu Jorge ukrýval?",o:["Druhú knihu Aristotelovej Poetiky (o komédii)","Apokalypsu sv. Jána","Platónov Štát","Zakázaný preklad Biblie"],e:"Jediná kópia stratenej knihy o komédii a smiechu.",c:"7. deň"},
+  {q:"Ako sa volá tajná miestnosť knižnice?",o:["Finis Africae","Aedificium","Skriptórium","Fons Adae"],e:"„Koniec Afriky“, zamurovaná miestnosť v južnej veži.",c:"2. – 7. deň"},
+  {q:"Kto je Bernard Gui?",o:["Inkvizítor (dominikán)","Knihovník","Opát","Generál františkánov"],e:"Prichádza s pápežskou delegáciou a odsúdi Remigia, Salvatora a dievča.",c:"4. – 5. deň"},
+  {q:"Čo nosí Viliam, čo je v tej dobe nevídané?",o:["Okuliare","Hodinky","Ďalekohľad","Kompas na krku"],e:"Okuliare sú dôležitý motív – ukradnú mu ich a na konci ich daruje Adsovi.",c:"1. deň"},
+  {q:"Ako sa končí príbeh opátstva?",o:["Celé vyhorí","Viliam sa stane opátom","Opátstvo prevezme inkvizícia","Mnísi knižnicu otvoria verejnosti"],e:"Požiar začne v knižnici a horí tri dni a tri noci.",c:"7. deň"},
+  {q:"Ku ktorému literárnemu smeru patrí román?",o:["Postmodernizmus","Romantizmus","Realizmus","Klasicizmus"],e:"Hra s inými textami, zmes žánrov a fiktívny nájdený rukopis.",c:"úvod"},
+  {q:"O čom sa vedie veľký spor medzi Viliamom a Jorgem?",o:["O smiechu","O alchýmii","O tom, kto bude opátom","O preklade Biblie"],e:"Jorge tvrdí, že Kristus sa nesmial a smiech je hriešny; Viliam smiech obhajuje.",c:"1. – 2. deň"}
+ ],
+ med:[
+  {q:"Kto zomrel ako prvý, ešte pred príchodom Viliama?",o:["Adelmo z Otranta","Venantius","Berengar","Severín"],e:"Mladý iluminátor Adelmo – Viliam napokon zistí, že išlo o samovraždu.",c:"1. deň"},
+  {q:"Kde našli Venantia?",o:["Hlavou dole v sude s prasacou krvou","Vo vani v kúpeľoch","V kostole pri matutíne","Pod vežou Aedificia"],e:"Do suda ho hodil Berengar; zomrel však na jed v kuchyni.",c:"2. deň"},
+  {q:"Kde našli Berengara?",o:["Utopeného vo vani","V sude s krvou","V kostnici","V Malachiášovej cele"],e:"Otrávený a oslabený sa utopil vo vani v kúpeľoch.",c:"3. – 4. deň"},
+  {q:"Ako zomrel Severín?",o:["Rozbili mu hlavu armilárnou sférou","Otrávil sa knihou","Utopil sa","Upálili ho"],e:"Zabil ho Malachiáš kovovým modelom nebies.",c:"5. deň"},
+  {q:"Kto zabil Severína?",o:["Malachiáš","Jorge vlastnými rukami","Remigio","Bencius"],e:"Malachiáš zo žiarlivosti, Jorge ho naviedol. Remigia tam zatkli len preto, že sa prehrabával v policiach.",c:"5. / 7. deň"},
+  {q:"Čo povedal umierajúci Malachiáš?",o:["Že to malo silu tisícich škorpiónov","Penitenziagite!","Že videl Antikrista","Že kniha je v Leones"],e:"„Povedal mi… naozaj… mala silu tisícich škorpiónov.“",c:"6. deň"},
+  {q:"Prečo mali obete čierne prsty a jazyk?",o:["Pri listovaní otrávenej knihy si slinili prsty","Písali jedovatým atramentom","Pili otrávené víno","Dotkli sa bylín v nemocnici"],e:"Jorge napustil strany jedom; zlepené strany sa dali otočiť len zaslinenými prstami.",c:"7. deň"},
+  {q:"Ako Viliam ukáže svoj dôvtip hneď na začiatku?",o:["Podľa stôp opíše ušlého koňa Brunella","Rozlúšti šifru","Nájde vchod do knižnice","Uhádne vraha"],e:"Podľa stôp v snehu a chlpov na kríkoch uhádne vzhľad koňa, jeho meno aj smer.",c:"1. deň"},
+  {q:"Prečo Viliam s Adsom prišli do opátstva?",o:["Na disputu františkánov s pápežskými vyslancami o chudobe Krista","Vyšetriť vraždu na príkaz pápeža","Odpísať vzácne knihy","Adso tu mal zložiť sľuby"],e:"Opátstvo je neutrálne miesto na stretnutie oboch strán; vyšetrovanie dostane Viliam až na mieste.",c:"prológ / 1. deň"},
+  {q:"Kto sú Remigio a Salvatore?",o:["Bývalí stúpenci Fra Dolcina","Dominikáni z Avignonu","Knihovníci","Cisárovi vojaci"],e:"Obaja kedysi patrili k sekte dolciniánov, čo Bernard Gui využije.",c:"1. – 5. deň"},
+  {q:"Kto prezradí Viliamovi tajný vchod do knižnice cez kostnicu?",o:["Alinardo","Bencius","Mikuláš","Severín"],e:"Najstarší mních Alinardo: štvrtá lebka sprava, stlačiť oči.",c:"2. deň"},
+  {q:"Kto ukradne zvláštnu knihu z nemocnice po Severínovej smrti?",o:["Bencius","Remigio","Aymaro","Salvatore"],e:"Bencius ju vzal a potom ju dal Malachiášovi výmenou za miesto pomocníka knihovníka.",c:"5. deň"},
+  {q:"Čo urobí Jorge s knihou na konci?",o:["Zje otrávené stránky, zvyšok skončí v ohni","Daruje ju Viliamovi","Pošle ju pápežovi","Ukryje ju v krypte"],e:"„Vezmi a zjedz“ – jedenie stránok je odkaz na Apokalypsu.",c:"7. deň"},
+  {q:"Ako vznikne požiar?",o:["Pri zápase s Jorgem sa prevrhne lampa","Udrie blesk","Dá ho založiť Bernard Gui","Salvatore pri čarovaní"],e:"Knihy vzplanú a prievan, ktorý mal plašiť votrelcov, oheň rozdúcha.",c:"7. deň"},
+  {q:"Kde sa Viliam a Adso navždy rozlúčia?",o:["V Mníchove","V Melku","V Ríme","V Avignone"],e:"Viliam mu daruje okuliare a odíde; Adso sa vráti do Melku.",c:"posledná strana"},
+  {q:"Na čo Viliam neskôr zomrie?",o:["Na mor (čiernu smrť)","V požiari opátstva","Upália ho","Otrávi sa knihou"],e:"Adso sa to dozvie neskôr a modlí sa za jeho dušu.",c:"posledná strana"}
+ ],
+ hard:[
+  {q:"Ako sa otvára zrkadlo do Finis Africae?",o:["Stlačením písmen Q a R v slove quatuor nad zrkadlom","Stlačením očí štvrtej lebky sprava","Otočením armilárnej sféry","Vyslovením hesla z Apokalypsy"],e:"„Primum et septimum de quatuor“ – prvé a siedme písmeno slova QUATUOR. Lebka je vchod z kostnice do Aedificia.",c:"6. deň"},
+  {q:"Ktorá veta pomohla Viliamovi pochopiť hádanku o „quatuor“?",o:["Salvatorovo „tertius equi“","Alinardove „trúby“","Malachiášove „škorpióny“","Benciovo „finis Africae“"],e:"Adso ju zopakuje v stajni a Viliam pochopí, že treba počítať písmená slova.",c:"6. deň"},
+  {q:"Čo je nápis nad zrkadlom?",o:["Super thronos viginti quatuor","Apocalypsis Iesu Christi","Stat rosa pristina nomine","Fons Adae"],e:"Verš z Apokalypsy o dvadsiatich štyroch starcoch na trónoch.",c:"2. / 6. deň"},
+  {q:"Kde sa našli Viliamove ukradnuté okuliare?",o:["V habite mŕtveho Berengara","V Jorgeho cele","V kuchyni pod stolom","V Malachiášovom stole"],e:"Našiel ich Severín; v ten istý deň Mikuláš donesie nové.",c:"4. deň"},
+  {q:"Čo zostalo v kuchyni po dievčati?",o:["Balík s veľkým zvieracím srdcom","Jej meno napísané na tabuľke","Čierna mačka","Venantiove poznámky"],e:"Odmena, ktorú dievča dostalo za návštevu (Remigio platil jedlom).",c:"3. deň"},
+  {q:"Ako boli zapísané Venantiove tajné poznámky?",o:["Znakmi zverokruhu, ktoré sa objavia až nad plameňom","Zrkadlovým písmom","Hebrejsky","Rímskymi číslicami"],e:"Popri gréckom texte; Viliam ich rozlúšti na 3. deň.",c:"2. – 3. deň"},
+  {q:"Na akom materiáli bol grécky text Aristotela?",o:["Na ľanovom papieri","Na purpurovom pergamene","Na egyptskom papyruse","Na voskových tabuľkách"],e:"Charta lintea – vyrábal sa pri Silose v Španielsku, odkiaľ knihu priniesol Jorge.",c:"6. – 7. deň"},
+  {q:"Kto sa po Remigiovom zatknutí stane pivničným?",o:["Mikuláš z Morimonda","Bencius","Aymaro","Alinardo"],e:"Sklár Mikuláš; ukáže aj poklad v krypte.",c:"6. deň"},
+  {q:"Kto sa stane pomocníkom knihovníka po Berengarovi?",o:["Bencius z Uppsaly","Adso","Mikuláš","Aymaro"],e:"Malachiáš ho vymenuje – a Bencius mu za to vráti ukradnutú knihu.",c:"5. deň"},
+  {q:"Čo bola Viliamova falošná stopa?",o:["Že vraždy idú podľa siedmich trúb Apokalypsy","Že vraždí opát kvôli pokladu","Že vrahovia sú pápežskí vojaci","Že vrahom je Ubertín"],e:"Podobnosť bola náhodná; Jorge ju potom sám využil.",c:"5. – 7. deň"},
+  {q:"Kto podľa rámca údajne preložil Adsov rukopis do francúzštiny?",o:["Abbé Vallet","Jean Mabillon","Athanasius Kircher","Adso sám"],e:"Kniha abbé Valleta z roku 1842; Mabillon údajne rukopis našiel, Kircher ho citoval.",c:"úvod"},
+  {q:"Kde a kedy našiel rozprávač rámca Valletovu knihu?",o:["V Prahe 16. augusta 1968","V Ríme v roku 1980","V Melku v roku 1945","V Buenos Aires v roku 1970"],e:"V Buenos Aires našiel neskôr len citáty z Adsovho príbehu v inej knihe.",c:"úvod"},
+  {q:"Ktorý mních je najstarší?",o:["Alinardo z Grottaferraty","Jorge z Burgosu","Opát Abbone","Ubertín z Casale"],e:"Jorge je druhý najstarší.",c:"2. deň"},
+  {q:"Ako sa volá „africká“ časť knižnice v južnej veži?",o:["Leones","Hibernia","Acaia","Fons Adae"],e:"Hibernia je Írsko (západ), Acaia Grécko, Fons Adae raj na východe.",c:"4. deň"},
+  {q:"Ako zomrie opát?",o:["Udusí sa v tajnej chodbe, ktorú zablokoval Jorge","Otrávi sa knihou","Zabijú ho Bernardovi lukostrelci","Zahynie v požiari pri záchrane pokladu"],e:"Jorge ho vlákal do chodby pod Finis Africae a pokazil mechanizmus.",c:"6. – 7. deň"},
+  {q:"Čo malo byť podľa Severína zvláštne na jede, ktorý mu ukradli?",o:["Spôsobuje únavu, ochrnutie a smrť – a ukradli ho už pred rokmi","Mal ho dovezený z Avignonu","Bol to arzén z kuchyne","Bol to obyčajný jed na potkany z kuchyne"],e:"Viliam z toho usúdi, že vrah plánoval dlho a premyslene.",c:"4. deň"}
+ ],
+ ultra:[
+  {q:"Ako sa volá opátov kôň, ktorého Viliam nájde podľa stôp?",a:["Brunellus","Brunello","Brunel"],s:"Brunellus",e:"Viliam uhádne aj meno – tak by učenec nazval najkrajšieho koňa.",c:"1. deň"},
+  {q:"Napíš, ako sa volá knihovník.",a:["Malachiáš","Malachias","Malachi","Malachiáš z Hildesheimu"],s:"Malachiáš z Hildesheimu",e:"Oficiálny strážca knižnice, v skutočnosti Jorgeho nástroj.",c:"1. deň"},
+  {q:"Ktoré dve písmená treba stlačiť nad zrkadlom?",a:["q a r","q r","qr","q,r","r a q","q aj r"],s:"Q a R",e:"Prvé a siedme písmeno slova QUATUOR.",c:"6. deň"},
+  {q:"Ako sa volá Adsov kláštor (aj mesto)?",a:["Melk"],s:"Melk",e:"Benediktínsky kláštor na Dunaji v Rakúsku.",c:"prológ"},
+  {q:"Z ktorej krajiny pochádza Viliam?",a:["Anglicko","z Anglicka","Anglia","England","Británia"],s:"Anglicko",e:"Anglický františkán, žiak Rogera Bacona.",c:"prológ"},
+  {q:"Ako sa volá Viliamov priateľ, filozof, podľa ktorého sa volá „britva“?",a:["Occam","Ockham","Okam","Viliam Occam","William Ockham"],s:"Viliam Occam",e:"Occamova britva: nepridávaj zbytočné predpoklady.",c:"1. deň"},
+  {q:"Kto je autorom ukrývanej knihy o komédii?",a:["Aristoteles","Aristotel"],s:"Aristoteles",e:"Druhá kniha Poetiky.",c:"7. deň"},
+  {q:"Čo vykrikuje Salvatore (heslo dolciniánov)?",a:["Penitenziagite","Penitenziagite!","penitentiagite"],s:"Penitenziagite!",e:"Skomolené „robte pokánie“.",c:"1. / 3. deň"},
+  {q:"V čom našli Venantia?",a:["v krvi","krv","krvou","prasacia krv","v sude s krvou","sud s krvou","v sude s prasacou krvou","sud","v sude","sude"],s:"v sude s prasacou krvou",e:"Hlavou dole, trčali mu len nohy.",c:"2. deň"},
+  {q:"Čím zabili Severína?",a:["armilárna sféra","armilárnou sférou","sféra","sférou","glóbus","nebeská sféra","model nebies"],s:"armilárnou sférou",e:"Kovový model nebeských sfér; udrel ho Malachiáš.",c:"5. deň"},
+  {q:"Ako sa volá inkvizítor?",a:["Bernard Gui","Gui","Bernard"],s:"Bernard Gui",e:"Dominikán, skutočná historická postava.",c:"4. deň"},
+  {q:"V ktorom meste sídli pápež?",a:["Avignon","v Avignone"],s:"Avignon",e:"Pápež Ján XXII.",c:"prológ"},
+  {q:"Ako sa volá vodca heretickej sekty, ku ktorej patrili Remigio a Salvatore?",a:["Dolcino","Fra Dolcino","Dolcín"],s:"Fra Dolcino",e:"Upálený v roku 1307 aj s Margarétou.",c:"3. deň"},
+  {q:"Ako sa volá latinská paródia, ktorú Viliam porovná s Adsovým snom?",a:["Coena Cypriani","Cena Cypriani","Cypriánova hostina","coena"],s:"Coena Cypriani",e:"Je v tom istom zväzku ako Aristoteles.",c:"6. deň"},
+  {q:"Koľko dní a nocí horí opátstvo?",a:["3","tri","tri dni","3 dni"],s:"tri dni a tri noci",e:"Mnísi to potom vzdajú a opátstvo opustia.",c:"posledná strana"},
+  {q:"V ktorom meste sa Viliam a Adso rozlúčia?",a:["Mníchov","v Mníchove","Munchen","München","Mnichov"],s:"Mníchov",e:"Viliam dá Adsovi okuliare.",c:"posledná strana"},
+  {q:"Čo daruje Viliam Adsovi na rozlúčku?",a:["okuliare","sklíčka","svoje okuliare"],s:"okuliare",e:"Tie, ktoré mu urobil Mikuláš; Adso ich nosí ešte pri písaní.",c:"posledná strana"},
+  {q:"Z ktorého španielskeho mesta pochádza Jorge?",a:["Burgos","z Burgosu"],s:"Burgos",e:"Knihy priniesol z okolia Silosu.",c:"7. deň"},
+  {q:"Na čo zomrie Viliam?",a:["mor","na mor","čierna smrť","na čiernu smrť"],s:"na mor (čiernu smrť)",e:"Dozvieme sa to na poslednej strane.",c:"posledná strana"},
+  {q:"Ako sa volá tajná miestnosť (latinsky)?",a:["Finis Africae","finis africae"],s:"Finis Africae",e:"„Koniec Afriky“.",c:"2. – 7. deň"},
+  {q:"Ktorý mních vymení ukradnutú knihu za miesto pomocníka knihovníka?",a:["Bencius","Benno","Bencius z Uppsaly","Benno z Uppsaly"],s:"Bencius (Benno) z Uppsaly",e:"Zvedavosť, ktorá sa dá kúpiť.",c:"5. deň"},
+  {q:"Kto zabil Severína?",o:["Malachiáš","Jorge","Remigio","Bernardovi lukostrelci"],e:"Zo žiarlivosti, naviedol ho Jorge.",c:"7. deň"},
+  {q:"Čo sa stane s dievčaťom v knihe?",o:["Odvezú ju na upálenie ako bosorku","Zachránia ju dedinčania","Odíde s Adsom do Melku","Utečie s Ubertínom"],e:"Záchrana dedinčanmi je len vo filme.",c:"5. deň / posledná strana"},
+  {q:"Čo sa stane s Bernardom Guiom v knihe?",o:["Odíde živý s väzňami","Zahynie pri útoku dedinčanov","Zhorí v knižnici","Otrávi sa knihou"],e:"Smrť pri útoku dedinčanov je vo filme z roku 1986.",c:"5. deň"}
+ ]
+};
+
+/* ---------- POSTAVY ---------- */
+document.getElementById("chars").innerHTML = CHARS.map(g => `
+  <div class="group"><h3>${esc(g.g)}</h3><div class="cards">
+   ${g.items.map(c => `<article class="card"><h4>${esc(c.n)}</h4><div class="role">${esc(c.r)}</div><p>${esc(c.d)}</p>${c.f ? `<span class="fate">Osud: ${esc(c.f)}</span>` : ""}</article>`).join("")}
+  </div></div>`).join("");
+
+/* ---------- DNI ---------- */
+const chEl = document.getElementById("chapters");
+chEl.innerHTML = CH.map((c,i) => `
+  <details class="ch" id="ch${i}">
+    <summary><span class="n">${esc(c.n)}</span><span class="t">${esc(c.t)}</span><span class="d">${esc(c.d)}</span></summary>
+    <div class="ch-body"><p class="s">${esc(c.s)}</p>
+      <div class="det"><b class="lbl">Na písomku</b><ul>${c.x.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div></div>
+  </details>`).join("");
+const rawS = CH.map(c => ({s:c.s, x:c.x}));
+const fold = s => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+function hl(text, q){
+  if (!q) return esc(text);
+  const f = fold(text), qq = fold(q); let out = "", i = 0, k;
+  while ((k = f.indexOf(qq, i)) !== -1){ out += esc(text.slice(i,k)) + "<mark>" + esc(text.slice(k,k+q.length)) + "</mark>"; i = k + q.length; }
+  return out + esc(text.slice(i));
+}
+document.getElementById("chSearch").addEventListener("input", e => {
+  const q = e.target.value.trim(); let hits = 0;
+  CH.forEach((c,i) => {
+    const d = document.getElementById("ch"+i);
+    const hay = fold([c.t,c.d,c.s,...c.x].join(" "));
+    const ok = !q || hay.includes(fold(q));
+    d.hidden = !ok; if (ok) hits++;
+    d.querySelector(".s").innerHTML = hl(rawS[i].s, q);
+    d.querySelectorAll(".det li").forEach((li,j) => li.innerHTML = hl(rawS[i].x[j], q));
+    d.querySelector(".t").innerHTML = hl(c.t, q);
+    if (q && ok) d.open = true;
+  });
+  document.getElementById("noHits").hidden = hits > 0;
+});
+const tAll = document.getElementById("toggleAll");
+tAll.addEventListener("click", () => {
+  const all = [...chEl.querySelectorAll("details.ch")];
+  const open = all.some(d => !d.open);
+  all.forEach(d => d.open = open);
+  tAll.textContent = open ? "Zavrieť všetky" : "Otvoriť všetky";
+});
+
+/* ---------- MŔTVI, SYMBOLY, FAKTY ---------- */
+const DL = ["","","Ako ho našli","Čo sa naozaj stalo","Trúba"];
+document.getElementById("deadRows").innerHTML = DEAD.map(r=>`<tr>${r.map((x,i)=>`<td${DL[i]?` data-l="${DL[i]}"`:""}>${esc(x)}</td>`).join("")}</tr>`).join("");
+document.getElementById("otherFates").innerHTML = OTHER.map(o=>`<article class="card"><h4>${esc(o.t)}</h4><p>${esc(o.d)}</p></article>`).join("");
+document.getElementById("symbols").innerHTML =
+  `<p><b>Hlavné témy:</b> ${esc(THEMES)}</p>` +
+  `<div class="cards">${SYMS.map(s=>`<article class="card"><h4>${esc(s.t)}</h4><p>${esc(s.d)}</p></article>`).join("")}</div>`;
+document.getElementById("whys").innerHTML = WHYS.map(w=>`<details><summary>${esc(w.q)}</summary><p>${esc(w.a)}</p></details>`).join("");
+document.getElementById("factRows").innerHTML = FACTS.map(f=>`<tr><td>${esc(f[0])}</td><td>${esc(f[1])}</td></tr>`).join("");
+document.getElementById("vsRows").innerHTML = VS.map(r=>`<tr>${r.map(x=>`<td>${esc(x)}</td>`).join("")}</tr>`).join("");
+
+/* ---------- TESTY ---------- */
+const LEVELS = [
+  {k:"easy",n:"Základné",d:"Kto, kde, čo – základ deja",b:"●○○"},
+  {k:"med",n:"Stredné",d:"Kľúčové scény a smrti",b:"●●○"},
+  {k:"hard",n:"Ťažké",d:"Detaily ako na skutočnej písomke",b:"●●●"},
+  {k:"mix",n:"Mix 20",d:"Náhodný výber zo všetkých",b:"⟳"},
+  {k:"ultra",n:"Ultra ťažké",d:"Dopisovačky aj výber, len pre tých, čo čítali",b:"✎✎✎"}
+];
+const shuffle = a => { a = a.slice(); for (let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+let cur = "easy", qs = [], ans = {};
+
+const lvlEl = document.getElementById("levels");
+lvlEl.innerHTML = LEVELS.map(l=>`<button class="lvl" type="button" data-k="${l.k}" aria-pressed="false"><span class="bars">${l.b}</span><b>${l.n}</b><span>${l.d} · ${l.k==="mix"?20:Q[l.k].length} otázok</span></button>`).join("");
+lvlEl.addEventListener("click", e => { const b = e.target.closest(".lvl"); if (b) start(b.dataset.k); });
+
+function build(k){
+  let base = k==="mix" ? shuffle([...Q.easy,...Q.med,...Q.hard]).slice(0,20) : Q[k];
+  if (k==="ultra") base = shuffle(base);
+  return base.map(x => x.a ? {...x} : {...x, opts: shuffle(x.o.map((t,i)=>({t,ok:i===0})))});
+}
+function start(k, list){
+  cur = k; ans = {};
+  qs = list || build(k);
+  try { localStorage.setItem("mr-level", k); } catch(e){}
+  lvlEl.querySelectorAll(".lvl").forEach(b=>b.setAttribute("aria-pressed", b.dataset.k===k));
+  render();
+}
+function render(){
+  const L = document.getElementById("qlist");
+  L.innerHTML = qs.map((x,i)=>`
+   <div class="q" id="q${i}">
+     <div class="qh"><span class="num">${i+1}.</span><span class="txt">${esc(x.q)}</span><span class="ref">${esc(x.c)}</span></div>
+     ${x.a ? `<form class="fill" data-q="${i}"><input id="f${i}" type="text" autocomplete="off" spellcheck="false" placeholder="Napíš odpoveď…" aria-label="Odpoveď na otázku ${i+1}"><button class="btn" type="submit">Skontrolovať</button></form>` : `<div class="opts">${x.opts.map((o,j)=>`<button class="opt" type="button" data-q="${i}" data-o="${j}">${esc(o.t)}</button>`).join("")}</div>`}
+   </div>`).join("");
+  document.getElementById("doneBox").hidden = true;
+  score();
+}
+document.getElementById("qlist").addEventListener("click", e => {
+  const b = e.target.closest(".opt"); if (!b) return;
+  const i = +b.dataset.q, j = +b.dataset.o; if (ans[i] !== undefined) return;
+  const x = qs[i]; const ok = x.opts[j].ok; ans[i] = ok;
+  const box = document.getElementById("q"+i);
+  box.classList.add(ok ? "is-ok" : "is-bad");
+  box.querySelectorAll(".opt").forEach((btn,k)=>{ btn.disabled = true;
+    if (x.opts[k].ok) btn.classList.add("correct"); else if (k===j) btn.classList.add("wrong"); });
+  const ex = document.createElement("div"); ex.className = "expl";
+  ex.innerHTML = (ok ? '<b class="ok">Správne.</b> ' : '<b class="no">Nie.</b> Správne je: <b>'+esc(x.opts.find(o=>o.ok).t)+'</b>. ') + esc(x.e);
+  box.appendChild(ex);
+  score();
+});
+const norm = s => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[„“"'!?.:;()]/g,"").replace(/\s+/g," ").trim();
+document.getElementById("qlist").addEventListener("submit", e => {
+  const f = e.target.closest("form.fill"); if (!f) return; e.preventDefault();
+  const i = +f.dataset.q; if (ans[i] !== undefined) return;
+  const inp = f.querySelector("input"); const v = norm(inp.value); if (!v) { inp.focus(); return; }
+  const x = qs[i];
+  const ok = x.a.some(a => { const n = norm(a); return v === n || v.replace(/,/g,"") === n.replace(/,/g,"") || (n.length >= 4 && v.includes(n)) || v.split(" ").includes(n); });
+  ans[i] = ok; inp.disabled = true; f.querySelector("button").disabled = true;
+  inp.classList.add(ok ? "correct" : "wrong");
+  const box = document.getElementById("q"+i); box.classList.add(ok ? "is-ok" : "is-bad");
+  const ex = document.createElement("div"); ex.className = "expl";
+  ex.innerHTML = (ok ? '<b class="ok">Správne.</b> ' : '<b class="no">Nie.</b> Správne je: <b>'+esc(x.s)+'</b>. ') + esc(x.e);
+  box.appendChild(ex); score();
+});
+function score(){
+  const tot = qs.length, done = Object.keys(ans).length, ok = Object.values(ans).filter(Boolean).length;
+  document.getElementById("sOk").textContent = ok;
+  document.getElementById("sTot").textContent = tot;
+  document.getElementById("mOk").style.width = (tot? ok/tot*100:0)+"%";
+  document.getElementById("mBad").style.width = (tot? (done-ok)/tot*100:0)+"%";
+  document.getElementById("btnRetryWrong").disabled = !(done && done>ok);
+  const d = document.getElementById("doneBox");
+  if (done === tot && tot){
+    const pct = Math.round(ok/tot*100);
+    const msg = pct>=90 ? "Výborne. Toto vyzerá, akoby si knihu čítal." : pct>=70 ? "Dobre. Prejdi si chybné otázky a dni, na ktoré odkazujú." : "Ešte nie. Prečítaj si dni pri chybných otázkach a skús znova.";
+    d.innerHTML = `<h3>${ok} z ${tot} · ${pct} %</h3><p>${msg}</p>`;
+    d.hidden = false;
+  } else d.hidden = true;
+}
+document.getElementById("btnReset").addEventListener("click", ()=>start(cur));
+document.getElementById("btnRetryWrong").addEventListener("click", ()=>{
+  const wrong = qs.filter((x,i)=>ans[i]===false).map(x=> x.a ? {...x} : {...x, opts: shuffle(x.opts)});
+  if (wrong.length) start(cur, wrong);
+});
+let saved = "easy"; try { saved = localStorage.getItem("mr-level") || "easy"; } catch(e){}
+start(Q[saved] || saved==="mix" ? saved : "easy");
+
+/* ---------- ROUTING ---------- */
+const VIEWS = ["prehlad","postavy","dni","mrtvi","symboly","fakty","testy"];
+function route(){
+  const h = location.hash.replace("#","");
+  const v = VIEWS.includes(h) ? h : "prehlad";
+  VIEWS.forEach(n => document.getElementById("v-"+n).hidden = n!==v);
+  document.querySelectorAll("nav.tabs a").forEach(a => a.getAttribute("href")==="#"+v ? a.setAttribute("aria-current","page") : a.removeAttribute("aria-current"));
+}
+window.addEventListener("hashchange", () => { route(); window.scrollTo({top:0}); });
+route();
+</script>
+</body>
+</html>
